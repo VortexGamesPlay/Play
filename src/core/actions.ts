@@ -1,4 +1,5 @@
 import { GameError } from './errors';
+import { t } from '../i18n';
 import type { GameEvent } from './events';
 import { releaseCreature, renameCreature, toggleFavorite } from './systems/creatures';
 import { claimDaily } from './systems/daily';
@@ -20,7 +21,7 @@ import { placeEgg, removeEgg, setAmbiance, speedUp } from './systems/incubation'
 import { claimQuest } from './systems/quests';
 import { harvest } from './systems/sanctuary';
 import { buy } from './systems/shop';
-import type { ActionContext, ExpeditionDuration, GameState, Settings } from './types';
+import type { ActionContext, ExpeditionDuration, GameState } from './types';
 
 /**
  * Toutes les intentions du joueur. Ce format sérialisable est aussi celui qui sera envoyé
@@ -41,7 +42,8 @@ export type GameAction =
   | { type: 'toggleFavorite'; uid: string }
   | { type: 'release'; uid: string }
   | { type: 'setPlayerName'; name: string }
-  | { type: 'setSetting'; key: keyof Settings; value: boolean }
+  | { type: 'setSetting'; key: 'sound' | 'reducedMotion'; value: boolean }
+  | { type: 'setLocale'; locale: 'en' | 'fr' }
   | { type: 'evolve'; uid: string; to: string }
   | { type: 'breed'; a: string; b: string; stabilize: boolean }
   | { type: 'startExpedition'; biomeId: string; uids: string[]; duration: ExpeditionDuration }
@@ -99,6 +101,10 @@ export function applyAction(state: GameState, action: GameAction, ctx: ActionCon
       break;
     }
     case 'setSetting': draft.settings[action.key] = action.value; break;
+    case 'setLocale':
+      if (action.locale !== 'en' && action.locale !== 'fr') throw new GameError('bad_locale', t('Langue inconnue.'));
+      draft.settings.locale = action.locale;
+      break;
     case 'evolve': evolve(draft, action.uid, action.to, ctx, events); break;
     case 'breed': breed(draft, action.a, action.b, action.stabilize, ctx, events); break;
     case 'startExpedition': startExpedition(draft, action.biomeId, action.uids, action.duration, ctx); break;

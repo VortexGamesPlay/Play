@@ -176,6 +176,7 @@ export interface MissionsState {
 export interface Settings {
   sound: boolean;
   reducedMotion: boolean;
+  locale: 'en' | 'fr';
 }
 
 export interface GameState {
