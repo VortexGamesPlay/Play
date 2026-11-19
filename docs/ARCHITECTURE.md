@@ -70,7 +70,7 @@ Clic → useGame.dispatch(action)
 
 ## Rendu des créatures
 
-`ui/art/CreatureArt.tsx` assemble une créature à partir de son `ArtSpec` : forme du corps (8), oreilles (12), crête (10), queue (10), ailes (6), yeux (6), bouche (5), motif (7) et palette. Les gènes décalent la teinte (±12°) ; les mutations transforment la palette et ajoutent des couches (`mutationLook.ts`). Animations CSS : repos, marche, attaque, sommeil, clignement, battement d'ailes, queue. Les silhouettes de l'Ovidex passent par un filtre SVG (forme pure).
+`ui/art/CreatureArt.tsx` assemble une créature à partir de son `ArtSpec` : forme du corps (8), oreilles (12), crête (10), queue (10), ailes (6), yeux (6), bouche (5), motif (7) et palette. Les gènes décalent la teinte (±12°) ; les mutations transforment la palette et ajoutent des couches (`mutationLook.ts`). Animations CSS : repos, marche, attaque, sommeil, clignement, battement d'ailes, queue. Les silhouettes du Bestiaire passent par un filtre SVG (forme pure).
 
 ## Sauvegarde
 

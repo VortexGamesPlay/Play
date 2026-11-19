@@ -25,7 +25,7 @@ _Date : 19 novembre 2026_
 | Besoin | Choix | Justification |
 |---|---|---|
 | Langage | **TypeScript strict** | Sécurité des refactorings sur un projet de plusieurs années. |
-| Interface | **React 18** | Écrans riches (Ovidex, fiches, boutique), écosystème mature. |
+| Interface | **React 18** | Écrans riches (Bestiaire, fiches, boutique), écosystème mature. |
 | État | **Zustand** | Store minimal ; la logique métier reste hors de React. |
 | Build | **Vite** (`base: './'`) | Rapide ; le build fonctionne aussi en `file://` (Electron) et dans Capacitor. |
 | Tests | **Vitest** + script **Playwright** | Tests unitaires du cœur + parcours réel dans un navigateur. |

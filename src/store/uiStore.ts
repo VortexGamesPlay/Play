@@ -2,10 +2,10 @@ import { create } from 'zustand';
 import type { GameEvent } from '@core/events';
 
 export type Route =
-  | 'sanctuaire' | 'incubateur' | 'collection' | 'ovidex' | 'laboratoire'
+  | 'sanctuaire' | 'incubateur' | 'collection' | 'bestiaire' | 'laboratoire'
   | 'exploration' | 'arene' | 'boutique' | 'inventaire' | 'communaute' | 'profil';
 
-export const ROUTES: Route[] = ['sanctuaire', 'incubateur', 'collection', 'ovidex', 'laboratoire', 'exploration', 'arene', 'boutique', 'inventaire', 'communaute', 'profil'];
+export const ROUTES: Route[] = ['sanctuaire', 'incubateur', 'collection', 'bestiaire', 'laboratoire', 'exploration', 'arene', 'boutique', 'inventaire', 'communaute', 'profil'];
 
 export type ToastKind = 'info' | 'success' | 'error' | 'reward';
 export interface Toast {

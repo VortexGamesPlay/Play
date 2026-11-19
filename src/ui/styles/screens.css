@@ -162,7 +162,7 @@
 .food-ic { width: 34px; height: 34px; border-radius: 50%; flex: none; background: radial-gradient(circle at 35% 30%, white 0 12%, var(--fc) 13%); box-shadow: inset -4px -5px 0 rgba(0, 0, 0, .12), 0 3px 8px color-mix(in srgb, var(--fc) 50%, transparent); }
 .food-ic.big { width: 64px; height: 64px; }
 
-/* ── Ovidex ── */
+/* ── Bestiaire ── */
 .dex-hero { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; background: linear-gradient(120deg, #ffffff, #f7f3ff); }
 .dex-hero h2 { font-size: 24px; }
 .dex-ring { --p: 0; width: 110px; height: 110px; border-radius: 50%; display: grid; place-content: center; text-align: center; flex: none;

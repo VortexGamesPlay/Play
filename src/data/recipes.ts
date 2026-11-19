@@ -11,7 +11,7 @@ export const RECIPES: RecipeDef[] = [
   { id: 'r_geode', name: 'Géode chantante', hint: 'La pierre patiente et le givre éternel…',
     parents: [{ element: 'terre' }, { element: 'glace' }], result: 'cristalis', chance: 0.2 },
   { id: 'r_astre', name: 'Naissance d\'un astre', hint: 'Le jour qui rencontre la nuit…',
-    parents: [{ element: 'lumiere' }, { element: 'ombre' }], result: 'astrelune', chance: 0.06 },
+    parents: [{ element: 'lumiere' }, { element: 'ombre' }], result: 'cometuse', chance: 0.06 },
   { id: 'r_neant', name: 'Le Néant', hint: 'La lumière la plus pure et l\'ombre la plus profonde, chacune à son apogée…',
-    parents: [{ species: 'solarielle' }, { species: 'noctombre' }], result: 'neantis', chance: 0.08 },
+    parents: [{ species: 'aubelys' }, { species: 'revombre' }], result: 'neantelle', chance: 0.08 },
 ];

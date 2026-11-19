@@ -103,7 +103,7 @@ export interface SpeciesDef {
   weightKg: number;
   favoriteFood: string[];
   evolutions: EvolutionDef[];
-  /** Comment l'espèce s'obtient (affichage Ovidex / validation des données). */
+  /** Comment l'espèce s'obtient (affichage Bestiaire / validation des données). */
   obtainableBy: ('egg' | 'evolution' | 'breeding')[];
   art: ArtSpec;
 }

@@ -21,8 +21,8 @@ for (const [name, vp] of [['desktop', { width: 1366, height: 860 }], ['mobile', 
   await p.evaluate((t) => localStorage.setItem('eggverse.save.main', t), readFileSync(`${SP}/save-p3.json`, 'utf8'));
   await p.goto('http://localhost:4321/#/collection'); await p.reload(); await p.waitForSelector('.cr-card');
   await p.waitForTimeout(800); await p.screenshot({ path: `${SP}/p3-${name}-collection.png` });
-  // Évolution de Pyroli
-  await p.locator('.cr-card', { hasText: 'Pyroli' }).click();
+  // Évolution de Tisonnet
+  await p.locator('.cr-card', { hasText: 'Tisonnet' }).click();
   await p.waitForSelector('.evo-row.ready');
   await p.waitForTimeout(600); await p.screenshot({ path: `${SP}/p3-${name}-fiche.png` });
   await p.locator('.evo-row.ready button').first().click();
@@ -35,9 +35,9 @@ for (const [name, vp] of [['desktop', { width: 1366, height: 860 }], ['mobile', 
   // Laboratoire
   await p.goto('http://localhost:4321/#/laboratoire'); await p.waitForSelector('.lab-slot');
   await p.locator('.lab-slot.empty').first().click();
-  await p.locator('.picker-row', { hasText: 'Pyrodrake' }).locator('button').click();
+  await p.locator('.picker-row', { hasText: 'Fournaillon' }).locator('button').click();
   await p.locator('.lab-slot.empty').first().click();
-  await p.locator('.picker-row', { hasText: 'Aquabulle' }).locator('button').click();
+  await p.locator('.picker-row', { hasText: 'Perlouille' }).locator('button').click();
   await p.waitForSelector('.lab-forecast'); await p.waitForTimeout(600);
   await p.screenshot({ path: `${SP}/p3-${name}-labo.png`, fullPage: true });
   await p.locator('button:has-text("Lancer la fusion")').click();

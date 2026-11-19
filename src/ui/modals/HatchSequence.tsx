@@ -90,7 +90,7 @@ export function HatchSequence({ event }: { event: Hatched }) {
             {c.mutations.map((m) => <MutationBadge key={m} mutation={m} />)}
           </div>
           {event.newVariants.length > 0 && (
-            <p className="hatch-variant"><Icon name="sparkle" />Variante {event.newVariants.map((m) => MUTATIONS[m]?.name).join(' + ')} enregistrée dans l'Ovidex !</p>
+            <p className="hatch-variant"><Icon name="sparkle" />Variante {event.newVariants.map((m) => MUTATIONS[m]?.name).join(' + ')} enregistrée dans le Bestiaire !</p>
           )}
           {event.crystalsAwarded > 0 && <p className="hatch-bonus"><CrystalIcon width={18} height={18} />+{event.crystalsAwarded} cristaux de découverte</p>}
           <div className="row" style={{ justifyContent: 'center', marginTop: 14, gap: 10 }}>

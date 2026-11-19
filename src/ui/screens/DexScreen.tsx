@@ -60,7 +60,7 @@ export function DexScreen() {
       <div className="card dex-hero">
         <div className="dex-ring" style={{ ['--p' as string]: pct } as CSSProperties}><b className="num">{pct}%</b><span>complété</span></div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <h2>Ovidex</h2>
+          <h2>Bestiaire</h2>
           <p className="soft" style={{ fontSize: 14 }}>L'encyclopédie des créatures oubliées. Chaque éclosion lève un peu plus le voile.</p>
           <div className="dex-stats">
             <div><b className="num">{known}/{SPECIES_LIST.length}</b><span>espèces</span></div>

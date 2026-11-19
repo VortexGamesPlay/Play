@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BALANCE, RECIPES, SPECIES } from '@data/index';
+import { BALANCE, ITEMS, MUTATIONS, RECIPES, SPECIES } from '@data/index';
 import { createRng } from '../rng';
 import { createCreature } from '../systems/creatures';
 import { evolutionOptions } from '../systems/evolution';
@@ -8,6 +8,7 @@ import { baseFormOf, breedingOdds } from '../systems/odds';
 import { migrate } from '../save/migrations';
 import { deserialize, serialize } from '../save/serializer';
 import { SCHEMA_VERSION } from '../state';
+import { SPECIES_RENAMES_V3 } from '../save/renames';
 import { makeContext, HOUR } from '../time';
 import type { GameState } from '../types';
 import { newGame, run, T0 } from './helpers';
@@ -25,52 +26,52 @@ function withCreature(s: GameState, speciesId: string, patch: Partial<GameState[
 describe('Évolutions', () => {
   it('refuse une évolution dont les conditions ne sont pas remplies', () => {
     const s = newGame();
-    const c = withCreature(s, 'pyroli', { level: 10 });
-    expect(() => run(s, { type: 'evolve', uid: c.uid, to: 'pyrodrake' })).toThrow(/conditions/);
+    const c = withCreature(s, 'tisonnet', { level: 10 });
+    expect(() => run(s, { type: 'evolve', uid: c.uid, to: 'fournaillon' })).toThrow(/conditions/);
   });
   it('fait évoluer, conserve gènes et niveau, enregistre l\'espèce', () => {
     const s = newGame();
-    const c = withCreature(s, 'pyroli', { level: 16 });
-    const { state, events } = run(s, { type: 'evolve', uid: c.uid, to: 'pyrodrake' });
+    const c = withCreature(s, 'tisonnet', { level: 16 });
+    const { state, events } = run(s, { type: 'evolve', uid: c.uid, to: 'fournaillon' });
     const after = state.creatures.find((x) => x.uid === c.uid)!;
-    expect(after.speciesId).toBe('pyrodrake');
+    expect(after.speciesId).toBe('fournaillon');
     expect(after.genes).toEqual(c.genes);
     expect(after.level).toBe(16);
-    expect(state.dex.pyrodrake?.obtainedCount).toBe(1);
-    expect(events[0]).toMatchObject({ type: 'evolved', from: 'pyroli', to: 'pyrodrake', newSpecies: true });
+    expect(state.dex.fournaillon?.obtainedCount).toBe(1);
+    expect(events[0]).toMatchObject({ type: 'evolved', from: 'tisonnet', to: 'fournaillon', newSpecies: true });
   });
   it('gère les branches : régime alimentaire', () => {
     const s = newGame();
-    const c = withCreature(s, 'mousselin', { level: 14, diet: { fruit: 8 } });
+    const c = withCreature(s, 'lichenou', { level: 14, diet: { fruit: 8 } });
     const opts = evolutionOptions(s, c, 12);
     expect(opts.find((o) => o.def.to === 'petalys')!.ready).toBe(true);
-    expect(opts.find((o) => o.def.to === 'sylvegard')!.ready).toBe(false);
+    expect(opts.find((o) => o.def.to === 'bosquelin')!.ready).toBe(false);
   });
   it('gère le moment de la journée et l\'affection', () => {
     const s = newGame();
-    const c = withCreature(s, 'givrelot', { level: 16, affection: 60 });
-    expect(() => run(s, { type: 'evolve', uid: c.uid, to: 'givrelune' }, NOON)).toThrow();
-    expect(run(s, { type: 'evolve', uid: c.uid, to: 'givrelune' }, NIGHT).state.creatures.at(-1)!.speciesId).toBe('givrelune');
+    const c = withCreature(s, 'frimelot', { level: 16, affection: 60 });
+    expect(() => run(s, { type: 'evolve', uid: c.uid, to: 'frimelune' }, NOON)).toThrow();
+    expect(run(s, { type: 'evolve', uid: c.uid, to: 'frimelune' }, NIGHT).state.creatures.at(-1)!.speciesId).toBe('frimelune');
   });
   it('consomme l\'objet d\'évolution', () => {
     const s = newGame();
-    const c = withCreature(s, 'galetou', { level: 12 });
-    expect(() => run(s, { type: 'evolve', uid: c.uid, to: 'orolithe' })).toThrow();
-    s.inventory.pierre_eveil = 1;
-    const { state } = run(s, { type: 'evolve', uid: c.uid, to: 'orolithe' });
-    expect(state.inventory.pierre_eveil).toBeUndefined();
+    const c = withCreature(s, 'caillounet', { level: 12 });
+    expect(() => run(s, { type: 'evolve', uid: c.uid, to: 'aurgile' })).toThrow();
+    s.inventory.coquille_eveil = 1;
+    const { state } = run(s, { type: 'evolve', uid: c.uid, to: 'aurgile' });
+    expect(state.inventory.coquille_eveil).toBeUndefined();
   });
   it('gère l\'environnement de naissance (ambiance)', () => {
     const s = newGame();
-    const cold = withCreature(s, 'scarabor', { level: 20 });
-    const hot = withCreature(s, 'scarabor', { level: 20, origin: { kind: 'egg', eggType: 'volcanique', ambiance: 'chaleur', night: false } });
+    const cold = withCreature(s, 'sphingres', { level: 20 });
+    const hot = withCreature(s, 'sphingres', { level: 20, origin: { kind: 'egg', eggType: 'volcanique', ambiance: 'chaleur', night: false } });
     expect(evolutionOptions(s, cold, 12)[0]!.ready).toBe(false);
     expect(evolutionOptions(s, hot, 12)[0]!.ready).toBe(true);
   });
 });
 
 describe('Reproduction', () => {
-  function parents(a = 'pyroli', b = 'aquabulle') {
+  function parents(a = 'tisonnet', b = 'perlouille') {
     const s = newGame();
     s.wallet = { coins: 10000, crystals: 0, essence: 1000 };
     const pa = withCreature(s, a, { level: 12, affection: 40 });
@@ -101,18 +102,18 @@ describe('Reproduction', () => {
     expect(() => run(state, { type: 'breed', a: pa.uid, b: pb.uid, stabilize: false })).toThrow(/repose/);
   });
   it('les issues d\'une fusion somment à 1 et incluent les recettes', () => {
-    for (const [a, b] of [['pyroli', 'aquabulle'], ['solarielle', 'noctombre'], ['mousselin', 'mousselin'], ['pyrodrake', 'galetou']]) {
+    for (const [a, b] of [['tisonnet', 'perlouille'], ['aubelys', 'revombre'], ['lichenou', 'lichenou'], ['fournaillon', 'caillounet']]) {
       const odds = breedingOdds(a!, b!);
       expect(odds.reduce((x, o) => x + o.probability, 0)).toBeCloseTo(1, 10);
     }
-    expect(breedingOdds('pyroli', 'aquabulle').find((o) => o.speciesId === 'brumavap')?.probability).toBeCloseTo(0.3);
-    const both = breedingOdds('solarielle', 'noctombre');
-    expect(both.some((o) => o.speciesId === 'neantis')).toBe(true);
-    expect(both.some((o) => o.speciesId === 'astrelune')).toBe(true);
+    expect(breedingOdds('tisonnet', 'perlouille').find((o) => o.speciesId === 'brumavap')?.probability).toBeCloseTo(0.3);
+    const both = breedingOdds('aubelys', 'revombre');
+    expect(both.some((o) => o.speciesId === 'neantelle')).toBe(true);
+    expect(both.some((o) => o.speciesId === 'cometuse')).toBe(true);
   });
   it('donne la forme de base de la lignée', () => {
-    expect(baseFormOf('infernyx')).toBe('pyroli');
-    expect(breedingOdds('infernyx', 'infernyx')).toEqual([{ speciesId: 'pyroli', probability: 1, recipeId: null }]);
+    expect(baseFormOf('basaltor')).toBe('tisonnet');
+    expect(breedingOdds('basaltor', 'basaltor')).toEqual([{ speciesId: 'tisonnet', probability: 1, recipeId: null }]);
   });
   it('les gènes hérités restent dans les bornes', () => {
     const ctx = makeContext(T0, createRng(3));
@@ -144,13 +145,39 @@ describe('Reproduction', () => {
 
 describe('Migration de sauvegarde', () => {
   it('passe une sauvegarde v1 en v2 sans perte', () => {
-    const v1 = { schemaVersion: 1, creatures: [{ uid: 'x', speciesId: 'pyroli' }] };
+    const v1 = { schemaVersion: 1, creatures: [{ uid: 'x', speciesId: 'tisonnet' }] };
     const v2 = migrate(v1, SCHEMA_VERSION);
-    expect(v2.schemaVersion).toBe(2);
+    expect(v2.schemaVersion).toBe(SCHEMA_VERSION);
     expect(v2.recipesFound).toEqual([]);
     expect((v2.creatures as { breedCount: number }[])[0]!.breedCount).toBe(0);
   });
-  it('relit une sauvegarde v2 complète', () => {
+  it('convertit les anciens identifiants d\'espèces (v2 → v3)', () => {
+    const [oldId, newId] = Object.entries(SPECIES_RENAMES_V3)[0]!;
+    const v2 = { schemaVersion: 2, creatures: [{ uid: 'x', speciesId: oldId, origin: { kind: 'breeding', parents: [oldId, oldId] } }],
+      dex: { [oldId]: { speciesId: oldId, obtainedCount: 1, variants: [] } }, discoveries: [{ speciesId: oldId }],
+      eggs: [{ uid: 'e', type: 'hybride', genetics: { speciesId: oldId, parents: [oldId, oldId] } }], incubators: [{ egg: null }] };
+    const v3 = migrate(v2, SCHEMA_VERSION) as Record<string, any>;
+    expect(v3.creatures[0].speciesId).toBe(newId);
+    expect(v3.creatures[0].origin.parents).toEqual([newId, newId]);
+    expect(v3.dex[newId].speciesId).toBe(newId);
+    expect(v3.dex[oldId]).toBeUndefined();
+    expect(v3.discoveries[0].speciesId).toBe(newId);
+    expect(v3.eggs[0].genetics.speciesId).toBe(newId);
+    for (const id of Object.values(SPECIES_RENAMES_V3)) expect(SPECIES[id]).toBeDefined();
+  });
+  it('convertit les mutations et objets renommés (v2 → v3)', () => {
+    const v2 = { schemaVersion: 2, creatures: [{ uid: 'x', speciesId: 'aerolis', mutations: ['chromatique', 'givree'] }],
+      dex: { aerolis: { speciesId: 'aerolis', variants: ['chromatique'] } }, discoveries: [{ speciesId: 'aerolis', mutationId: 'chromatique' }],
+      inventory: { baie_sucree: 3, pierre_eveil: 1 }, eggs: [], incubators: [] };
+    const v3 = migrate(v2, SCHEMA_VERSION) as Record<string, any>;
+    expect(v3.creatures[0].mutations).toEqual(['irisee', 'givree']);
+    expect(v3.dex.aerolis.variants).toEqual(['irisee']);
+    expect(v3.discoveries[0].mutationId).toBe('irisee');
+    expect(v3.inventory).toEqual({ fruit_rose: 3, coquille_eveil: 1 });
+    expect(MUTATIONS.irisee).toBeDefined();
+    expect(ITEMS.fruit_rose && ITEMS.coquille_eveil).toBeTruthy();
+  });
+  it('relit une sauvegarde complète', () => {
     const s = newGame();
     expect(deserialize(serialize(s, T0), T0).state).toEqual(s);
   });

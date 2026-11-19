@@ -15,7 +15,7 @@ npm run smoke        # après build : parcours complet dans Chromium (desktop + 
 
 ## Ce qui est jouable
 
-Incuber 10 types d'œufs dans des incubateurs à ambiance, assister à l'éclosion animée, découvrir 30 espèces et 11 mutations visuelles, compléter l'Ovidex, nourrir et faire monter de niveau ses créatures, les regarder vivre dans le sanctuaire, récolter des pièces, suivre la quête principale, réclamer la récompense quotidienne, acheter en boutique (probabilités affichées, aucun paiement réel). Sauvegarde automatique.
+Incuber 10 types d'œufs dans des incubateurs à ambiance, assister à l'éclosion animée, découvrir 30 espèces et 11 mutations visuelles, compléter le Bestiaire, nourrir et faire monter de niveau ses créatures, les regarder vivre dans le sanctuaire, récolter des pièces, suivre la quête principale, réclamer la récompense quotidienne, acheter en boutique (probabilités affichées, aucun paiement réel). Sauvegarde automatique.
 
 Laboratoire, Exploration, Arène et Communauté affichent clairement leur état « en développement » : rien n'y est simulé.
 

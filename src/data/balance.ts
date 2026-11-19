@@ -4,7 +4,7 @@ import { HOUR, MINUTE } from '@core/time';
 export const BALANCE = {
   startingWallet: { coins: 300, crystals: 10, essence: 0 },
   startingEggs: ['forestier', 'forestier', 'marin'] as string[],
-  startingInventory: { baie_sucree: 5 } as Record<string, number>,
+  startingInventory: { fruit_rose: 5 } as Record<string, number>,
   startingIncubators: 2,
   maxIncubators: 6,
   maxEggStorage: 30,

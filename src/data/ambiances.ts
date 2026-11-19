@@ -21,8 +21,8 @@ export const AMBIANCES: Record<string, AmbianceDef> = {
   },
   serre: {
     id: 'serre', name: 'Serre luxuriante', color: '#4cc46a',
-    description: 'Humidité et pollen. Favorise les mutations florales et chromatiques.',
-    mutationMultipliers: { florale: 4, chromatique: 1.4 },
+    description: 'Humidité et pollen. Favorise les mutations florales et irisées.',
+    mutationMultipliers: { florale: 4, irisee: 1.4 },
   },
   etoilee: {
     id: 'etoilee', name: 'Nuit étoilée', color: '#5a4bd6',

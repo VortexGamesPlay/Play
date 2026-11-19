@@ -86,7 +86,7 @@ export function CreatureDetail({ uid }: { uid: string }) {
 
         <div className="row" style={{ gap: 8, margin: '14px 0' }}>
           <button className="btn btn-mint" style={{ flex: 1 }} onClick={() => openModal({ kind: 'feed', uid })}><Icon name="leaf" />Nourrir</button>
-          <button className="btn btn-ghost" onClick={() => openModal({ kind: 'dex', speciesId: c.speciesId })}><Icon name="book" />Ovidex</button>
+          <button className="btn btn-ghost" onClick={() => openModal({ kind: 'dex', speciesId: c.speciesId })}><Icon name="book" />Bestiaire</button>
         </div>
 
         <h3 className="detail-h">Statistiques <span className="badge soft-badge">Puissance {st.power}</span></h3>

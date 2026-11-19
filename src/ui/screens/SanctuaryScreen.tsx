@@ -232,7 +232,7 @@ function DiscoveriesCard() {
   return (
     <div className="card">
       <div className="card-title"><Icon name="sparkle" /><h3>Dernières découvertes</h3></div>
-      {list.length === 0 ? <p className="soft" style={{ fontSize: 14 }}>Fais éclore un œuf pour enregistrer ta première découverte dans l'Ovidex.</p> : (
+      {list.length === 0 ? <p className="soft" style={{ fontSize: 14 }}>Fais éclore un œuf pour enregistrer ta première découverte dans le Bestiaire.</p> : (
         <div className="disc-list">
           {list.map((d, i) => (
             <button key={i} className="disc-item" onClick={() => openModal({ kind: 'dex', speciesId: d.speciesId })}>

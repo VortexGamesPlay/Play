@@ -7,7 +7,7 @@ Légende : ✅ terminé et vérifié · 🟡 partiel (détail indiqué) · ⏳ n
 | Élément | État |
 |---|---|
 | Architecture en couches (core / data / services / store / ui) | ✅ |
-| Navigation : barre latérale PC, barre inférieure + feuille « Plus » sur mobile, URL par écran (`#/ovidex`), bouton retour | ✅ |
+| Navigation : barre latérale PC, barre inférieure + feuille « Plus » sur mobile, URL par écran (`#/bestiaire`), bouton retour | ✅ |
 | Interface : système de design, modales, notifications, infobulles, barres, badges de rareté, transitions | ✅ |
 | Données centralisées et validées automatiquement | ✅ |
 | Sauvegarde automatique, copie de secours, migrations, export / import | ✅ |
@@ -26,7 +26,7 @@ Légende : ✅ terminé et vérifié · 🟡 partiel (détail indiqué) · ⏳ n
 | 30 espèces originales (bébés, juvéniles, adultes, ancestraux), 15 éléments | ✅ |
 | 9 raretés avec couleur, effet et probabilité centralisée | ✅ |
 | 11 mutations visuelles cumulables (groupes compatibles) | ✅ |
-| Ovidex : silhouettes, catégories, filtres, recherche, fiches, lignées, variantes, historique, complétion | ✅ |
+| Bestiaire : silhouettes, catégories, filtres, recherche, fiches, lignées, variantes, historique, complétion | ✅ |
 | Probabilités réelles affichées (espèces + mutations, par ambiance, jour / nuit) | ✅ |
 
 ### Livré en avance (bases des phases suivantes)
@@ -39,15 +39,15 @@ Légende : ✅ terminé et vérifié · 🟡 partiel (détail indiqué) · ⏳ n
 |---|---|
 | Nourriture, XP, niveaux (1–50), affection, régime alimentaire suivi | ✅ |
 | Évolutions avec conditions : niveau, affection, jour/nuit, objet (consommé), alimentation, ambiance de naissance, mutation | ✅ |
-| Embranchements : Mousselin, Givrelot et Galetou ont chacun deux évolutions possibles (choix définitif) | ✅ |
-| 6 nouvelles espèces (36 au total) : Pétalys, Orolithe, Givrelune, Marécroc, Spectrelune, Sarcophor | ✅ |
-| Objets d'évolution (Pierre d'éveil, Larme de lune) achetables en essence | ✅ |
+| Embranchements : Lichenou, Frimelot et Caillounet ont chacun deux évolutions possibles (choix définitif) | ✅ |
+| 6 nouvelles espèces (36 au total) : Pétalys, Aurgile, Frimelune, Marécroc, Voilunaire, Sarcophor | ✅ |
+| Objets d'évolution (Coquille d'éveil, Rosée lunaire) achetables en essence | ✅ |
 | Cinématique d'évolution (lueur, alternance accélérée des silhouettes, éclair, révélation) | ✅ |
 | Laboratoire : choix des parents, compatibilité, prévisions exactes avant validation, coût | ✅ |
 | Règles : niveau 10+, affection 20+, 4 fusions max par créature, repos de 1 h | ✅ |
 | Héritage : chaque gène d'un parent (±3, bond +5 possible), teinte et taille moyennes, génération | ✅ |
 | Transmission des mutations (35 %, 70 % avec stabilisateur d'essence), groupes incompatibles respectés | ✅ |
-| 4 recettes secrètes (Brumavap, Cristalis, Astrélune, Néantis), carnet de recettes avec indices | ✅ |
+| 4 recettes secrètes (Brumavap, Cristalis, Cométuse, Néantelle), carnet de recettes avec indices | ✅ |
 | Œuf génétique (motif ADN), animation de fusion, éclosion qui révèle la recette | ✅ |
 | Quêtes du Chapitre IV (évolution, fusion, recette, 22 espèces) | ✅ |
 | Sauvegarde : schéma v2 avec migration automatique depuis v1 | ✅ |

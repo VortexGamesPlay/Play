@@ -13,7 +13,7 @@ export const NAV_MAIN: NavEntry[] = [
   { route: 'sanctuaire', label: 'Sanctuaire', icon: 'sanctuary' },
   { route: 'incubateur', label: 'Incubateur', icon: 'egg' },
   { route: 'collection', label: 'Créatures', icon: 'paw' },
-  { route: 'ovidex', label: 'Ovidex', icon: 'book' },
+  { route: 'bestiaire', label: 'Bestiaire', icon: 'book' },
 ];
 
 export const NAV_WORLD: NavEntry[] = [

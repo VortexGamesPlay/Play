@@ -17,7 +17,7 @@ if (mode === 'species') {
   for (const sp of SPECIES_LIST) { const c = createCreature(s, sp.id, [], { kind: 'starter' }, ctx); c.genes.hue = 0; c.hatchedAt = now - SPECIES_LIST.indexOf(sp); s.creatures.push(c); registerInDex(s, c, ctx); }
 } else {
   const muts = Object.keys(MUTATIONS);
-  muts.forEach((m, i) => { const c = createCreature(s, ['pyroli','aquabulle','mousselin','noctuli','etincelou','givrelot'][i % 6]!, [m], { kind: 'starter' }, ctx); c.genes.hue = 0; c.nickname = MUTATIONS[m]!.name; c.hatchedAt = now - i; s.creatures.push(c); });
-  const c = createCreature(s, 'astrelune', ['doree', 'cristalline', 'florale', 'mutante'], { kind: 'starter' }, ctx); c.nickname = 'Cumul x4'; c.hatchedAt = now - 50; s.creatures.push(c);
+  muts.forEach((m, i) => { const c = createCreature(s, ['tisonnet','perlouille','lichenou','songelin','etincelou','frimelot'][i % 6]!, [m], { kind: 'starter' }, ctx); c.genes.hue = 0; c.nickname = MUTATIONS[m]!.name; c.hatchedAt = now - i; s.creatures.push(c); });
+  const c = createCreature(s, 'cometuse', ['doree', 'cristalline', 'florale', 'mutante'], { kind: 'starter' }, ctx); c.nickname = 'Cumul x4'; c.hatchedAt = now - 50; s.creatures.push(c);
 }
 writeFileSync(process.argv[3]!, serialize(s, now));

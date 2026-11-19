@@ -6,14 +6,14 @@ import type { QuestDef } from '@core/content';
  */
 export const MAIN_QUESTS: QuestDef[] = [
   { id: 'q01', chapter: 'Chapitre I — L\'Éveil', title: 'Première chaleur', description: 'Place un œuf dans un incubateur et attends son éclosion.',
-    goal: { kind: 'stat', stat: 'eggsHatched', target: 1 }, reward: { coins: 100, items: { baie_sucree: 3 } } },
+    goal: { kind: 'stat', stat: 'eggsHatched', target: 1 }, reward: { coins: 100, items: { fruit_rose: 3 } } },
   { id: 'q02', chapter: 'Chapitre I — L\'Éveil', title: 'Petit creux', description: 'Nourris une créature.',
     goal: { kind: 'stat', stat: 'creaturesFed', target: 1 }, reward: { coins: 80, crystals: 3 } },
   { id: 'q03', chapter: 'Chapitre I — L\'Éveil', title: 'Les fruits du sanctuaire', description: 'Récolte les pièces produites par tes créatures dans le Sanctuaire.',
     goal: { kind: 'stat', stat: 'harvests', target: 1 }, reward: { coins: 120, eggs: ['forestier'] } },
   { id: 'q04', chapter: 'Chapitre I — L\'Éveil', title: 'Petite famille', description: 'Possède 4 créatures.',
     goal: { kind: 'creatureCount', target: 4 }, reward: { coins: 150, eggs: ['marin'] } },
-  { id: 'q05', chapter: 'Chapitre I — L\'Éveil', title: 'Apprenti naturaliste', description: 'Découvre 3 espèces différentes dans l\'Ovidex.',
+  { id: 'q05', chapter: 'Chapitre I — L\'Éveil', title: 'Apprenti naturaliste', description: 'Découvre 3 espèces différentes dans le Bestiaire.',
     goal: { kind: 'dexCount', target: 3 }, reward: { coins: 200, crystals: 5 } },
   { id: 'q06', chapter: 'Chapitre II — La Croissance', title: 'Grandir ensemble', description: 'Fais atteindre le niveau 5 à une créature.',
     goal: { kind: 'maxLevel', target: 5 }, reward: { coins: 250, items: { graine_soleil: 5 } } },
@@ -38,7 +38,7 @@ export const MAIN_QUESTS: QuestDef[] = [
   { id: 'q16', chapter: 'Chapitre IV — Les Métamorphoses', title: 'Apprenti généticien', description: 'Lance une fusion au Laboratoire.',
     goal: { kind: 'stat', stat: 'breedings', target: 1 }, reward: { coins: 800, essence: 40 } },
   { id: 'q17', chapter: 'Chapitre IV — Les Métamorphoses', title: 'Formule interdite', description: 'Découvre une recette génétique secrète.',
-    goal: { kind: 'recipeCount', target: 1 }, reward: { crystals: 50, items: { pierre_eveil: 1 } } },
+    goal: { kind: 'recipeCount', target: 1 }, reward: { crystals: 50, items: { coquille_eveil: 1 } } },
   { id: 'q18', chapter: 'Chapitre IV — Les Métamorphoses', title: 'Grand naturaliste', description: 'Découvre 22 espèces.',
     goal: { kind: 'dexCount', target: 22 }, reward: { crystals: 80, eggs: ['legendaire'] } },
 ];

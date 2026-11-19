@@ -21,7 +21,7 @@ export function validateContent(): string[] {
   for (const s of SPECIES_LIST) {
     if (idSeen.has(s.id)) errors.push(`Espèce en double : ${s.id}`);
     idSeen.add(s.id);
-    if (dexSeen.has(s.dex)) errors.push(`Numéro d'Ovidex en double : ${s.dex}`);
+    if (dexSeen.has(s.dex)) errors.push(`Numéro d'Bestiaire en double : ${s.dex}`);
     dexSeen.add(s.dex);
     if (!ELEMENTS[s.element]) errors.push(`${s.id} : élément inconnu ${s.element}`);
     if (!RARITIES[s.rarity]) errors.push(`${s.id} : rareté inconnue ${s.rarity}`);

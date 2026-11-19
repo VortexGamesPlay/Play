@@ -6,7 +6,7 @@ import type { MutationDef } from '@core/content';
  * Ajouter une mutation : ajouter une entrée ici + (optionnel) un rendu dans ui/art/mutationLook.ts.
  */
 export const MUTATIONS: Record<string, MutationDef> = {
-  chromatique: { id: 'chromatique', name: 'Chromatique', group: 'palette', baseChance: 0.02,  statMultiplier: 1.02, color: '#ff6fb5', description: 'Les pigments de la créature ont tourné : une palette entièrement inédite.' },
+  irisee: { id: 'irisee', name: 'Irisée', group: 'palette', baseChance: 0.02,  statMultiplier: 1.02, color: '#ff6fb5', description: 'Les pigments de la créature ont tourné : une palette entièrement inédite.' },
   doree:       { id: 'doree',       name: 'Dorée',       group: 'palette', baseChance: 0.008, statMultiplier: 1.05, color: '#f5c542', description: 'Un pelage d\'or pur qui scintille au moindre rayon.' },
   corrompue:   { id: 'corrompue',   name: 'Corrompue',   group: 'palette', baseChance: 0.008, statMultiplier: 1.06, color: '#7a2a8f', description: 'Une énergie trouble parcourt son corps de veines luminescentes.' },
   antique:     { id: 'antique',     name: 'Antique',     group: 'palette', baseChance: 0.006, statMultiplier: 1.05, color: '#b08850', description: 'Des runes oubliées sont gravées sur sa peau, teintée de sépia.' },

@@ -13,10 +13,17 @@ Toute nouvelle créature respecte les règles ci-dessous (elles sont appliquées
 2. **Le noyau.** Une gemme lumineuse, de la couleur de l'élément, qui pulse doucement : sertie dans la coquille chez les bébés, sur la poitrine ou dans l'éclat chez les autres.
 3. **Le visage EGGVERSE.** Yeux en amande petits et écartés, un seul reflet, un cil extérieur ; taches de rousseur (jamais de joues roses rondes) ; petite bouche ; trait de contour fin et coloré (jamais noir).
 
+## Noms (anti-plagiat)
+
+- Chaque nom de créature est un mot inventé, à consonance française, propre à EGGVERSE.
+- `npm run check:names` compare automatiquement tous les noms à la liste publique des noms d'espèces d'une licence existante (5 langues, ~2 700 noms, téléchargée à l'exécution et **jamais stockée dans le dépôt**). Un nom est refusé s'il est identique, à 2 lettres près, ou s'il partage une racine de 5 lettres. Les libellés en français courant (familles, objets, œufs) ne sont refusés qu'en cas d'identité exacte.
+- Vocabulaire maison : **Bestiaire** (encyclopédie), **mutation Irisée** (variante de couleur), **Coquille d'éveil** et **Rosée lunaire** (objets d'évolution), **Fruit rose**. On n'emploie pas le vocabulaire propre à une licence existante (« -dex », « chromatique » au sens de variante, pierres d'évolution, « baies », balles de capture, dresseurs…).
+
 ## Interdits (anti-plagiat)
 
 - Pas de grands yeux étoilés façon mascotte.
-- Pas d'archétypes reconnaissables d'une licence existante : rongeur jaune électrique, lézard orange à queue enflammée, tortue à carapace bleue, etc.
+- Pas d'archétypes reconnaissables d'une licence existante : rongeur jaune électrique, lézard ou dragon de feu ailé, trio de départ feu/eau/plante présenté comme un choix, lion cosmique, fée lunaire venue de l'espace, scarabée qui roule une boule, hibou de nuit, créature avec un jardin sur le dos, etc.
+- Concepts retenus à la place : béliers de basalte (feu), gelées marines (eau), gardiens des clairières (nature), phalènes d'orage (foudre), gardiens des songes (ombre), sphinx de grès (désert), méduse-comète et baleine des étoiles (cosmique), golem d'ambre (primordial).
 - Pas de nom, design, objet ou symbole emprunté (ex. balle de capture).
 - Un élément ≠ une couleur imposée : la Foudre d'EGGVERSE est violette et cyan (phalènes d'orage), le Feu est rouge basalte et braise.
 

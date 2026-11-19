@@ -21,7 +21,7 @@ const map = (p: Palette, f: (c: string, k: keyof Palette) => string): Palette =>
   ({ primary: f(p.primary, 'primary'), secondary: f(p.secondary, 'secondary'), accent: f(p.accent, 'accent'), belly: f(p.belly, 'belly'), eye: f(p.eye, 'eye') });
 
 export const MUTATION_LOOKS: Record<string, MutationLook> = {
-  chromatique: { palette: (p) => map(p, (c, k) => (k === 'eye' ? c : rotateHue(c, 150))), overlays: ['sparkles'] },
+  irisee: { palette: (p) => map(p, (c, k) => (k === 'eye' ? c : rotateHue(c, 150))), overlays: ['sparkles'] },
   doree: { palette: (p) => ({ ...p, primary: '#f7c948', secondary: '#d4911a', accent: '#fff1a8', belly: '#fff4cf' }), overlays: ['sparkles'], glow: '#ffd84a' },
   corrompue: {
     palette: (p) => ({ primary: mix(p.primary, '#2a1438', 0.65), secondary: mix(p.secondary, '#14081e', 0.7), accent: '#e040ff', belly: mix(p.belly, '#5a2a6a', 0.6), eye: '#ff4fd8' }),

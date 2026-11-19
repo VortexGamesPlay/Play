@@ -59,7 +59,7 @@ async function run(name, viewport) {
   await page.locator('.harvest button:has-text("Récolter")').click();
   await page.locator('.daily-card button:has-text("Récupérer")').click();
 
-  for (const r of ['collection', 'ovidex', 'boutique', 'inventaire', 'laboratoire', 'profil']) {
+  for (const r of ['collection', 'bestiaire', 'boutique', 'inventaire', 'laboratoire', 'profil']) {
     await page.goto(URL + '#/' + r);
     await page.waitForTimeout(150);
     await page.clock.fastForward(500);

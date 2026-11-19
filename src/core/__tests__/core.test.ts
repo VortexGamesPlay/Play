@@ -83,7 +83,7 @@ describe('Économie', () => {
     expect(state.ledger.at(-1)).toMatchObject({ currency: 'coins', delta: -120 });
     expect(events[0]).toMatchObject({ type: 'purchased' });
   });
-  it('verrouille les offres selon la progression de l\'Ovidex', () => {
+  it('verrouille les offres selon la progression du Bestiaire', () => {
     const s = newGame();
     s.wallet.coins = 99999;
     expect(() => run(s, { type: 'buy', offerId: 'egg_volcanique' })).toThrow(/Découvre 3 espèces/);
@@ -100,7 +100,7 @@ describe('Économie', () => {
 });
 
 describe('Incubation et éclosion', () => {
-  it('cycle complet : placer, attendre, éclore, enregistrer dans l\'Ovidex', () => {
+  it('cycle complet : placer, attendre, éclore, enregistrer dans le Bestiaire', () => {
     let s = newGame();
     const egg = s.eggs[0]!;
     s = run(s, { type: 'placeEgg', eggUid: egg.uid, slot: 0 }).state;
@@ -150,8 +150,8 @@ describe('Élevage', () => {
   it('nourrir consomme l\'objet et donne de l\'expérience', () => {
     const s = withCreature();
     const uid = s.creatures[0]!.uid;
-    const { state, events } = run(s, { type: 'feed', uid, item: 'baie_sucree' }, T0 + HOUR);
-    expect(state.inventory.baie_sucree).toBe((s.inventory.baie_sucree ?? 0) - 1);
+    const { state, events } = run(s, { type: 'feed', uid, item: 'fruit_rose' }, T0 + HOUR);
+    expect(state.inventory.fruit_rose).toBe((s.inventory.fruit_rose ?? 0) - 1);
     expect(events.some((e) => e.type === 'levelUp')).toBe(true);
   });
   it('la récolte du sanctuaire est plafonnée', () => {

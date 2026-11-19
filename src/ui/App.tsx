@@ -20,7 +20,7 @@ function Screen() {
     case 'sanctuaire': return <SanctuaryScreen />;
     case 'incubateur': return <IncubatorScreen />;
     case 'collection': return <CollectionScreen />;
-    case 'ovidex': return <DexScreen />;
+    case 'bestiaire': return <DexScreen />;
     case 'boutique': return <ShopScreen />;
     case 'inventaire': return <InventoryScreen />;
     case 'profil': return <ProfileScreen />;

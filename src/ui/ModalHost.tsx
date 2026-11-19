@@ -22,7 +22,7 @@ function Render({ m }: { m: M }) {
     case 'breedFx': return <BreedFx parents={m.parents} eggUid={m.eggUid} />;
     case 'parentPicker': return <Modal title="Choisir un parent" width={560}><ParentPickerModal exclude={m.exclude} onPick={m.onPick} /></Modal>;
     case 'creature': return <Modal title="Fiche créature" width={620}><CreatureDetail uid={m.uid} /></Modal>;
-    case 'dex': return <Modal title={isDiscovered(state, m.speciesId) ? `Ovidex — ${SPECIES[m.speciesId]?.name}` : 'Ovidex — ???'} width={600}><DexDetail speciesId={m.speciesId} /></Modal>;
+    case 'dex': return <Modal title={isDiscovered(state, m.speciesId) ? `Bestiaire — ${SPECIES[m.speciesId]?.name}` : 'Bestiaire — ???'} width={600}><DexDetail speciesId={m.speciesId} /></Modal>;
     case 'eggPicker': return <Modal title={`Incubateur ${m.slot + 1} — choisir un œuf`} width={600}><EggPickerModal slot={m.slot} /></Modal>;
     case 'odds': return <Modal title="Probabilités" width={560}><OddsModal eggType={m.eggType} /></Modal>;
     case 'feed': return <Modal title={m.uid ? `Nourrir ${(() => { const c = state.creatures.find((x) => x.uid === m.uid); return c ? c.nickname || getSpecies(c.speciesId).name : ''; })()}` : 'Nourrir une créature'} width={520}><FeedModal uid={m.uid} item={m.item} /></Modal>;

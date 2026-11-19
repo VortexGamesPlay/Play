@@ -66,7 +66,7 @@ export function CollectionScreen() {
         <div className="field" style={{ flex: '1 1 200px' }}><Icon name="search" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher…" aria-label="Rechercher" /></div>
         <select className="select" value={sort} onChange={(e) => setSort(e.target.value as Sort)} aria-label="Trier">
           <option value="recent">Plus récentes</option><option value="level">Niveau</option><option value="rarity">Rareté</option>
-          <option value="power">Puissance</option><option value="dex">N° Ovidex</option><option value="name">Nom</option>
+          <option value="power">Puissance</option><option value="dex">N° Bestiaire</option><option value="name">Nom</option>
         </select>
         <select className="select" value={rar ?? ''} onChange={(e) => setRar((e.target.value || null) as RarityId | null)} aria-label="Rareté">
           <option value="">Toutes raretés</option>

@@ -8,19 +8,19 @@ interface Plan { title: string; icon: IconName; phase: number; pitch: string; fe
 
 const PLANS: Partial<Record<Route, Plan>> = {
   exploration: {
-    title: 'Exploration des biomes', icon: 'compass', phase: 4, art: ['zephyrin', 'scarabor', 'givrelot'],
+    title: 'Exploration des biomes', icon: 'compass', phase: 4, art: ['zephyrin', 'sphingres', 'frimelot'],
     pitch: 'Envoie tes créatures en expédition dans huit biomes pour y trouver des œufs exclusifs, des ressources et des secrets.',
     features: ['Forêt enchantée, Volcan ancestral, Montagnes gelées, Royaume sous-marin', 'Dimension cosmique, Marais toxique, Désert ancien, Vallée des ombres', 'Expéditions minutées, météo dynamique et zones secrètes', 'Quêtes de biome et événements'],
     ready: ['Cycle jour/nuit déjà actif (influence les mutations)', 'Œufs et créatures thématiques par biome déjà présents'],
   },
   arene: {
-    title: 'Arène', icon: 'swords', phase: 5, art: ['pyrodrake', 'fulgurion', 'marebulle'],
+    title: 'Arène', icon: 'swords', phase: 5, art: ['fournaillon', 'orageline', 'clapotine'],
     pitch: 'Combats au tour par tour en équipe : avantages élémentaires, compétences, statuts, boss et classements.',
     features: ['Équipes de 3 créatures, énergie et compétences', 'Table des avantages élémentaires', 'Combats PNJ, arènes et boss', 'Récompenses et classements'],
     ready: ['Statistiques calculées (base d\'espèce + gènes + niveau + personnalité + mutations)', 'Table des forces élémentaires déjà définie', 'Animation d\'attaque visible dans chaque fiche créature'],
   },
   communaute: {
-    title: 'Communauté', icon: 'people', phase: 6, art: ['lumiolet', 'noctuli', 'mousselin'],
+    title: 'Communauté', icon: 'people', phase: 6, art: ['lucilet', 'songelin', 'lichenou'],
     pitch: 'Comptes, amis, visites de sanctuaires, échanges sécurisés côté serveur, marché, classements et découvertes mondiales.',
     features: ['Comptes et synchronisation entre appareils', 'Amis et visites de sanctuaires', 'Échanges et marché validés par le serveur (anti-duplication)', 'Événements communautaires et premières découvertes mondiales'],
     ready: ['Toutes les actions passent par un réducteur pur, rejouable côté serveur', 'Journal des transactions déjà tenu', 'Export / import de sauvegarde disponible dans le Profil'],

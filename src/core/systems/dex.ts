@@ -11,7 +11,7 @@ export interface DexRegistration {
   crystalsAwarded: number;
 }
 
-/** Enregistre une créature obtenue dans l'Ovidex et attribue les récompenses de découverte. */
+/** Enregistre une créature obtenue dans le Bestiaire et attribue les récompenses de découverte. */
 export function registerInDex(draft: GameState, c: CreatureInstance, ctx: ActionContext): DexRegistration {
   const sp = getSpecies(c.speciesId);
   let entry = draft.dex[c.speciesId];

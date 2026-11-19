@@ -2,7 +2,7 @@ import { BALANCE } from '@data/balance';
 import { addEgg } from './systems/inventory';
 import type { GameState } from './types';
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export function createInitialState(now: number): GameState {
   const state: GameState = {
