@@ -3,6 +3,7 @@ import { AMBIANCES } from '@data/ambiances';
 import { EGGS } from '@data/eggs';
 import { ITEMS } from '@data/items';
 import { SHOP_OFFERS } from '@data/shop';
+import { DECORATIONS } from '@data/buildings';
 import type { ShopOffer } from '@core/content';
 import { incubationDuration } from '@core/systems/incubation';
 import { offerLabel, offerStatus } from '@core/systems/shop';
@@ -14,12 +15,13 @@ import { Price } from '../components/Price';
 import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
 
-type Tab = 'egg' | 'food' | 'upgrade';
+type Tab = 'egg' | 'food' | 'upgrade' | 'deco';
 
 function OfferVisual({ o }: { o: ShopOffer }) {
   if (o.kind === 'egg') return <EggArt type={o.ref} size={70} />;
   if (o.kind === 'item') return <span className="food-ic big" style={{ ['--fc' as string]: ITEMS[o.ref]!.color } as CSSProperties} />;
   if (o.kind === 'ambiance') return <span className="amb-orb" style={{ ['--ac' as string]: AMBIANCES[o.ref]!.color } as CSSProperties} />;
+  if (o.kind === 'decoration') return <span className="amb-orb deco" style={{ ['--ac' as string]: DECORATIONS.find((d) => d.id === o.ref)?.color } as CSSProperties}><Icon name="sparkle" /></span>;
   return <span className="slot-orb"><Icon name="egg" /></span>;
 }
 
@@ -29,6 +31,7 @@ function OfferDesc({ o }: { o: ShopOffer }) {
     case 'item': return <p className="soft offer-desc">{ITEMS[o.ref]!.description}{ITEMS[o.ref]!.kind === 'food' ? ` (+${ITEMS[o.ref]!.xp} XP)` : ''}</p>;
     case 'ambiance': return <p className="soft offer-desc">{AMBIANCES[o.ref]!.description}</p>;
     case 'incubator_slot': return <p className="soft offer-desc">Un emplacement supplémentaire pour incuber plusieurs œufs en parallèle.</p>;
+    case 'decoration': return <p className="soft offer-desc">{DECORATIONS.find((d) => d.id === o.ref)?.description} Visible dans la scène du sanctuaire.</p>;
   }
 }
 
@@ -37,7 +40,7 @@ export function ShopScreen() {
   const dispatch = useGame((s) => s.dispatch);
   const openModal = useUi((s) => s.openModal);
   const [tab, setTab] = useState<Tab>('egg');
-  const offers = SHOP_OFFERS.filter((o) => (tab === 'egg' ? o.kind === 'egg' : tab === 'food' ? o.kind === 'item' : o.kind === 'incubator_slot' || o.kind === 'ambiance'));
+  const offers = SHOP_OFFERS.filter((o) => (tab === 'egg' ? o.kind === 'egg' : tab === 'food' ? o.kind === 'item' : tab === 'deco' ? o.kind === 'decoration' : o.kind === 'incubator_slot' || o.kind === 'ambiance'));
 
   return (
     <div className="stack" style={{ gap: 16 }}>
@@ -46,6 +49,7 @@ export function ShopScreen() {
         <button className={tab === 'egg' ? 'active' : ''} onClick={() => setTab('egg')}><Icon name="egg" width={16} height={16} />Œufs</button>
         <button className={tab === 'food' ? 'active' : ''} onClick={() => setTab('food')}><Icon name="leaf" width={16} height={16} />Nourriture</button>
         <button className={tab === 'upgrade' ? 'active' : ''} onClick={() => setTab('upgrade')}><Icon name="sanctuary" width={16} height={16} />Améliorations</button>
+        <button className={tab === 'deco' ? 'active' : ''} onClick={() => setTab('deco')}><Icon name="sparkle" width={16} height={16} />Décorations</button>
       </div>
       <div className="shop-grid">
         {offers.map((o) => {

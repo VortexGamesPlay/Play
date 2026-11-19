@@ -4,6 +4,10 @@ import { releaseCreature, renameCreature, toggleFavorite } from './systems/creat
 import { claimDaily } from './systems/daily';
 import { breed } from './systems/breeding';
 import { evolve } from './systems/evolution';
+import { claimExpedition, forage, recallExpedition, startExpedition } from './systems/exploration';
+import { setTheme, toggleDecoration, upgradeBuilding } from './systems/buildings';
+import { claimAchievement, claimMission, claimSideQuest, syncPeriods } from './systems/missions';
+import { assertPresent } from './systems/exploration';
 import { grant } from './systems/economy';
 import { feed } from './systems/feeding';
 import { hatch } from './systems/hatching';
@@ -11,7 +15,7 @@ import { placeEgg, removeEgg, setAmbiance, speedUp } from './systems/incubation'
 import { claimQuest } from './systems/quests';
 import { harvest } from './systems/sanctuary';
 import { buy } from './systems/shop';
-import type { ActionContext, GameState, Settings } from './types';
+import type { ActionContext, ExpeditionDuration, GameState, Settings } from './types';
 
 /**
  * Toutes les intentions du joueur. Ce format sérialisable est aussi celui qui sera envoyé
@@ -34,7 +38,17 @@ export type GameAction =
   | { type: 'setPlayerName'; name: string }
   | { type: 'setSetting'; key: keyof Settings; value: boolean }
   | { type: 'evolve'; uid: string; to: string }
-  | { type: 'breed'; a: string; b: string; stabilize: boolean };
+  | { type: 'breed'; a: string; b: string; stabilize: boolean }
+  | { type: 'startExpedition'; biomeId: string; uids: string[]; duration: ExpeditionDuration }
+  | { type: 'claimExpedition'; uid: string }
+  | { type: 'recallExpedition'; uid: string }
+  | { type: 'forage'; biomeId: string }
+  | { type: 'upgradeBuilding'; id: string }
+  | { type: 'toggleDecoration'; id: string }
+  | { type: 'setTheme'; theme: string }
+  | { type: 'claimMission'; id: string; period: 'day' | 'week' }
+  | { type: 'claimAchievement'; id: string }
+  | { type: 'claimSideQuest'; id: string };
 
 export interface ActionResult {
   state: GameState;
@@ -48,6 +62,7 @@ export interface ActionResult {
 export function applyAction(state: GameState, action: GameAction, ctx: ActionContext): ActionResult {
   const draft = structuredClone(state);
   const events: GameEvent[] = [];
+  syncPeriods(draft, ctx);
   switch (action.type) {
     case 'placeEgg': placeEgg(draft, action.eggUid, action.slot, ctx); break;
     case 'removeEgg': removeEgg(draft, action.slot); break;
@@ -58,7 +73,7 @@ export function applyAction(state: GameState, action: GameAction, ctx: ActionCon
     case 'harvest': harvest(draft, ctx, events); break;
     case 'claimDaily': claimDaily(draft, ctx, events); break;
     case 'claimQuest': claimQuest(draft, action.questId, ctx, events); break;
-    case 'feed': feed(draft, action.uid, action.item, ctx, events); break;
+    case 'feed': assertPresent(draft, action.uid); feed(draft, action.uid, action.item, ctx, events); break;
     case 'rename': renameCreature(draft, action.uid, action.name); break;
     case 'toggleFavorite': toggleFavorite(draft, action.uid); break;
     case 'release':
@@ -73,6 +88,16 @@ export function applyAction(state: GameState, action: GameAction, ctx: ActionCon
     case 'setSetting': draft.settings[action.key] = action.value; break;
     case 'evolve': evolve(draft, action.uid, action.to, ctx, events); break;
     case 'breed': breed(draft, action.a, action.b, action.stabilize, ctx, events); break;
+    case 'startExpedition': startExpedition(draft, action.biomeId, action.uids, action.duration, ctx); break;
+    case 'claimExpedition': claimExpedition(draft, action.uid, ctx, events); break;
+    case 'recallExpedition': recallExpedition(draft, action.uid); break;
+    case 'forage': forage(draft, action.biomeId, ctx, events); break;
+    case 'upgradeBuilding': upgradeBuilding(draft, action.id, ctx); break;
+    case 'toggleDecoration': toggleDecoration(draft, action.id); break;
+    case 'setTheme': setTheme(draft, action.theme); break;
+    case 'claimMission': claimMission(draft, action.id, action.period, ctx, events); break;
+    case 'claimAchievement': claimAchievement(draft, action.id, ctx, events); break;
+    case 'claimSideQuest': claimSideQuest(draft, action.id, ctx, events); break;
     default: {
       const never: never = action;
       throw new GameError('unknown_action', `Action inconnue : ${JSON.stringify(never)}`);

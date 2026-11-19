@@ -43,6 +43,22 @@ export const MIGRATIONS: Record<number, (s: RawState) => RawState> = {
     eggs: ((s.eggs as unknown[] | undefined) ?? []).map(rnEgg),
     incubators: ((s.incubators as Obj[] | undefined) ?? []).map((slot) => ({ ...slot, egg: rnEgg(slot.egg) })),
   }),
+  // v3 → v4 (Phase 4) : monde, bâtiments, expéditions, missions, succès.
+  3: (s) => {
+    const sanctuary = (s.sanctuary as Obj | undefined) ?? {};
+    const creatures = ((s.creatures as unknown[] | undefined) ?? []).length;
+    // Les capacités n'étaient pas limitées par des bâtiments : on choisit des niveaux qui ne bloquent personne.
+    const nichoirs = Math.min(5, Math.max(1, Math.ceil((creatures - 30) / 20)));
+    return {
+      ...s,
+      sanctuary: { ...sanctuary, buildings: { nichoirs, grenier: 1 }, decorations: {}, theme: 'prairie' },
+      expeditions: [],
+      exploration: { expeditionsByBiome: {}, secretsFound: [], lastForageAt: {} },
+      missions: { dayKey: null, dayBaseline: null, dayClaimed: [], weekKey: null, weekBaseline: null, weekClaimed: [] },
+      achievements: [],
+      sideQuests: [],
+    };
+  },
 };
 
 export function migrate(raw: RawState, targetVersion: number): RawState {

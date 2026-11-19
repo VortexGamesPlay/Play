@@ -2,6 +2,7 @@ import type { EvolutionCondition } from '@core/content';
 import { AMBIANCES } from '@data/ambiances';
 import { ITEMS } from '@data/items';
 import { MUTATIONS } from '@data/mutations';
+import { WEATHERS } from '@data/weather';
 
 const TAGS: Record<string, string> = { fruit: 'fruits', graine: 'graines', poisson: 'poissons', champi: 'champignons', mineral: 'minéraux', nectar: 'nectars' };
 export const foodTagName = (t: string) => TAGS[t] ?? t;
@@ -15,6 +16,7 @@ export function conditionText(c: EvolutionCondition): string {
     case 'diet': return `${c.count} ${foodTagName(c.tag)} mangés`;
     case 'mutation': return `Mutation ${MUTATIONS[c.mutation]?.name ?? c.mutation}`;
     case 'ambiance': return `Née en ambiance ${AMBIANCES[c.ambiance]?.name ?? c.ambiance}`;
+    case 'weather': return `Météo du sanctuaire : ${WEATHERS[c.weather]?.name ?? c.weather}`;
   }
 }
 

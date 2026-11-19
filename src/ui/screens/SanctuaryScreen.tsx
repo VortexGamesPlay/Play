@@ -1,4 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { THEMES } from '@data/buildings';
+import { isAway } from '@core/systems/exploration';
+import { pendingProduce } from '@core/systems/sanctuary';
+import { sanctuaryWeather } from '@core/systems/weather';
+import { WEATHER_ICON, WeatherFx } from '../art/Scenery';
+import { darken } from '../art/color';
+import { BuildPanel, MissionsCard } from './SanctuaryPanels';
 import { BALANCE } from '@data/balance';
 import { EGGS } from '@data/eggs';
 import { ITEMS } from '@data/items';
@@ -82,15 +89,20 @@ function useActors(creatures: CreatureInstance[], night: boolean) {
   return { actors, react };
 }
 
+/** Fond du sanctuaire : terrain choisi, jour/nuit, bâtiments construits et décorations. */
 function SceneBackdrop({ night }: { night: boolean }) {
+  const sanct = useGame((s) => s.state.sanctuary);
+  const level = (id: string) => sanct.buildings[id] ?? 0;
+  const t = THEMES[sanct.theme] ?? THEMES.prairie!;
+  const sky = night ? t.nightSky : t.sky;
+  const shade = (c: string) => (night ? darken(c, 28) : c);
+  const deco = (id: string) => sanct.decorations[id] === true;
   return (
     <svg className="scene-bg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <defs>
-        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          {night ? <><stop offset="0" stopColor="#241a5c" /><stop offset="1" stopColor="#5a4aa8" /></> : <><stop offset="0" stopColor="#9fd8ff" /><stop offset="1" stopColor="#ffe4f2" /></>}
-        </linearGradient>
-        <linearGradient id="hillA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={night ? '#3e6a6a' : '#8fe0a0'} /><stop offset="1" stopColor={night ? '#2a4a52' : '#5fc47e'} /></linearGradient>
-        <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={night ? '#3a6a5a' : '#a8eb9a'} /><stop offset="1" stopColor={night ? '#264a40' : '#74cf7a'} /></linearGradient>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={sky[0]} /><stop offset="1" stopColor={sky[1]} /></linearGradient>
+        <linearGradient id="hillA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={shade(t.hill[0])} /><stop offset="1" stopColor={shade(t.hill[1])} /></linearGradient>
+        <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={shade(t.ground[0])} /><stop offset="1" stopColor={shade(t.ground[1])} /></linearGradient>
       </defs>
       <rect width="800" height="400" fill="url(#sky)" />
       {night ? (
@@ -105,17 +117,38 @@ function SceneBackdrop({ night }: { night: boolean }) {
         </g>
       )}
       <path d="M0 210C120 150 240 170 340 200C460 236 560 150 800 190V400H0Z" fill="url(#hillA)" />
+      {level('observatoire') > 0 && (
+        <g transform="translate(520 178)"><rect x="-16" y="-10" width="32" height="40" rx="4" fill={shade('#e8e0ff')} /><path d="M-22-10a22 22 0 0 1 44 0Z" fill={shade('#7b5cff')} /><rect x="2" y="-30" width="22" height="7" rx="3" fill={shade('#5a3ee0')} transform="rotate(-30 2 -30)" />{night && <circle cx="0" cy="8" r="5" fill="#ffe680" />}</g>
+      )}
       <path d="M0 250C160 220 300 240 420 236C560 232 680 216 800 236V400H0Z" fill="url(#ground)" />
-      {[[70, 214, 1], [740, 206, 1.2], [600, 218, 0.8]].map(([x, y, s], i) => (
-        <g key={i} transform={`translate(${x} ${y}) scale(${s})`}>
-          <rect x="-5" y="-6" width="10" height="34" rx="4" fill={night ? '#4a3a3a' : '#a0714a'} />
-          <circle cx="0" cy="-24" r="28" fill={night ? '#2f5a4a' : '#5fc47e'} /><circle cx="-16" cy="-12" r="18" fill={night ? '#2a5040' : '#4fb46e'} /><circle cx="16" cy="-14" r="20" fill={night ? '#356a52' : '#6fd48a'} />
+      {[[70, 214, 1], [740, 206, 1.2], [600, 218, 0.8]].map(([x, y, k], i) => (
+        <g key={i} transform={`translate(${x} ${y}) scale(${k})`}>
+          <rect x="-5" y="-6" width="10" height="34" rx="4" fill={shade('#a0714a')} />
+          <circle cx="0" cy="-24" r="28" fill={shade(t.hill[1])} /><circle cx="-16" cy="-12" r="18" fill={shade(darken(t.hill[1], 6))} /><circle cx="16" cy="-14" r="20" fill={shade(t.hill[0])} />
         </g>
       ))}
-      <ellipse cx="640" cy="340" rx="110" ry="30" fill={night ? '#3a5aa8' : '#7fd0ff'} opacity=".85" />
+      {Array.from({ length: Math.min(5, level('nichoirs')) }, (_, i) => (
+        <g key={`n${i}`} transform={`translate(${150 + i * 34} ${244 - (i % 2) * 6}) scale(.8)`}><rect x="-12" y="-14" width="24" height="20" rx="3" fill={shade('#f6e2c0')} /><path d="M-16-12L0-28L16-12Z" fill={shade('#d9505a')} /><circle cx="0" cy="-5" r="4" fill={shade('#5a3a2a')} /></g>
+      ))}
+      <ellipse cx="640" cy="340" rx={110 + level('bassin') * 14} ry={30 + level('bassin') * 4} fill={night ? '#3a5aa8' : '#7fd0ff'} opacity=".85" />
       <ellipse cx="620" cy="334" rx="60" ry="9" fill="white" opacity=".35" />
+      {level('bassin') > 0 && <g fill="#c8f0ff">{[600, 660, 700].map((x, i) => <circle key={i} className="bubble-up" style={{ animationDelay: `${i}s` }} cx={x} cy="340" r="3" />)}</g>}
+      {level('fournaise') > 0 && (
+        <g transform="translate(95 300)"><path d="M-34 20L-20-16H20L34 20Z" fill={shade('#5a3a3a')} /><ellipse cx="0" cy="-16" rx="20" ry="6" fill="#ff8a3d" className="lava-glow" /><circle cx="0" cy="-34" r={6 + level('fournaise') * 2} fill="#ffb03d" opacity=".5" className="lava-glow" /></g>
+      )}
+      {level('jardin') > 0 && (
+        <g transform="translate(330 330)">{Array.from({ length: 2 + level('jardin') }, (_, i) => <g key={i} transform={`translate(${i * 22} ${(i % 2) * 6})`}><rect x="-8" y="-2" width="16" height="10" rx="3" fill={shade('#8a5a3a')} /><circle cx="0" cy="-6" r="6" fill={shade('#5fc47e')} /><circle cx="3" cy="-8" r="2.5" fill="#ff6f91" /></g>)}</g>
+      )}
+      {deco('lanternes') && [[260, 200], [430, 190], [560, 205]].map(([x, y], i) => <g key={`l${i}`} className="float-island" style={{ animationDelay: `${i}s` }}><g transform={`translate(${x} ${y})`}><rect x="-6" y="-8" width="12" height="15" rx="4" fill="#ffc85a" /><circle r={night ? 16 : 10} fill="#ffc85a" opacity=".3" /></g></g>)}
+      {deco('arche') && <g transform="translate(470 300)"><path d="M-30 30V0A30 30 0 0 1 30 0V30" stroke={shade('#7fb05a')} strokeWidth="6" fill="none" />{[-26, -14, 0, 14, 26].map((x, i) => <circle key={i} cx={x} cy={-Math.sqrt(Math.max(0, 900 - x * x)) + 2} r="5" fill={['#ff9fd0', '#ffe066', '#c6a7ff', '#ff9fd0', '#ffe066'][i]} />)}</g>}
+      {deco('statue') && <g transform="translate(400 280)"><rect x="-16" y="10" width="32" height="10" rx="2" fill={shade('#c8c0e0')} /><path d="M0-24C14-24 20-6 20 2C20 12 12 14 0 14C-12 14-20 12-20 2C-20-6-14-24 0-24Z" fill={shade('#e8e0ff')} /><path d="M-14 0l6 4 5-5 5 5 6-4" stroke={shade('#b8a6f0')} strokeWidth="2" fill="none" /></g>}
+      {deco('champignons') && [[210, 360], [235, 368], [190, 372]].map(([x, y], i) => <g key={`m${i}`} transform={`translate(${x} ${y})`}><rect x="-3" y="-8" width="6" height="10" fill="#f0e6d8" /><path d="M-11-6a11 9 0 0 1 22 0Z" fill="#c46fe0" /></g>)}
+      {deco('cristaux') && <g transform="translate(540 360)">{[[-14, 0, 1], [0, -6, 1.3], [14, 2, 0.9]].map(([x, y, k], i) => <path key={i} transform={`translate(${x} ${y}) scale(${k})`} d="M0-22L7-4L0 6L-7-4Z" fill="#9fe8ff" stroke="white" strokeWidth="1.5" />)}</g>}
+      {deco('banc') && <g transform="translate(300 290)"><rect x="-26" y="-6" width="52" height="7" rx="3" fill={shade('#c08a52')} /><rect x="-24" y="-16" width="48" height="6" rx="3" fill={shade('#a8743f')} /><rect x="-22" y="0" width="4" height="10" fill={shade('#8a5a3a')} /><rect x="18" y="0" width="4" height="10" fill={shade('#8a5a3a')} /></g>}
+      {deco('fontaine') && <g transform="translate(380 368)"><ellipse rx="30" ry="9" fill={shade('#c8c0e0')} /><ellipse cy="-2" rx="24" ry="6" fill="#7fd0ff" /><rect x="-4" y="-26" width="8" height="24" fill={shade('#d8d0f0')} /><circle cy="-30" r="6" fill="#7fd0ff" className="lava-glow" /></g>}
+      {deco('guirlande') && <g><path d="M60 120Q400 190 760 110" stroke={shade('#8a7a6a')} strokeWidth="2" fill="none" />{Array.from({ length: 14 }, (_, i) => <circle key={i} cx={60 + i * 50} cy={120 + Math.sin((i / 13) * Math.PI) * 40 - i * 0.7} r="4" fill="#ffe680" className="star-twinkle" style={{ animationDelay: `${i * 0.2}s` }} />)}</g>}
       {[[120, 300], [260, 360], [420, 320], [520, 370], [330, 290]].map(([x, y], i) => (
-        <g key={i} transform={`translate(${x} ${y})`}>{[0, 72, 144, 216, 288].map((r) => <ellipse key={r} cx="0" cy="-4" rx="3" ry="4" fill={['#ff9fd0', '#ffe066', '#c6a7ff', '#ffffff', '#ff9a6a'][i]} transform={`rotate(${r})`} />)}<circle r="2" fill="#ffc23d" /></g>
+        <g key={`f${i}`} transform={`translate(${x} ${y})`}>{[0, 72, 144, 216, 288].map((r) => <ellipse key={r} cx="0" cy="-4" rx="3" ry="4" fill={['#ff9fd0', '#ffe066', '#c6a7ff', '#ffffff', '#ff9a6a'][i]} transform={`rotate(${r})`} />)}<circle r="2" fill="#ffc23d" /></g>
       ))}
     </svg>
   );
@@ -124,6 +157,7 @@ function SceneBackdrop({ night }: { night: boolean }) {
 function SanctuaryScene({ creatures }: { creatures: CreatureInstance[] }) {
   const now = useNow();
   const night = isNight(new Date(now).getHours());
+  const weather = sanctuaryWeather(now);
   const shown = useMemo(() => [...creatures].sort((a, b) => Number(b.favorite) - Number(a.favorite) || b.hatchedAt - a.hatchedAt).slice(0, MAX_ACTORS), [creatures]);
   const { actors, react } = useActors(shown, night);
   const openModal = useUi((s) => s.openModal);
@@ -132,6 +166,7 @@ function SanctuaryScene({ creatures }: { creatures: CreatureInstance[] }) {
   return (
     <div className={`scene ${night ? 'night' : ''}`}>
       <SceneBackdrop night={night} />
+      <WeatherFx fx={weather.fx} density={0.7} />
       {actors.map((a) => {
         const c = byId.get(a.uid);
         if (!c) return null;
@@ -254,6 +289,11 @@ export function SanctuaryScreen() {
   const pending = pendingHarvest(state, now);
   const rate = totalHarvestRate(state);
   const capFill = Math.min(1, (now - state.sanctuary.lastHarvestAt) / BALANCE.harvestCapMs);
+  const present = state.creatures.filter((c) => !isAway(state, c.uid));
+  const produce = pendingProduce(state, now);
+  const hasProduce = (produce.essence ?? 0) > 0 || Object.keys(produce.items ?? {}).length > 0;
+  const [tab, setTab] = useState<'vue' | 'amenager'>('vue');
+  const weather = sanctuaryWeather(now);
 
   return (
     <div className="stack" style={{ gap: 18 }}>
@@ -261,10 +301,19 @@ export function SanctuaryScreen() {
         <div className="scene-head">
           <div>
             <h2>Sanctuaire de {state.player.name}</h2>
-            <p className="soft" style={{ fontSize: 14 }}>{state.creatures.length} créature{state.creatures.length > 1 ? 's' : ''} · touche une créature pour interagir</p>
+            <p className="soft" style={{ fontSize: 14 }}>{present.length} présente{present.length > 1 ? 's' : ''}{state.expeditions.length ? ` · ${state.creatures.length - present.length} en expédition` : ''} · <Icon name={WEATHER_ICON[weather.fx]} width={14} height={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> {weather.name}</p>
+          </div>
+          <span className="spacer" />
+          <div className="tabs" style={{ flex: 'none' }}>
+            <button className={tab === 'vue' ? 'active' : ''} onClick={() => setTab('vue')}><Icon name="sanctuary" width={16} height={16} />Vue</button>
+            <button className={tab === 'amenager' ? 'active' : ''} onClick={() => setTab('amenager')}><Icon name="hammer" width={16} height={16} />Aménager</button>
           </div>
         </div>
-        {state.creatures.length > 0 ? <SanctuaryScene creatures={state.creatures} /> : (
+        {present.length > 0 ? <SanctuaryScene creatures={present} /> : state.creatures.length > 0 ? (
+          <div className="scene empty-scene"><SceneBackdrop night={isNight(new Date(now).getHours())} />
+            <div className="empty-scene-msg"><h3>Tout le monde est en expédition</h3><p>Le sanctuaire est bien calme… Tes créatures reviendront bientôt avec leur butin.</p><button className="btn" onClick={() => navigate('exploration')}><Icon name="compass" />Voir les expéditions</button></div>
+          </div>
+        ) : (
           <div className="scene empty-scene">
             <SceneBackdrop night={isNight(new Date(now).getHours())} />
             <div className="empty-scene-msg">
@@ -283,11 +332,14 @@ export function SanctuaryScreen() {
               <div className="muted" style={{ fontSize: 12, marginTop: 3 }}>Stockage plein après {BALANCE.harvestCapMs / HOUR} h — pense à revenir !</div>
             </div>
           </div>
-          <button className="btn btn-gold" disabled={pending <= 0} onClick={() => dispatch({ type: 'harvest' })}><Icon name="harvest" />Récolter</button>
+          {hasProduce && <div className="harvest-extra"><span className="muted" style={{ fontSize: 12, fontWeight: 800 }}>+ BÂTIMENTS</span><RewardLine r={produce} /></div>}
+          <button className="btn btn-gold" disabled={pending <= 0 && !hasProduce} onClick={() => dispatch({ type: 'harvest' })}><Icon name="harvest" />Récolter</button>
         </div>
       </div>
 
+      {tab === 'amenager' && <BuildPanel />}
       <div className="sanct-grid">
+        <MissionsCard />
         <QuestCard />
         <DailyCard />
         <DiscoveriesCard />

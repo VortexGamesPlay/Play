@@ -5,6 +5,8 @@ import type { GameEvent } from '../events';
 import type { ActionContext, GameState } from '../types';
 import { dexCount, variantCount } from './dex';
 import { grantReward } from './economy';
+import { unlockedBiomeCount } from './exploration';
+import { totalBuildingLevels } from './buildings';
 
 export function questProgress(state: GameState, q: QuestDef): { current: number; target: number; done: boolean } {
   const g = q.goal;
@@ -17,6 +19,10 @@ export function questProgress(state: GameState, q: QuestDef): { current: number;
     case 'variantCount': current = variantCount(state); break;
     case 'incubators': current = state.incubators.length; break;
     case 'recipeCount': current = state.recipesFound.length; break;
+    case 'biomeExpeditions': current = state.exploration.expeditionsByBiome[g.biome] ?? 0; break;
+    case 'biomesUnlocked': current = unlockedBiomeCount(state); break;
+    case 'secretsFound': current = state.exploration.secretsFound.length; break;
+    case 'buildingLevels': current = totalBuildingLevels(state); break;
   }
   return { current: Math.min(current, g.target), target: g.target, done: current >= g.target };
 }

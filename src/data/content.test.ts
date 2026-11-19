@@ -10,7 +10,7 @@ describe('Contenu du jeu', () => {
     expect(SPECIES_LIST.map((s) => s.dex).sort((a, b) => a - b)).toEqual(Array.from({ length: SPECIES_LIST.length }, (_, i) => i + 1));
   });
   it('contient les 10 catégories d\'œufs du cahier des charges + l\'œuf génétique', () => {
-    expect(Object.values(EGGS).filter((e) => !e.genetic)).toHaveLength(10);
+    expect(Object.values(EGGS).filter((e) => !e.genetic && !e.exploreOnly)).toHaveLength(10);
     expect(EGGS.hybride?.genetic).toBe(true);
   });
   it('propose plusieurs évolutions pour au moins une espèce', () => {

@@ -24,6 +24,9 @@ export type Modal =
   | { kind: 'hatch'; event: Extract<GameEvent, { type: 'hatched' }> }
   | { kind: 'evolve'; event: Extract<GameEvent, { type: 'evolved' }> }
   | { kind: 'breedFx'; parents: [string, string]; eggUid: string }
+  | { kind: 'biome'; biomeId: string }
+  | { kind: 'expedition'; biomeId: string }
+  | { kind: 'expeditionResult'; event: Extract<GameEvent, { type: 'expeditionDone' }> }
   | { kind: 'parentPicker'; exclude: string | null; onPick: (uid: string) => void }
   | { kind: 'confirm'; title: string; body: string; confirmLabel: string; danger?: boolean; onConfirm: () => void };
 

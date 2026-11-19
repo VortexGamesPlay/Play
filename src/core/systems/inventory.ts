@@ -1,4 +1,4 @@
-import { BALANCE } from '@data/balance';
+import { eggCap } from './buildings';
 import { EGGS } from '@data/eggs';
 import { ITEMS } from '@data/items';
 import { assertGame } from '../errors';
@@ -20,13 +20,13 @@ export function removeItem(draft: GameState, item: ItemId, qty: number): void {
 }
 
 export function eggStorageFull(state: GameState): boolean {
-  return state.eggs.length >= BALANCE.maxEggStorage;
+  return state.eggs.length >= eggCap(state);
 }
 
 export function addEgg(draft: GameState, type: EggTypeId, source: string, now: number, opts: { ignoreCap?: boolean } = {}): EggInstance {
   assertGame(!!EGGS[type], 'unknown_egg', 'Œuf inconnu.');
   if (!opts.ignoreCap) {
-    assertGame(!eggStorageFull(draft), 'egg_storage_full', `Ton panier d'œufs est plein (${BALANCE.maxEggStorage} max).`);
+    assertGame(!eggStorageFull(draft), 'egg_storage_full', `Ton panier d'œufs est plein (${eggCap(draft)} max). Agrandis le Grenier à œufs.`);
   }
   const egg: EggInstance = { uid: nextUid(draft, 'egg'), type, obtainedAt: now, source };
   draft.eggs.push(egg);

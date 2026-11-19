@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { isNight } from '@core/time';
+import { sanctuaryWeather } from '@core/systems/weather';
+import { WEATHER_ICON } from '../art/Scenery';
 import { CurrencyIcon, Icon } from '../art/Icons';
 import { useGame } from '../../store/gameStore';
 import { useUi, type Route } from '../../store/uiStore';
@@ -89,7 +91,9 @@ function CurrencyPill({ currency, value, label }: { currency: 'coins' | 'crystal
 function TopBar() {
   const route = useUi((s) => s.route);
   const wallet = useGame((s) => s.state.wallet);
-  const night = isNight(new Date(useNow()).getHours());
+  const now = useNow();
+  const night = isNight(new Date(now).getHours());
+  const weather = sanctuaryWeather(now);
   return (
     <header className="topbar">
       <h1>{TITLES[route]}</h1>
@@ -99,6 +103,7 @@ function TopBar() {
         <CurrencyPill currency="crystals" value={wallet.crystals} label="Cristaux : objets rares, accélérations" />
         <CurrencyPill currency="essence" value={wallet.essence} label="Essence : génétique et mutations" />
       </div>
+      <div className="daynight tip" data-tip={`Météo du sanctuaire : ${weather.name}`}><Icon name={WEATHER_ICON[weather.fx]} style={{ color: '#5cb8ff' }} /><span>{weather.name}</span></div>
       <div className="daynight tip" data-tip={night ? 'Nuit (20h–6h) : mutations cosmiques renforcées' : 'Jour (6h–20h)'}>
         <Icon name={night ? 'moon' : 'sun'} style={{ color: night ? '#7b5cff' : '#ffb000' }} />
         <span>{night ? 'Nuit' : 'Jour'}</span>

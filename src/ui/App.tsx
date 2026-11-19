@@ -13,6 +13,7 @@ import { InventoryScreen } from './screens/InventoryScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { ComingSoonScreen } from './screens/ComingSoonScreen';
 import { LabScreen } from './screens/LabScreen';
+import { ExplorationScreen } from './screens/ExplorationScreen';
 
 function Screen() {
   const route = useUi((s) => s.route);
@@ -25,7 +26,8 @@ function Screen() {
     case 'inventaire': return <InventoryScreen />;
     case 'profil': return <ProfileScreen />;
     case 'laboratoire': return <LabScreen />;
-    case 'exploration': case 'arene': case 'communaute': return <ComingSoonScreen route={route} />;
+    case 'exploration': return <ExplorationScreen />;
+    case 'arene': case 'communaute': return <ComingSoonScreen route={route} />;
   }
 }
 

@@ -8,6 +8,8 @@ import { FeedModal } from './modals/FeedModal';
 import { HatchSequence } from './modals/HatchSequence';
 import { EvolutionSequence } from './modals/EvolutionSequence';
 import { BreedFx, ParentPickerModal } from './screens/LabScreen';
+import { BiomeModal, ExpeditionModal, ExpeditionResult } from './screens/ExplorationScreen';
+import { BIOME_BY_ID } from '@data/biomes';
 import { OddsModal } from './modals/OddsModal';
 import { EggPickerModal } from './screens/IncubatorScreen';
 import { useGame } from '../store/gameStore';
@@ -18,6 +20,9 @@ function Render({ m }: { m: M }) {
   const state = useGame((s) => s.state);
   switch (m.kind) {
     case 'hatch': return <HatchSequence event={m.event} />;
+    case 'biome': return <Modal title={BIOME_BY_ID[m.biomeId]?.name} width={820}><BiomeModal biomeId={m.biomeId} /></Modal>;
+    case 'expedition': return <Modal title={`Expédition : ${BIOME_BY_ID[m.biomeId]?.name}`} width={720}><ExpeditionModal biomeId={m.biomeId} /></Modal>;
+    case 'expeditionResult': return <Modal title="Retour d'expédition" width={560}><ExpeditionResult event={m.event} /></Modal>;
     case 'evolve': return <EvolutionSequence event={m.event} />;
     case 'breedFx': return <BreedFx parents={m.parents} eggUid={m.eggUid} />;
     case 'parentPicker': return <Modal title="Choisir un parent" width={560}><ParentPickerModal exclude={m.exclude} onPick={m.onPick} /></Modal>;

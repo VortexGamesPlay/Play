@@ -3,6 +3,7 @@ import { BALANCE } from '@data/balance';
 import { ITEMS } from '@data/items';
 import { displayName, getSpecies } from '@core/systems/creatures';
 import { isFavoriteFood } from '@core/systems/feeding';
+import { isAway } from '@core/systems/exploration';
 import { CreatureArt } from '../art/CreatureArt';
 import { Icon } from '../art/Icons';
 import { Bar } from '../components/Bar';
@@ -65,7 +66,7 @@ export function FeedModal({ uid, item }: { uid?: string; item?: string }) {
         <p className="soft">Choisis qui mangera : <b>{def?.name}</b> (×{qty})</p>
         {state.creatures.length === 0 ? <EmptyState icon="paw" title="Aucune créature">Fais éclore un œuf d'abord.</EmptyState> : (
           <div className="picker-list">
-            {state.creatures.map((c) => {
+            {state.creatures.filter((c) => !isAway(state, c.uid)).map((c) => {
               const fav = isFavoriteFood(c.speciesId, item);
               return (
                 <div key={c.uid} className="picker-row">

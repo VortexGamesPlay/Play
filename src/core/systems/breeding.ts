@@ -9,6 +9,7 @@ import { displayName, findCreature, getSpecies } from './creatures';
 import { spend } from './economy';
 import { addEgg, eggStorageFull } from './inventory';
 import { breedingOdds } from './odds';
+import { assertPresent } from './exploration';
 
 const B = BALANCE.breeding;
 
@@ -74,6 +75,8 @@ export function breed(draft: GameState, uidA: string, uidB: string, stabilize: b
   assertGame(uidA !== uidB, 'same_parent', 'Il faut deux créatures différentes.');
   const a = findCreature(draft, uidA);
   const b = findCreature(draft, uidB);
+  assertPresent(draft, uidA);
+  assertPresent(draft, uidB);
   for (const c of [a, b]) {
     const why = breedBlocker(c, ctx.now);
     assertGame(!why, 'breed_blocked', `${displayName(c)} ne peut pas participer : ${why}.`);

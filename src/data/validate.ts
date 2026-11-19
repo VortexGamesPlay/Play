@@ -6,6 +6,10 @@ import { MUTATIONS } from './mutations';
 import { MAIN_QUESTS } from './quests';
 import { RARITIES } from './rarities';
 import { RECIPES } from './recipes';
+import { BIOMES } from './biomes';
+import { BUILDINGS, DECORATIONS, THEMES } from './buildings';
+import { WEATHERS } from './weather';
+import { ACHIEVEMENTS, DAILY_MISSIONS, SIDE_QUESTS, WEEKLY_MISSIONS } from './missions';
 import { SHOP_OFFERS } from './shop';
 import { SPECIES_LIST, SPECIES } from './species';
 
@@ -83,6 +87,29 @@ export function validateContent(): string[] {
       if (!m.species && !m.element) errors.push(`Recette ${r.id} : parent sans critère`);
     }
   }
+
+  // Monde
+  for (const b of BIOMES) {
+    for (const m of b.materials) if (ITEMS[m.item]?.kind !== 'material') errors.push(`Biome ${b.id} : matériau inconnu ${m.item}`);
+    for (const e of b.eggs) if (!EGGS[e.egg] || EGGS[e.egg]!.genetic) errors.push(`Biome ${b.id} : œuf invalide ${e.egg}`);
+    for (const f of b.foods) if (ITEMS[f]?.kind !== 'food') errors.push(`Biome ${b.id} : nourriture inconnue ${f}`);
+    for (const w of b.weather) if (!WEATHERS[w.weather]) errors.push(`Biome ${b.id} : météo inconnue ${w.weather}`);
+    for (const el of b.favoredElements) if (!ELEMENTS[el]) errors.push(`Biome ${b.id} : élément inconnu ${el}`);
+    if (!THEMES[b.theme]) errors.push(`Biome ${b.id} : terrain inconnu ${b.theme}`);
+  }
+  for (const egg of Object.values(EGGS)) {
+    if (egg.exploreOnly && SHOP_OFFERS.some((o) => o.kind === 'egg' && o.ref === egg.id)) errors.push(`Œuf ${egg.id} : exclusif à l'exploration mais vendu`);
+    if (egg.exploreOnly && !BIOMES.some((b) => b.eggs.some((e) => e.egg === egg.id))) errors.push(`Œuf ${egg.id} : exclusif mais absent des biomes`);
+  }
+  for (const bd of BUILDINGS) {
+    if (bd.costs.length !== bd.maxLevel) errors.push(`Bâtiment ${bd.id} : ${bd.costs.length} coûts pour ${bd.maxLevel} niveaux`);
+    for (const c of bd.costs) for (const m of Object.keys(c.materials)) if (ITEMS[m]?.kind !== 'material') errors.push(`Bâtiment ${bd.id} : matériau inconnu ${m}`);
+  }
+  for (const o of SHOP_OFFERS) if (o.kind === 'decoration' && !DECORATIONS.some((d) => d.id === o.ref)) errors.push(`Offre ${o.id} : décoration inconnue`);
+  for (const m of [...DAILY_MISSIONS, ...WEEKLY_MISSIONS]) if (m.target <= 0) errors.push(`Mission ${m.id} : objectif invalide`);
+  for (const q of SIDE_QUESTS) if (q.goal.kind === 'biomeExpeditions' && !BIOMES.some((b) => b.id === (q.goal as { biome: string }).biome)) errors.push(`Quête ${q.id} : biome inconnu`);
+  if (new Set(ACHIEVEMENTS.map((a) => a.id)).size !== ACHIEVEMENTS.length) errors.push('Succès en double');
+  for (const s of SPECIES_LIST) for (const e of s.evolutions) for (const c of e.conditions) if (c.type === 'weather' && !WEATHERS[c.weather]) errors.push(`${s.id} : météo inconnue ${c.weather}`);
 
   for (const q of MAIN_QUESTS) {
     for (const e of q.reward.eggs ?? []) if (!EGGS[e]) errors.push(`Quête ${q.id} : œuf inconnu ${e}`);

@@ -5,6 +5,7 @@ import { EGGS } from '@data/eggs';
 import { MUTATIONS } from '@data/mutations';
 import { RARITIES } from '@data/rarities';
 import { SHOP_OFFERS } from '@data/shop';
+import { eggCap } from '@core/systems/buildings';
 import { canIncubateIn, incubationDuration, isReady, progressOf, speedUpCost } from '@core/systems/incubation';
 import { formatDuration, isNight } from '@core/time';
 import type { EggInstance, IncubatorSlot } from '@core/types';
@@ -193,7 +194,7 @@ export function IncubatorScreen() {
         )}
       </div>
 
-      <div className="section-title"><Icon name="egg" width={22} height={22} style={{ color: 'var(--violet)' }} /><h2>Panier d'œufs</h2><span className="muted">{state.eggs.length}/{BALANCE.maxEggStorage}</span></div>
+      <div className="section-title"><Icon name="egg" width={22} height={22} style={{ color: 'var(--violet)' }} /><h2>Panier d'œufs</h2><span className="muted">{state.eggs.length}/{eggCap(state)}</span></div>
       {groups.length === 0 ? (
         <EmptyState icon="egg" title="Ton panier est vide" action={<button className="btn" onClick={() => navigate('boutique')}><Icon name="bag" />Trouver des œufs</button>}>
           Récompense quotidienne, quêtes et boutique te fourniront de nouveaux œufs. L'exploration des biomes arrivera en Phase 4.

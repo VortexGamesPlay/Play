@@ -26,6 +26,15 @@ export const SHOP_OFFERS: ShopOffer[] = [
   { id: 'evo_pierre', kind: 'item', ref: 'coquille_eveil', quantity: 1, price: { currency: 'essence', amount: 40 }, requires: { dexCount: 5 } },
   { id: 'evo_larme',  kind: 'item', ref: 'rosee_lune',   quantity: 1, price: { currency: 'essence', amount: 60 }, requires: { dexCount: 8 } },
 
+  { id: 'deco_lanternes', kind: 'decoration', ref: 'lanternes', price: { currency: 'coins', amount: 350 } },
+  { id: 'deco_banc', kind: 'decoration', ref: 'banc', price: { currency: 'coins', amount: 300 } },
+  { id: 'deco_champignons', kind: 'decoration', ref: 'champignons', price: { currency: 'coins', amount: 450 }, requires: { dexCount: 4 } },
+  { id: 'deco_arche', kind: 'decoration', ref: 'arche', price: { currency: 'coins', amount: 700 }, requires: { dexCount: 6 } },
+  { id: 'deco_fontaine', kind: 'decoration', ref: 'fontaine', price: { currency: 'coins', amount: 1200 }, requires: { dexCount: 8 } },
+  { id: 'deco_cristaux', kind: 'decoration', ref: 'cristaux', price: { currency: 'crystals', amount: 20 }, requires: { dexCount: 10 } },
+  { id: 'deco_statue', kind: 'decoration', ref: 'statue', price: { currency: 'coins', amount: 2000 }, requires: { dexCount: 12 } },
+  { id: 'deco_guirlande', kind: 'decoration', ref: 'guirlande', price: { currency: 'essence', amount: 50 }, requires: { dexCount: 14 } },
+
   { id: 'slot_3', kind: 'incubator_slot', slotNumber: 3, price: { currency: 'coins', amount: 600 } },
   { id: 'slot_4', kind: 'incubator_slot', slotNumber: 4, price: { currency: 'coins', amount: 1800 }, requires: { dexCount: 5 } },
   { id: 'slot_5', kind: 'incubator_slot', slotNumber: 5, price: { currency: 'coins', amount: 4500 }, requires: { dexCount: 9 } },

@@ -6,6 +6,8 @@ import type { ActionContext, CreatureInstance, GameState } from '../types';
 import { bodyMetrics, findCreature, getSpecies } from './creatures';
 import { registerInDex } from './dex';
 import { removeItem } from './inventory';
+import { assertPresent, isAway } from './exploration';
+import { sanctuaryWeather } from './weather';
 
 export interface ConditionCheck {
   condition: EvolutionCondition;
@@ -20,7 +22,8 @@ export interface EvolutionOption {
   ready: boolean;
 }
 
-export function checkCondition(state: GameState, c: CreatureInstance, cond: EvolutionCondition, hour: number): ConditionCheck {
+export function checkCondition(state: GameState, c: CreatureInstance, cond: EvolutionCondition, now: number): ConditionCheck {
+  const hour = new Date(now).getHours();
   switch (cond.type) {
     case 'level': return { condition: cond, met: c.level >= cond.value, progress: `${Math.min(c.level, cond.value)}/${cond.value}` };
     case 'affection': return { condition: cond, met: c.affection >= cond.value, progress: `${Math.min(c.affection, cond.value)}/${cond.value}` };
@@ -35,24 +38,26 @@ export function checkCondition(state: GameState, c: CreatureInstance, cond: Evol
     }
     case 'mutation': return { condition: cond, met: c.mutations.includes(cond.mutation) };
     case 'ambiance': return { condition: cond, met: c.origin.kind !== 'starter' && c.origin.ambiance === cond.ambiance };
+    case 'weather': return { condition: cond, met: sanctuaryWeather(now).id === cond.weather };
   }
 }
 
 /** Toutes les branches d'évolution d'une créature, avec l'état de chaque condition. */
-export function evolutionOptions(state: GameState, c: CreatureInstance, hour: number): EvolutionOption[] {
+export function evolutionOptions(state: GameState, c: CreatureInstance, now: number): EvolutionOption[] {
   return getSpecies(c.speciesId).evolutions.map((def) => {
-    const checks = def.conditions.map((cond) => checkCondition(state, c, cond, hour));
+    const checks = def.conditions.map((cond) => checkCondition(state, c, cond, now));
     return { def, checks, ready: checks.every((x) => x.met) };
   });
 }
 
-export function canEvolve(state: GameState, c: CreatureInstance, hour: number): boolean {
-  return evolutionOptions(state, c, hour).some((o) => o.ready);
+export function canEvolve(state: GameState, c: CreatureInstance, now: number): boolean {
+  return !isAway(state, c.uid) && evolutionOptions(state, c, now).some((o) => o.ready);
 }
 
 export function evolve(draft: GameState, uid: string, to: string, ctx: ActionContext, events: GameEvent[]): void {
   const c = findCreature(draft, uid);
-  const option = evolutionOptions(draft, c, ctx.hour).find((o) => o.def.to === to);
+  assertPresent(draft, uid);
+  const option = evolutionOptions(draft, c, ctx.now).find((o) => o.def.to === to);
   assertGame(option, 'no_evolution', 'Cette créature ne peut pas évoluer vers cette espèce.');
   assertGame(option.ready, 'evolution_locked', 'Toutes les conditions d\'évolution ne sont pas remplies.');
   for (const cond of option.def.conditions) {

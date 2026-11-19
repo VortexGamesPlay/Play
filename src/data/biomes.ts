@@ -1,0 +1,101 @@
+import type { BiomeDef } from '@core/content';
+
+/** Les huit biomes explorables. */
+export const BIOMES: BiomeDef[] = [
+  {
+    id: 'foret', name: 'Forêt enchantée', scenery: 'forest', unlockDex: 0, difficulty: 60, theme: 'prairie',
+    description: 'Des arbres millénaires aux feuilles phosphorescentes. Les œufs y sont cachés entre les racines.',
+    palette: { sky1: '#bfe8d0', sky2: '#fff2d6', ground1: '#7fd08a', ground2: '#3f9a5a', accent: '#ffe066' },
+    favoredElements: ['nature', 'air', 'lumiere'],
+    materials: [{ item: 'bois_lune', weight: 6 }, { item: 'sable_dore', weight: 1 }],
+    eggs: [{ egg: 'forestier', weight: 8 }, { egg: 'celeste', weight: 1 }],
+    foods: ['fruit_rose', 'graine_soleil'],
+    weather: [{ weather: 'soleil', weight: 4 }, { weather: 'nuages', weight: 3 }, { weather: 'pluie', weight: 3 }, { weather: 'vent', weight: 2 }, { weather: 'pluie_etoiles', weight: 0.3 }],
+    secret: { name: 'Le Cercle des lucioles', afterExpeditions: 5, eggChanceBonus: 0.04, description: 'Une clairière où les lucioles dessinent d\'anciens symboles.' },
+  },
+  {
+    id: 'abysses', name: 'Royaume sous-marin', scenery: 'reef', unlockDex: 3, difficulty: 120, theme: 'lagon',
+    description: 'Des récifs de nacre et des forêts d\'algues lumineuses, sous une mer calme.',
+    palette: { sky1: '#5fd0e0', sky2: '#1f6fa8', ground1: '#3fb8b0', ground2: '#1d5e7e', accent: '#ffe6f2' },
+    favoredElements: ['eau', 'glace', 'cristal'],
+    materials: [{ item: 'nacre', weight: 6 }, { item: 'givre_eternel', weight: 1 }],
+    eggs: [{ egg: 'marin', weight: 6 }, { egg: 'abyssal', weight: 3 }],
+    foods: ['poisson_braise'],
+    weather: [{ weather: 'nuages', weight: 4 }, { weather: 'pluie', weight: 3 }, { weather: 'orage', weight: 1 }, { weather: 'soleil', weight: 3 }, { weather: 'maree_lumineuse', weight: 0.4 }],
+    secret: { name: 'La Fosse aux perles', afterExpeditions: 6, eggChanceBonus: 0.04, description: 'Un gouffre tapissé de perles géantes qui chantent.' },
+  },
+  {
+    id: 'montagnes', name: 'Montagnes gelées', scenery: 'peaks', unlockDex: 4, difficulty: 160, theme: 'neige',
+    description: 'Des cimes éternellement blanches où le vent sculpte la glace en statues.',
+    palette: { sky1: '#d8ecff', sky2: '#a9c4f0', ground1: '#f4f8ff', ground2: '#b8cbe8', accent: '#7fdcf0' },
+    favoredElements: ['glace', 'air', 'cristal'],
+    materials: [{ item: 'givre_eternel', weight: 6 }, { item: 'basalte', weight: 1 }],
+    eggs: [{ egg: 'glacial', weight: 5 }, { egg: 'marin', weight: 2 }, { egg: 'celeste', weight: 1 }],
+    foods: ['cristal_sucre'],
+    weather: [{ weather: 'neige', weight: 5 }, { weather: 'vent', weight: 3 }, { weather: 'soleil', weight: 2 }, { weather: 'brume', weight: 2 }, { weather: 'aurore', weight: 0.4 }],
+    secret: { name: 'Le Palais de givre', afterExpeditions: 6, eggChanceBonus: 0.05, description: 'Une cité de glace abandonnée au sommet du plus haut pic.' },
+  },
+  {
+    id: 'volcan', name: 'Volcan ancestral', scenery: 'volcano', unlockDex: 5, difficulty: 220, theme: 'cendres',
+    description: 'Des coulées de lave figées et des geysers brûlants. La roche y garde une chaleur millénaire.',
+    palette: { sky1: '#ffb38a', sky2: '#5a2a3e', ground1: '#6a3a3a', ground2: '#2e1820', accent: '#ff8a3d' },
+    favoredElements: ['feu', 'terre', 'primordial'],
+    materials: [{ item: 'basalte', weight: 6 }, { item: 'sable_dore', weight: 1 }],
+    eggs: [{ egg: 'volcanique', weight: 7 }, { egg: 'antique', weight: 1 }],
+    foods: ['poisson_braise'],
+    weather: [{ weather: 'canicule', weight: 4 }, { weather: 'soleil', weight: 3 }, { weather: 'brume', weight: 2 }, { weather: 'orage', weight: 1 }, { weather: 'eruption', weight: 0.4 }],
+    secret: { name: 'La Chambre magmatique', afterExpeditions: 7, eggChanceBonus: 0.05, description: 'Le cœur du volcan, où dorment des œufs plus vieux que le monde.' },
+  },
+  {
+    id: 'marais', name: 'Marais toxique', scenery: 'swamp', unlockDex: 7, difficulty: 260, theme: 'prairie',
+    description: 'Des eaux colorées, des champignons géants et des bulles qui éclatent en chantant.',
+    palette: { sky1: '#c8e6a0', sky2: '#6a7a9e', ground1: '#6f9a4a', ground2: '#3a4a2e', accent: '#c46fe0' },
+    favoredElements: ['toxique', 'nature', 'eau'],
+    materials: [{ item: 'mousse_marais', weight: 6 }, { item: 'bois_lune', weight: 2 }],
+    eggs: [{ egg: 'marecage', weight: 5 }, { egg: 'corrompu', weight: 1 }, { egg: 'forestier', weight: 2 }],
+    foods: ['champi_lune'],
+    weather: [{ weather: 'pluie', weight: 4 }, { weather: 'brume', weight: 4 }, { weather: 'orage', weight: 2 }, { weather: 'nuages', weight: 2 }],
+    secret: { name: 'L\'Îlot des spores', afterExpeditions: 7, eggChanceBonus: 0.05, description: 'Une île flottante couverte de champignons luminescents.' },
+  },
+  {
+    id: 'desert', name: 'Désert ancien', scenery: 'dunes', unlockDex: 9, difficulty: 320, theme: 'cendres',
+    description: 'Des dunes dorées qui cachent les ruines d\'une civilisation de gardiens disparue.',
+    palette: { sky1: '#ffe2a8', sky2: '#f0a85a', ground1: '#f0c878', ground2: '#c08a4a', accent: '#2fa89a' },
+    favoredElements: ['terre', 'feu', 'primordial'],
+    materials: [{ item: 'sable_dore', weight: 6 }, { item: 'basalte', weight: 1 }],
+    eggs: [{ egg: 'antique', weight: 5 }, { egg: 'volcanique', weight: 2 }],
+    foods: ['graine_soleil'],
+    weather: [{ weather: 'canicule', weight: 5 }, { weather: 'vent', weight: 3 }, { weather: 'soleil', weight: 3 }, { weather: 'pluie_etoiles', weight: 0.3 }],
+    secret: { name: 'Le Tombeau des gardiens', afterExpeditions: 8, eggChanceBonus: 0.05, description: 'Une salle scellée où reposent des œufs antiques intacts.' },
+  },
+  {
+    id: 'ombres', name: 'Vallée des ombres', scenery: 'shadows', unlockDex: 11, difficulty: 400, theme: 'lune',
+    description: 'Une vallée où le soleil ne se lève jamais. Les lanternes y flottent seules.',
+    palette: { sky1: '#4a3a7a', sky2: '#140c2e', ground1: '#3a2f5e', ground2: '#1a1236', accent: '#b8a6f0' },
+    favoredElements: ['ombre', 'spectre', 'cosmique'],
+    materials: [{ item: 'eclat_ombre', weight: 6 }, { item: 'poussiere_etoile', weight: 1 }],
+    eggs: [{ egg: 'crepuscule', weight: 5 }, { egg: 'fantome', weight: 3 }, { egg: 'corrompu', weight: 1 }],
+    foods: ['champi_lune'],
+    weather: [{ weather: 'brume', weight: 5 }, { weather: 'nuages', weight: 3 }, { weather: 'orage', weight: 2 }, { weather: 'pluie_etoiles', weight: 0.3 }],
+    secret: { name: 'Le Puits sans fond', afterExpeditions: 8, eggChanceBonus: 0.06, description: 'Un puits d\'où remontent des échos de créatures oubliées.' },
+  },
+  {
+    id: 'cosmos', name: 'Dimension cosmique', scenery: 'space', unlockDex: 14, difficulty: 520, theme: 'lune',
+    description: 'Des îles flottantes au milieu des nébuleuses. La gravité y est capricieuse.',
+    palette: { sky1: '#3a2d9e', sky2: '#0e0a2a', ground1: '#6a5ae0', ground2: '#2c2470', accent: '#ffe680' },
+    favoredElements: ['cosmique', 'lumiere', 'ombre'],
+    materials: [{ item: 'poussiere_etoile', weight: 6 }, { item: 'eclat_ombre', weight: 1 }],
+    eggs: [{ egg: 'celeste', weight: 4 }, { egg: 'cosmique', weight: 2 }, { egg: 'prismatique', weight: 1 }],
+    foods: ['nectar_etoile'],
+    weather: [{ weather: 'nuages', weight: 3 }, { weather: 'brume', weight: 2 }, { weather: 'soleil', weight: 2 }, { weather: 'pluie_etoiles', weight: 1 }],
+    secret: { name: 'L\'Observatoire perdu', afterExpeditions: 9, eggChanceBonus: 0.06, description: 'Un observatoire flottant d\'où l\'on aperçoit l\'œuf légendaire originel.' },
+  },
+];
+
+export const BIOME_BY_ID: Record<string, BiomeDef> = Object.fromEntries(BIOMES.map((b) => [b.id, b]));
+
+/** Météo du sanctuaire (utilisée par les évolutions et la scène). */
+export const SANCTUARY_WEATHER = [
+  { weather: 'soleil', weight: 4 }, { weather: 'nuages', weight: 3 }, { weather: 'pluie', weight: 2 },
+  { weather: 'orage', weight: 1 }, { weather: 'brume', weight: 1 }, { weather: 'vent', weight: 1 },
+];

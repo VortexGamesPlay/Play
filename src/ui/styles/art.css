@@ -58,3 +58,40 @@
 @keyframes egg-crack { to { stroke-dashoffset: 0; } }
 .cr-core-glow { animation: cr-core 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
 @keyframes cr-core { 0%, 100% { opacity: .2; transform: scale(.85); } 50% { opacity: .45; transform: scale(1.15); } }
+
+/* ── Décors de biomes ── */
+.biome-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.biome-svg * { transform-box: fill-box; }
+.firefly { animation: firefly 3s ease-in-out infinite; transform-origin: center; }
+@keyframes firefly { 0%, 100% { opacity: .2; transform: translate(0, 0); } 50% { opacity: 1; transform: translate(8px, -12px); } }
+.lava-glow { animation: cr-pulse 2.4s ease-in-out infinite; }
+.smoke { animation: smoke 6s ease-in-out infinite; transform-origin: center; }
+@keyframes smoke { 0% { transform: translateY(0) scale(.8); opacity: .5; } 100% { transform: translateY(-40px) scale(1.4); opacity: 0; } }
+.seaweed { animation: seaweed 3.5s ease-in-out infinite; transform-origin: bottom center; }
+@keyframes seaweed { 50% { transform: skewX(8deg); } }
+.bubble-up { animation: bubble-up 5s linear infinite; }
+@keyframes bubble-up { from { transform: translateY(0); opacity: .8; } to { transform: translateY(-300px); opacity: 0; } }
+.float-island { animation: cr-float 5s ease-in-out infinite; }
+
+/* ── Effets météo ── */
+.wfx { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 3; }
+.wfx .p { position: absolute; display: block; }
+.wfx-rain .p, .wfx-storm .p { top: -20px; width: 2px; height: 18px; background: linear-gradient(transparent, rgba(255, 255, 255, .75)); animation: rain-fall calc(.7s * var(--s)) linear infinite; }
+@keyframes rain-fall { to { transform: translate(-30px, 520px); } }
+.wfx-snow .p { top: -10px; width: calc(6px * var(--s)); height: calc(6px * var(--s)); border-radius: 50%; background: white; opacity: .9; animation: snow-fall calc(6s * var(--s)) linear infinite; }
+@keyframes snow-fall { to { transform: translate(40px, 520px); } }
+.wfx-stars .p { top: -10px; width: 80px; height: 2px; background: linear-gradient(90deg, transparent, #fff8c8); transform: rotate(25deg); animation: shooting calc(3s * var(--s)) linear infinite; }
+@keyframes shooting { from { transform: translate(0, 0) rotate(25deg); opacity: 0; } 10% { opacity: 1; } to { transform: translate(-260px, 160px) rotate(25deg); opacity: 0; } }
+.wfx-embers .p { width: 5px; height: 5px; border-radius: 50%; background: #ffb03d; box-shadow: 0 0 8px #ff7a3d; animation: ember-up calc(4s * var(--s)) linear infinite; }
+@keyframes ember-up { from { transform: translateY(60px); opacity: 0; } 20% { opacity: 1; } to { transform: translateY(-200px); opacity: 0; } }
+.wfx-wind .p { width: 120px; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .55); animation: wind calc(2.5s * var(--s)) linear infinite; }
+@keyframes wind { from { transform: translateX(-200px); opacity: 0; } 30% { opacity: 1; } to { transform: translateX(900px); opacity: 0; } }
+.fog-band { position: absolute; left: -20%; right: -20%; top: 45%; height: 120px; background: radial-gradient(ellipse at center, rgba(255, 255, 255, .55), transparent 70%); animation: fog 18s ease-in-out infinite alternate; display: block; }
+.fog-band.b2 { top: 65%; animation-duration: 24s; opacity: .7; }
+@keyframes fog { to { transform: translateX(15%); } }
+.aurora-band { position: absolute; left: -10%; right: -10%; top: 5%; height: 140px; display: block; background: linear-gradient(90deg, transparent, rgba(120, 255, 200, .45), rgba(160, 120, 255, .45), transparent); filter: blur(18px); animation: aurora-wave 8s ease-in-out infinite alternate; }
+.aurora-band.b2 { top: 18%; animation-duration: 11s; opacity: .7; }
+@keyframes aurora-wave { to { transform: translateX(10%) skewY(4deg); } }
+.sun-glow { position: absolute; right: 8%; top: -60px; width: 260px; height: 260px; border-radius: 50%; display: block; background: radial-gradient(circle, rgba(255, 245, 190, .55), transparent 70%); animation: cr-pulse 5s ease-in-out infinite; }
+.storm-flash { position: absolute; inset: 0; display: block; background: white; opacity: 0; animation: storm-flash 7s infinite; }
+@keyframes storm-flash { 0%, 90%, 94%, 100% { opacity: 0; } 91%, 95% { opacity: .55; } }

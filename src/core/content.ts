@@ -79,7 +79,9 @@ export type EvolutionCondition =
   | { type: 'item'; item: ItemId }
   | { type: 'diet'; tag: string; count: number }
   | { type: 'mutation'; mutation: MutationId }
-  | { type: 'ambiance'; ambiance: AmbianceId };
+  | { type: 'ambiance'; ambiance: AmbianceId }
+  /** Météo actuelle du sanctuaire. */
+  | { type: 'weather'; weather: string };
 
 export interface EvolutionDef {
   to: SpeciesId;
@@ -136,6 +138,8 @@ export interface EggDef {
   visual: EggVisual;
   /** Œuf génétique : son contenu vient des parents (Laboratoire), pas d'une table. */
   genetic?: boolean;
+  /** Œuf exclusif à l'exploration (jamais vendu en boutique). */
+  exploreOnly?: boolean;
 }
 
 export interface MutationDef {
@@ -164,7 +168,7 @@ export interface ItemDef {
   name: string;
   description: string;
   /** food : se mange ; evolution : consommé lors d'une évolution qui l'exige. */
-  kind: 'food' | 'evolution';
+  kind: 'food' | 'evolution' | 'material';
   xp: number;
   affection: number;
   tags: string[];
@@ -183,7 +187,8 @@ export type ShopOffer =
   | { id: string; kind: 'egg'; ref: EggTypeId; price: Price; requires?: Requirement }
   | { id: string; kind: 'item'; ref: ItemId; quantity: number; price: Price; requires?: Requirement }
   | { id: string; kind: 'incubator_slot'; slotNumber: number; price: Price; requires?: Requirement }
-  | { id: string; kind: 'ambiance'; ref: AmbianceId; price: Price; requires?: Requirement };
+  | { id: string; kind: 'ambiance'; ref: AmbianceId; price: Price; requires?: Requirement }
+  | { id: string; kind: 'decoration'; ref: string; price: Price; requires?: Requirement };
 
 export interface Price {
   currency: CurrencyId;
@@ -201,7 +206,11 @@ export type QuestGoal =
   | { kind: 'maxLevel'; target: number }
   | { kind: 'variantCount'; target: number }
   | { kind: 'incubators'; target: number }
-  | { kind: 'recipeCount'; target: number };
+  | { kind: 'recipeCount'; target: number }
+  | { kind: 'biomeExpeditions'; biome: string; target: number }
+  | { kind: 'biomesUnlocked'; target: number }
+  | { kind: 'secretsFound'; target: number }
+  | { kind: 'buildingLevels'; target: number };
 
 export interface Reward {
   coins?: number;
@@ -227,6 +236,95 @@ export interface RecipeDef {
   result: SpeciesId;
   /** Probabilité d'obtenir le résultat quand les parents correspondent. */
   chance: number;
+}
+
+export type WeatherId = string;
+
+export interface WeatherDef {
+  id: WeatherId;
+  name: string;
+  description: string;
+  /** Événement rare et spectaculaire (affiché comme tel). */
+  event?: boolean;
+  /** Effets sur les expéditions. */
+  lootMul: number;
+  eggChanceMul: number;
+  /** Éléments avantagés pendant cette météo. */
+  elementBonus: ElementId[];
+  /** Effet visuel dans les scènes. */
+  fx: 'none' | 'rain' | 'snow' | 'fog' | 'storm' | 'stars' | 'embers' | 'aurora' | 'sun' | 'wind';
+}
+
+export interface BiomeDef {
+  id: string;
+  name: string;
+  description: string;
+  /** Nombre d'espèces découvertes requis pour l'atteindre. */
+  unlockDex: number;
+  /** Puissance d'équipe conseillée. */
+  difficulty: number;
+  palette: { sky1: string; sky2: string; ground1: string; ground2: string; accent: string };
+  scenery: 'forest' | 'volcano' | 'peaks' | 'reef' | 'space' | 'swamp' | 'dunes' | 'shadows';
+  favoredElements: ElementId[];
+  materials: { item: ItemId; weight: number }[];
+  eggs: { egg: EggTypeId; weight: number }[];
+  foods: ItemId[];
+  weather: { weather: WeatherId; weight: number }[];
+  secret: { name: string; description: string; afterExpeditions: number; eggChanceBonus: number };
+  /** Terrain de sanctuaire débloqué par la première expédition dans ce biome. */
+  theme: string;
+}
+
+export interface BuildingEffect {
+  kind: 'creatureCap' | 'eggCap' | 'garden' | 'zone' | 'essence';
+  base?: number;
+  perLevel: number;
+  elements?: ElementId[];
+}
+
+export interface BuildingDef {
+  id: string;
+  name: string;
+  description: string;
+  /** Niveau de départ (0 = à construire). */
+  startLevel: number;
+  maxLevel: number;
+  /** costs[n] = coût pour passer du niveau n au niveau n+1. */
+  costs: { coins: number; materials: Partial<Record<ItemId, number>> }[];
+  effect: BuildingEffect;
+}
+
+export interface DecorationDef {
+  id: string;
+  name: string;
+  description: string;
+  shape: 'lantern' | 'arch' | 'statue' | 'mushrooms' | 'crystals' | 'bench' | 'fountain' | 'garland';
+  color: string;
+}
+
+export interface ThemeDef {
+  id: string;
+  name: string;
+  sky: [string, string];
+  ground: [string, string];
+  hill: [string, string];
+  nightSky: [string, string];
+}
+
+export interface MissionDef {
+  id: string;
+  title: string;
+  stat: keyof PlayerStats;
+  target: number;
+  reward: Reward;
+}
+
+export interface AchievementDef {
+  id: string;
+  title: string;
+  description: string;
+  goal: QuestGoal;
+  reward: Reward;
 }
 
 export interface QuestDef {

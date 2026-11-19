@@ -8,6 +8,7 @@ import { breedBlocker, breedingCost, compatibility, inheritanceOdds } from '@cor
 import { displayName, getSpecies } from '@core/systems/creatures';
 import { isDiscovered } from '@core/systems/dex';
 import { breedingOdds } from '@core/systems/odds';
+import { isAway } from '@core/systems/exploration';
 import { formatDuration } from '@core/time';
 import type { CreatureInstance } from '@core/types';
 import { CreatureArt } from '../art/CreatureArt';
@@ -56,11 +57,12 @@ function ParentSlot({ c, label, onPick, onClear }: { c: CreatureInstance | null;
 }
 
 export function ParentPickerModal({ exclude, onPick }: { exclude: string | null; onPick: (uid: string) => void }) {
-  const creatures = useGame((s) => s.state.creatures);
+  const state = useGame((s) => s.state);
+  const creatures = state.creatures;
   const close = useUi.getState().closeModal;
   const now = useNow();
   const list = creatures.filter((c) => c.uid !== exclude)
-    .map((c) => ({ c, why: breedBlocker(c, now) }))
+    .map((c) => ({ c, why: isAway(state, c.uid) ? 'En expédition' : breedBlocker(c, now) }))
     .sort((a, b) => Number(!!a.why) - Number(!!b.why) || b.c.level - a.c.level);
   if (list.length === 0) return <EmptyState icon="paw" title="Aucune créature disponible">Fais éclore d'autres œufs pour pouvoir composer un couple.</EmptyState>;
   return (

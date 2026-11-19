@@ -1,6 +1,9 @@
 import { useRef, useState } from 'react';
 import { SPECIES_LIST } from '@data/species';
 import { dexCount, variantCount } from '@core/systems/dex';
+import { ACHIEVEMENTS } from '@data/missions';
+import { questProgress } from '@core/systems/quests';
+import { Bar } from '../components/Bar';
 import { Icon } from '../art/Icons';
 import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
@@ -43,7 +46,7 @@ export function ProfileScreen() {
     ['Espèces découvertes', `${dexCount(state)}/${SPECIES_LIST.length}`], ['Variantes', variantCount(state)], ['Créatures', state.creatures.length],
     ['Œufs éclos', state.stats.eggsHatched], ['Œufs obtenus', state.stats.eggsObtained], ['Repas donnés', state.stats.creaturesFed],
     ['Niveaux gagnés', state.stats.levelUps], ['Récoltes', state.stats.harvests], ['Pièces récoltées', state.stats.coinsHarvested.toLocaleString('fr-FR')],
-    ['Achats', state.stats.purchases], ['Connexions quotidiennes', state.stats.dailyClaims], ['Quêtes terminées', state.quests.claimed.length],
+    ['Achats', state.stats.purchases], ['Expéditions', state.stats.expeditions], ['Zones secrètes', state.exploration.secretsFound.length], ['Connexions quotidiennes', state.stats.dailyClaims], ['Quêtes terminées', state.quests.claimed.length],
   ];
 
   return (
@@ -56,6 +59,24 @@ export function ProfileScreen() {
         </form>
         <p className="muted" style={{ fontSize: 13, marginTop: 8 }}>Gardien depuis le {fmtDate(state.player.createdAt)}</p>
         <div className="stat-tiles">{stats.map(([l, v]) => <div key={l}><b className="num">{v}</b><span>{l}</span></div>)}</div>
+
+        <div className="card-title" style={{ marginTop: 22 }}><Icon name="trophy" /><h2>Trophées</h2><span className="spacer" /><span className="badge soft-badge">{state.achievements.length}/{ACHIEVEMENTS.length}</span></div>
+        <div className="trophies">
+          {ACHIEVEMENTS.map((a) => {
+            const p = questProgress(state, { ...a, chapter: '' });
+            const got = state.achievements.includes(a.id);
+            return (
+              <div key={a.id} className={`trophy ${got ? 'got' : p.done ? 'ready' : ''}`}>
+                <span className="trophy-ic"><Icon name="trophy" /></span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <b>{a.title}</b><div className="muted" style={{ fontSize: 12 }}>{a.description}</div>
+                  {!got && <Bar value={p.current / p.target} size="thin" />}
+                </div>
+                {got ? <Icon name="check" style={{ color: 'var(--mint)', width: 20 }} /> : <button className="btn btn-gold btn-sm" disabled={!p.done} onClick={() => dispatch({ type: 'claimAchievement', id: a.id })}>{p.done ? 'Obtenir' : `${p.current}/${p.target}`}</button>}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <div className="stack">

@@ -206,7 +206,7 @@ export const SPECIES_LIST: SpeciesDef[] = [
     id: 'champilou', dex: 21, name: 'Champilou', family: 'Marécot', element: 'toxique', rarity: 'peu_commun', stage: 'bebe',
     description: 'Il vit dans les marais et sent étonnamment bon la menthe. Ses spores font rire ceux qui les respirent.',
     baseStats: { hp: 60, atk: 48, def: 52, spd: 40 }, sizeCm: 29, weightKg: 4.4, favoriteFood: ['champi'],
-    evolutions: [{ to: 'marecroc', conditions: [{ type: 'level', value: 20 }] }], obtainableBy: ['egg'],
+    evolutions: [{ to: 'marecroc', conditions: [{ type: 'level', value: 20 }, { type: 'weather', weather: 'pluie' }] }], obtainableBy: ['egg'],
     art: art({ nativeEgg: 'corrompu', body: 'pear', ears: 'mushroom', crest: 'none', tail: 'none', eyes: 'sleepy', mouth: 'tiny', pattern: 'spots', scale: 0.8,
       palette: { primary: '#a6d65a', secondary: '#6b9e2e', accent: '#c46fe0', belly: '#e6f5c4', eye: '#2a3a10' } }),
   },
@@ -330,6 +330,39 @@ export const SPECIES_LIST: SpeciesDef[] = [
     evolutions: [], obtainableBy: ['evolution'],
     art: art({ body: 'gem', ears: 'cat', crest: 'crown', tail: 'curl', wings: 'none', eyes: 'fierce', mouth: 'tiny', pattern: 'runes', scale: 1,
       palette: { primary: '#1f8a8a', secondary: '#0f3e4a', accent: '#f5c542', belly: '#a8e0cf', eye: '#f5c542' }, aura: '#f5c542' }),
+  },
+  // ───────────── Phase 4 : créatures exclusives aux biomes ─────────────
+  {
+    id: 'nacrelle', dex: 37, name: 'Nacrelle', family: 'Gelée marine', element: 'eau', rarity: 'rare', stage: 'bebe',
+    description: 'Elle vit dans une coquille de nacre qu\'elle ne quitte jamais tout à fait. Elle collectionne les reflets de lune.',
+    baseStats: { hp: 62, atk: 44, def: 70, spd: 44 }, sizeCm: 24, weightKg: 2.4, favoriteFood: ['poisson', 'mineral'],
+    evolutions: [], obtainableBy: ['egg'],
+    art: art({ body: 'blob', ears: 'fin', crest: 'bubble', tail: 'none', eyes: 'sparkle', mouth: 'cat', pattern: 'spots', scale: 0.8,
+      palette: { primary: '#f6dcff', secondary: '#b88ae0', accent: '#7fe0ff', belly: '#fff6ff', eye: '#3a2050' } }),
+  },
+  {
+    id: 'nevelin', dex: 38, name: 'Névelin', family: 'Flocon', element: 'glace', rarity: 'peu_commun', stage: 'bebe',
+    description: 'Un furet des neiges qui creuse des galeries dans les névés. On ne voit que sa queue dépasser.',
+    baseStats: { hp: 46, atk: 52, def: 40, spd: 70 }, sizeCm: 30, weightKg: 1.6, favoriteFood: ['mineral', 'graine'],
+    evolutions: [], obtainableBy: ['egg'],
+    art: art({ body: 'tall', ears: 'round', crest: 'none', tail: 'fluffy', eyes: 'round', mouth: 'cat', pattern: 'belly', scale: 0.8,
+      palette: { primary: '#f4f6ff', secondary: '#a8b8e8', accent: '#7fb8f0', belly: '#ffffff', eye: '#2a3050' } }),
+  },
+  {
+    id: 'vasounet', dex: 39, name: 'Vasounet', family: 'Marécot', element: 'toxique', rarity: 'peu_commun', stage: 'bebe',
+    description: 'Un petit triton qui se roule dans la vase pour se faire beau. Ses taches changent de couleur avec son humeur.',
+    baseStats: { hp: 54, atk: 50, def: 48, spd: 52 }, sizeCm: 26, weightKg: 1.9, favoriteFood: ['champi', 'fruit'],
+    evolutions: [], obtainableBy: ['egg'],
+    art: art({ body: 'pear', ears: 'fin', crest: 'none', tail: 'leaf', eyes: 'round', mouth: 'smile', pattern: 'spots', scale: 0.8,
+      palette: { primary: '#9ac85a', secondary: '#c46fe0', accent: '#ffd23d', belly: '#e6f5c4', eye: '#1e2a10' } }),
+  },
+  {
+    id: 'ombrelin', dex: 40, name: 'Ombrelin', family: 'Gardien des songes', element: 'ombre', rarity: 'rare', stage: 'bebe',
+    description: 'Il porte une minuscule lanterne pour guider les voyageurs dans la Vallée des ombres. Il a peur du noir, lui aussi.',
+    baseStats: { hp: 50, atk: 58, def: 46, spd: 66 }, sizeCm: 22, weightKg: 0.9, favoriteFood: ['nectar', 'champi'],
+    evolutions: [], obtainableBy: ['egg'],
+    art: art({ body: 'round', ears: 'cat', crest: 'lure', tail: 'wisp', eyes: 'gem', mouth: 'tiny', pattern: 'stars', scale: 0.8,
+      palette: { primary: '#4a3a7a', secondary: '#2a1f4a', accent: '#ffc85a', belly: '#7a6ab0', eye: '#ffc85a' } }),
   },
 ];
 

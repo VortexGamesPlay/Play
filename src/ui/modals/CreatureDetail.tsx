@@ -4,10 +4,11 @@ import { AMBIANCES } from '@data/ambiances';
 import { EGGS } from '@data/eggs';
 import { PERSONALITIES } from '@data/personalities';
 import { RARITIES } from '@data/rarities';
-import { computeStats, displayName, geneQuality, getSpecies, harvestRatePerHour, releaseValue } from '@core/systems/creatures';
+import { computeStats, displayName, geneQuality, getSpecies, releaseValue } from '@core/systems/creatures';
 import { CreatureArt } from '../art/CreatureArt';
 import { SPECIES } from '@data/species';
 import { evolutionOptions } from '@core/systems/evolution';
+import { creatureRate } from '@core/systems/sanctuary';
 import { isDiscovered } from '@core/systems/dex';
 import { useNow } from '../hooks/useNow';
 import { EssenceIcon, Icon } from '../art/Icons';
@@ -39,7 +40,7 @@ export function CreatureDetail({ uid }: { uid: string }) {
   const st = computeStats(c);
   const pers = PERSONALITIES[c.personality];
   const maxed = c.level >= BALANCE.maxLevel;
-  const evoOptions = evolutionOptions(state, c, new Date(now).getHours());
+  const evoOptions = evolutionOptions(state, c, now);
 
   return (
     <div className="detail" style={{ ['--rc' as string]: r.color, ['--rg' as string]: r.glow } as CSSProperties}>
@@ -153,7 +154,7 @@ export function CreatureDetail({ uid }: { uid: string }) {
           {c.origin.kind === 'breeding' && <><dt>Parents</dt><dd>{SPECIES[c.origin.parents[0]]?.name} × {SPECIES[c.origin.parents[1]]?.name}</dd><dt>Ambiance</dt><dd>{AMBIANCES[c.origin.ambiance]?.name}</dd></>}
           <dt>Reproduction</dt><dd>{c.breedCount}/{BALANCE.breeding.maxBreeds} fusions{c.breedReadyAt > Date.now() ? ' · se repose' : ''}</dd>
           {c.origin.kind === 'egg' && <><dt>Œuf</dt><dd>{EGGS[c.origin.eggType]?.name}</dd><dt>Ambiance</dt><dd>{AMBIANCES[c.origin.ambiance]?.name}{c.origin.night ? ' · de nuit' : ' · de jour'}</dd></>}
-          <dt>Production</dt><dd>{Math.round(harvestRatePerHour(c))} pièces / h</dd>
+          <dt>Production</dt><dd>{Math.round(creatureRate(state, c))} pièces / h</dd>
           <dt>Aliments préférés</dt><dd>{sp.favoriteFood.map(foodTagName).join(', ')}</dd>
         </dl>
 

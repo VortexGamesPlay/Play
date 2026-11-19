@@ -71,6 +71,35 @@ export const EGGS: Record<string, EggDef> = {
     mutationMultipliers: { cosmique: 4 }, affinity: [], requiresAmbiance: ['etoilee'],
     visual: { base: '#1d1650', secondary: '#7a5af0', pattern: 'galaxy', glow: '#b9a8ff' },
   },
+  // Œufs exclusifs à l'exploration (jamais vendus)
+  abyssal: {
+    id: 'abyssal', name: 'Œuf abyssal', rarity: 'rare', incubationMs: 4 * MINUTE, exploreOnly: true,
+    description: 'Ramené des profondeurs. Il émet une lueur bleutée au rythme des marées.',
+    pool: [{ species: 'nacrelle', weightMul: 3 }, { species: 'perlouille' }, { species: 'cristalis', weightMul: 0.6 }],
+    mutationMultipliers: { cristalline: 1.5 }, affinity: ['froid'],
+    visual: { base: '#2a5aa8', secondary: '#7fe0ff', pattern: 'waves', glow: '#9ff0ff' },
+  },
+  glacial: {
+    id: 'glacial', name: 'Œuf glacial', rarity: 'peu_commun', incubationMs: 3 * MINUTE, exploreOnly: true,
+    description: 'Trouvé dans une crevasse. Son givre ne fond même pas au creux de la main.',
+    pool: [{ species: 'nevelin', weightMul: 3 }, { species: 'frimelot' }, { species: 'zephyrin' }],
+    mutationMultipliers: { givree: 2 }, affinity: ['froid'],
+    visual: { base: '#eef6ff', secondary: '#9cc8f0', pattern: 'clouds', glow: '#ffffff' },
+  },
+  marecage: {
+    id: 'marecage', name: 'Œuf des marais', rarity: 'peu_commun', incubationMs: 3 * MINUTE, exploreOnly: true,
+    description: 'Couvert de mousse et légèrement collant. Il bouillonne doucement.',
+    pool: [{ species: 'vasounet', weightMul: 3 }, { species: 'champilou' }, { species: 'lichenou' }],
+    mutationMultipliers: { mutante: 1.8, florale: 1.3 }, affinity: ['serre'],
+    visual: { base: '#7f9a4a', secondary: '#c46fe0', pattern: 'leaves', glow: '#d8ffb0' },
+  },
+  crepuscule: {
+    id: 'crepuscule', name: 'Œuf crépusculaire', rarity: 'rare', incubationMs: 6 * MINUTE, exploreOnly: true,
+    description: 'Il absorbe la lumière autour de lui. Une lanterne minuscule semble briller à l\'intérieur.',
+    pool: [{ species: 'ombrelin', weightMul: 3 }, { species: 'songelin' }, { species: 'linceulet' }],
+    mutationMultipliers: { spectrale: 1.6, corrompue: 1.3 }, affinity: ['brume'],
+    visual: { base: '#2e2250', secondary: '#ffc85a', pattern: 'wisps', glow: '#ffd88a' },
+  },
   hybride: {
     id: 'hybride', name: 'Œuf génétique', rarity: 'epique', incubationMs: 8 * MINUTE, genetic: true,
     description: 'Né au Laboratoire de la fusion de deux créatures. Son contenu dépend de la génétique de ses parents.',

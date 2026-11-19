@@ -41,4 +41,12 @@ export const MAIN_QUESTS: QuestDef[] = [
     goal: { kind: 'recipeCount', target: 1 }, reward: { crystals: 50, items: { coquille_eveil: 1 } } },
   { id: 'q18', chapter: 'Chapitre IV — Les Métamorphoses', title: 'Grand naturaliste', description: 'Découvre 22 espèces.',
     goal: { kind: 'dexCount', target: 22 }, reward: { crystals: 80, eggs: ['legendaire'] } },
+  { id: 'q19', chapter: 'Chapitre V — Le Vaste Monde', title: 'Premier voyage', description: 'Termine une expédition dans un biome.',
+    goal: { kind: 'stat', stat: 'expeditions', target: 1 }, reward: { coins: 300, items: { bois_lune: 3 } } },
+  { id: 'q20', chapter: 'Chapitre V — Le Vaste Monde', title: 'Bâtisseur en herbe', description: 'Améliore ou construis un bâtiment du sanctuaire.',
+    goal: { kind: 'stat', stat: 'buildingUpgrades', target: 1 }, reward: { coins: 500, crystals: 10 } },
+  { id: 'q21', chapter: 'Chapitre V — Le Vaste Monde', title: 'Horizons lointains', description: 'Atteins 4 biomes.',
+    goal: { kind: 'biomesUnlocked', target: 4 }, reward: { coins: 800, eggs: ['glacial'] } },
+  { id: 'q22', chapter: 'Chapitre V — Le Vaste Monde', title: 'Ce que cachent les cartes', description: 'Trouve une zone secrète.',
+    goal: { kind: 'secretsFound', target: 1 }, reward: { crystals: 40, essence: 40 } },
 ];

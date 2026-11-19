@@ -1,9 +1,10 @@
 import { useMemo, useState, type CSSProperties } from 'react';
 import { ELEMENTS } from '@data/elements';
 import { RARITIES, RARITY_ORDER } from '@data/rarities';
-import { BALANCE } from '@data/balance';
 import { ITEMS } from '@data/items';
 import { canEvolve } from '@core/systems/evolution';
+import { creatureCap } from '@core/systems/buildings';
+import { isAway } from '@core/systems/exploration';
 import { useNow } from '../hooks/useNow';
 import { computeStats, displayName, getSpecies } from '@core/systems/creatures';
 import type { ElementId, RarityId } from '@core/types';
@@ -18,7 +19,7 @@ type Sort = 'recent' | 'level' | 'rarity' | 'power' | 'name' | 'dex';
 export function CollectionScreen() {
   const state = useGame((s) => s.state);
   const creatures = state.creatures;
-  const hour = new Date(useNow()).getHours();
+  const now = useNow();
   const { openModal, navigate } = useUi.getState();
   const [sort, setSort] = useState<Sort>('recent');
   const [el, setEl] = useState<ElementId | null>(null);
@@ -56,7 +57,7 @@ export function CollectionScreen() {
   return (
     <div className="stack" style={{ gap: 14 }}>
       <div className="row-wrap" style={{ justifyContent: 'space-between' }}>
-        <h2 style={{ fontSize: 22 }}>Mes créatures <span className="muted num" style={{ fontSize: 15 }}>{creatures.length}/{BALANCE.maxCreatures}</span></h2>
+        <h2 style={{ fontSize: 22 }}>Mes créatures <span className="muted num" style={{ fontSize: 15 }}>{creatures.length}/{creatureCap(state)}</span></h2>
         {(() => {
           const food = Object.keys(useGame.getState().state.inventory).find((id) => ITEMS[id]?.kind === 'food');
           return <button className="btn btn-ghost btn-sm" onClick={() => food && openModal({ kind: 'feed', item: food })} disabled={!food}><Icon name="leaf" />Nourrir…</button>;
@@ -83,7 +84,7 @@ export function CollectionScreen() {
         ))}
       </div>
       {list.length === 0 ? <EmptyState icon="search" title="Aucun résultat">Aucune créature ne correspond à ces filtres.</EmptyState> : (
-        <div className="cr-grid">{list.map((c) => <CreatureCard key={c.uid} c={c} evolvable={canEvolve(state, c, hour)} onClick={() => openModal({ kind: 'creature', uid: c.uid })} />)}</div>
+        <div className="cr-grid">{list.map((c) => <CreatureCard key={c.uid} c={c} evolvable={canEvolve(state, c, now)} away={isAway(state, c.uid)} onClick={() => openModal({ kind: 'creature', uid: c.uid })} />)}</div>
       )}
     </div>
   );

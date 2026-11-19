@@ -120,9 +120,9 @@ export function addXp(draft: GameState, c: CreatureInstance, xp: number, events:
   if (c.level >= BALANCE.maxLevel) c.xp = 0;
 }
 
-export function harvestRatePerHour(c: CreatureInstance): number {
+export function harvestRatePerHour(c: CreatureInstance, zoneBonus = 0): number {
   const r = RARITIES[getSpecies(c.speciesId).rarity];
-  return r.harvestPerHour * (1 + (c.level - 1) * BALANCE.harvestLevelBonus);
+  return r.harvestPerHour * (1 + (c.level - 1) * BALANCE.harvestLevelBonus) * (1 + zoneBonus);
 }
 
 export function releaseValue(c: CreatureInstance): number {
@@ -143,6 +143,7 @@ export function toggleFavorite(draft: GameState, uid: string): void {
 
 export function releaseCreature(draft: GameState, uid: string, ctx: ActionContext, events: GameEvent[], grantEssence: (n: number) => void): void {
   const c = findCreature(draft, uid);
+  assertGame(!draft.expeditions.some((e) => e.creatureUids.includes(uid)), 'away', 'Cette créature est partie en expédition.');
   assertGame(!c.favorite, 'favorite_locked', 'Retire d\'abord cette créature de tes favoris.');
   const essence = releaseValue(c);
   draft.creatures = draft.creatures.filter((x) => x.uid !== uid);

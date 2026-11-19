@@ -53,7 +53,12 @@ function presentEvents(events: GameEvent[], state: GameState) {
     switch (ev.type) {
       case 'reward': ui.toast({ kind: 'reward', title: ev.reason, body: rewardText(ev.reward) }); playSfx('coin'); break;
       case 'purchased': ui.toast({ kind: 'success', title: 'Achat effectué', body: ev.label }); playSfx('buy'); break;
-      case 'harvested': ui.toast({ kind: 'reward', title: 'Récolte', body: `+${ev.coins} pièces` }); playSfx('coin'); break;
+      case 'harvested': {
+        const extra = [ev.produce?.essence ? `+${ev.produce.essence} essence` : '', ...Object.entries(ev.produce?.items ?? {}).map(([id, q]) => `${ITEMS[id]?.name} ×${q}`)].filter(Boolean);
+        ui.toast({ kind: 'reward', title: 'Récolte', body: [`+${ev.coins} pièces`, ...extra].join(' · ') }); playSfx('coin'); break;
+      }
+      case 'expeditionDone': ui.openModal({ kind: 'expeditionResult', event: ev }); playSfx('reveal', ev.secretFound ? 5 : 1); break;
+      case 'foraged': ui.toast({ kind: 'reward', title: 'Fouille', body: rewardText(ev.reward) || 'Rien de spécial…' }); playSfx('coin'); break;
       case 'levelUp': {
         const c = state.creatures.find((x) => x.uid === ev.uid);
         if (c) ui.toast({ kind: 'success', title: 'Niveau supérieur !', body: `${c.nickname || getSpecies(c.speciesId).name} passe au niveau ${ev.level}` });

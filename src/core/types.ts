@@ -127,6 +127,29 @@ export interface PlayerStats {
   speedUps: number;
   evolutions: number;
   breedings: number;
+  expeditions: number;
+  forages: number;
+  buildingUpgrades: number;
+}
+
+export type ExpeditionDuration = 'court' | 'moyen' | 'long';
+
+export interface ExpeditionInstance {
+  uid: string;
+  biomeId: string;
+  creatureUids: string[];
+  duration: ExpeditionDuration;
+  startedAt: number;
+  endsAt: number;
+}
+
+export interface MissionsState {
+  dayKey: string | null;
+  dayBaseline: PlayerStats | null;
+  dayClaimed: string[];
+  weekKey: string | null;
+  weekBaseline: PlayerStats | null;
+  weekClaimed: string[];
 }
 
 export interface Settings {
@@ -147,7 +170,24 @@ export interface GameState {
   ledger: LedgerEntry[];
   quests: { claimed: QuestId[] };
   stats: PlayerStats;
-  sanctuary: { lastHarvestAt: number };
+  sanctuary: {
+    lastHarvestAt: number;
+    buildings: Record<string, number>;
+    /** Décorations possédées → affichée ou non dans la scène. */
+    decorations: Record<string, boolean>;
+    theme: string;
+  };
+  expeditions: ExpeditionInstance[];
+  exploration: {
+    expeditionsByBiome: Record<string, number>;
+    secretsFound: string[];
+    lastForageAt: Record<string, number>;
+  };
+  missions: MissionsState;
+  /** Succès réclamés (trophées). */
+  achievements: string[];
+  /** Quêtes secondaires réclamées. */
+  sideQuests: string[];
   daily: { lastClaimDay: string | null; streak: number };
   unlocks: { ambiances: AmbianceId[] };
   /** Recettes génétiques secrètes découvertes. */

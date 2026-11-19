@@ -1,4 +1,4 @@
-import { BALANCE } from '@data/balance';
+import { creatureCap } from './buildings';
 import { MUTATIONS } from '@data/mutations';
 import { assertGame } from '../errors';
 import type { GameEvent } from '../events';
@@ -34,8 +34,8 @@ export function hatch(draft: GameState, slotIndex: number, ctx: ActionContext, e
   const slot = draft.incubators[slotIndex];
   assertGame(slot && slot.egg, 'slot_empty', 'Cet incubateur est vide.');
   assertGame(isReady(slot, ctx.now), 'not_ready', 'Cet œuf n\'est pas encore prêt.');
-  assertGame(draft.creatures.length < BALANCE.maxCreatures, 'sanctuary_full',
-    `Ton sanctuaire est plein (${BALANCE.maxCreatures} créatures). Libère une créature pour faire de la place.`);
+  assertGame(draft.creatures.length < creatureCap(draft), 'sanctuary_full',
+    `Ton sanctuaire est plein (${creatureCap(draft)} créatures). Agrandis les Nichoirs ou libère une créature.`);
 
   const egg = slot.egg;
   const night = isNight(ctx.hour);

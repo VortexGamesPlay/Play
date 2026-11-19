@@ -2,7 +2,7 @@ import { BALANCE } from '@data/balance';
 import { addEgg } from './systems/inventory';
 import type { GameState } from './types';
 
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 export function createInitialState(now: number): GameState {
   const state: GameState = {
@@ -19,9 +19,14 @@ export function createInitialState(now: number): GameState {
     quests: { claimed: [] },
     stats: {
       eggsObtained: 0, eggsHatched: 0, purchases: 0, harvests: 0, coinsHarvested: 0,
-      creaturesFed: 0, levelUps: 0, released: 0, dailyClaims: 0, speedUps: 0, evolutions: 0, breedings: 0,
+      creaturesFed: 0, levelUps: 0, released: 0, dailyClaims: 0, speedUps: 0, evolutions: 0, breedings: 0, expeditions: 0, forages: 0, buildingUpgrades: 0,
     },
-    sanctuary: { lastHarvestAt: now },
+    sanctuary: { lastHarvestAt: now, buildings: { nichoirs: 1, grenier: 1 }, decorations: {}, theme: 'prairie' },
+    expeditions: [],
+    exploration: { expeditionsByBiome: {}, secretsFound: [], lastForageAt: {} },
+    missions: { dayKey: null, dayBaseline: null, dayClaimed: [], weekKey: null, weekBaseline: null, weekClaimed: [] },
+    achievements: [],
+    sideQuests: [],
     daily: { lastClaimDay: null, streak: 0 },
     unlocks: { ambiances: ['neutre'] },
     recipesFound: [],

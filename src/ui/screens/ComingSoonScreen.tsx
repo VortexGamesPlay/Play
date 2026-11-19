@@ -7,12 +7,6 @@ import { isDiscovered } from '@core/systems/dex';
 interface Plan { title: string; icon: IconName; phase: number; pitch: string; features: string[]; ready: string[]; art: string[] }
 
 const PLANS: Partial<Record<Route, Plan>> = {
-  exploration: {
-    title: 'Exploration des biomes', icon: 'compass', phase: 4, art: ['zephyrin', 'sphingres', 'frimelot'],
-    pitch: 'Envoie tes créatures en expédition dans huit biomes pour y trouver des œufs exclusifs, des ressources et des secrets.',
-    features: ['Forêt enchantée, Volcan ancestral, Montagnes gelées, Royaume sous-marin', 'Dimension cosmique, Marais toxique, Désert ancien, Vallée des ombres', 'Expéditions minutées, météo dynamique et zones secrètes', 'Quêtes de biome et événements'],
-    ready: ['Cycle jour/nuit déjà actif (influence les mutations)', 'Œufs et créatures thématiques par biome déjà présents'],
-  },
   arene: {
     title: 'Arène', icon: 'swords', phase: 5, art: ['fournaillon', 'orageline', 'clapotine'],
     pitch: 'Combats au tour par tour en équipe : avantages élémentaires, compétences, statuts, boss et classements.',

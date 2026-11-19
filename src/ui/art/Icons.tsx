@@ -47,6 +47,14 @@ const ICONS = {
   arrowRight: <g {...S}><path d="M5 12h14M13 6l6 6-6 6" /></g>,
   volume: <g {...S}><path d="M4 9h4l5-4v14l-5-4H4Z" /><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" /></g>,
   motion: <g {...S}><path d="M3 12h4l3-7 4 14 3-7h4" /></g>,
+  cloud: <g {...S}><path d="M7 18a4 4 0 0 1-.6-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17.5 18Z" /></g>,
+  rain: <g {...S}><path d="M7 14a4 4 0 0 1-.6-8A5.5 5.5 0 0 1 17 4.5 4.5 4.5 0 0 1 17.5 14Z" /><path d="M8 17l-1 3M12 17l-1 3M16 17l-1 3" /></g>,
+  snow: <g {...S}><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></g>,
+  fog: <g {...S}><path d="M4 9h16M3 13h18M5 17h14" /></g>,
+  wind: <g {...S}><path d="M3 8h11a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h7" /></g>,
+  flame: <g {...S}><path d="M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4-1-6 1-8Z" /></g>,
+  map: <g {...S}><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3Z" /><path d="M9 3v15M15 6v15" /></g>,
+  hammer: <g {...S}><path d="M14 6l4 4-9 9-4-4Z" /><path d="M13 4l7 7M16 3l5 5" /></g>,
   trophy: <g {...S}><path d="M8 4h8v5a4 4 0 0 1-8 0Z" /><path d="M8 6H4a3 3 0 0 0 4 4M16 6h4a3 3 0 0 1-4 4M12 13v4M8 21h8M9 17h6v4H9z" /></g>,
 } satisfies Record<string, ReactNode>;
 

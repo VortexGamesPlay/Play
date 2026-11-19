@@ -7,7 +7,7 @@ import { CreatureArt } from '../art/CreatureArt';
 import { ElementIcon, Icon } from '../art/Icons';
 import { MUTATIONS } from '@data/mutations';
 
-export function CreatureCard({ c, onClick, selected, evolvable }: { c: CreatureInstance; onClick?: () => void; selected?: boolean; evolvable?: boolean }) {
+export function CreatureCard({ c, onClick, selected, evolvable, away }: { c: CreatureInstance; onClick?: () => void; selected?: boolean; evolvable?: boolean; away?: boolean }) {
   const sp = getSpecies(c.speciesId);
   const r = RARITIES[sp.rarity];
   return (
@@ -18,6 +18,7 @@ export function CreatureCard({ c, onClick, selected, evolvable }: { c: CreatureI
         <span className="cr-el tip" data-tip={ELEMENTS[sp.element].name}><ElementIcon element={sp.element} style={{ color: ELEMENTS[sp.element].color }} /></span>
       </div>
       {evolvable && <span className="cr-evo tip" data-tip="Évolution possible"><Icon name="sparkle" /></span>}
+      {away && <span className="cr-away"><Icon name="compass" />En expédition</span>}
       <div className="cr-card-art"><CreatureArt speciesId={c.speciesId} mutations={c.mutations} hue={c.genes.hue} size={112} seed={c.uid} /></div>
       <div className="cr-card-name">{displayName(c)}</div>
       <div className="cr-card-sub">

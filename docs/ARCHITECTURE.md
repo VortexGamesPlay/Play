@@ -68,6 +68,14 @@ Clic → useGame.dispatch(action)
 - `breedingOdds(a, b)` dans `odds.ts` : recettes applicables puis formes de base des deux lignées. **Même fonction** pour le tirage et pour l'affichage du Laboratoire.
 - L'espèce, les gènes et les mutations héritées sont fixés au moment de la fusion et stockés dans l'œuf (`EggInstance.genetics`) ; l'ambiance d'incubation peut encore ajouter une mutation dans un groupe libre. Côté serveur (Phase 6), la fusion sera exécutée avec la RNG serveur : le client ne pourra pas « relancer » un œuf.
 
+## Monde (Phase 4)
+
+- `core/systems/weather.ts` : la météo est **calculée**, pas stockée — hachage du lieu + tranche de 3 h → tirage pondéré. Tous les joueurs voient la même météo au même moment, et le serveur pourra la recalculer.
+- `core/systems/exploration.ts` : `expeditionForecast` sert à la fois à l'affichage et au calcul du butin (la météo prise en compte est celle du départ).
+- `core/systems/buildings.ts` : capacités (créatures, œufs), bonus de zones, production (jardin, observatoire) ; tout est dérivé du niveau des bâtiments.
+- `core/systems/missions.ts` : au début de chaque action, `syncPeriods` photographie les statistiques quand le jour ou la semaine change ; la progression d'une mission = statistique actuelle − photographie.
+- Ajouter un biome : une entrée dans `data/biomes.ts` (+ position sur la carte dans `ExplorationScreen.tsx`). Un bâtiment : `data/buildings.ts`.
+
 ## Rendu des créatures
 
 `ui/art/CreatureArt.tsx` assemble une créature à partir de son `ArtSpec` : forme du corps (8), oreilles (12), crête (10), queue (10), ailes (6), yeux (6), bouche (5), motif (7) et palette. Les gènes décalent la teinte (±12°) ; les mutations transforment la palette et ajoutent des couches (`mutationLook.ts`). Animations CSS : repos, marche, attaque, sommeil, clignement, battement d'ailes, queue. Les silhouettes du Bestiaire passent par un filtre SVG (forme pure).

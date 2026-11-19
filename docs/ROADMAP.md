@@ -29,9 +29,6 @@ Légende : ✅ terminé et vérifié · 🟡 partiel (détail indiqué) · ⏳ n
 | Bestiaire : silhouettes, catégories, filtres, recherche, fiches, lignées, variantes, historique, complétion | ✅ |
 | Probabilités réelles affichées (espèces + mutations, par ambiance, jour / nuit) | ✅ |
 
-### Livré en avance (bases des phases suivantes)
-
-- 🟡 **Phase 4** : sanctuaire vivant (promenade, sommeil plus fréquent la nuit, repas, jeu, réaction au toucher), récolte passive de pièces, cycle jour/nuit, quête principale (14 étapes), récompense quotidienne avec série. _Pas encore :_ habitats, décorations, bâtiments, biomes, expéditions, météo, quêtes secondaires / hebdomadaires.
 
 ## Phase 3 — Profondeur ✅
 
@@ -54,8 +51,26 @@ Légende : ✅ terminé et vérifié · 🟡 partiel (détail indiqué) · ⏳ n
 
 _Reste pour plus tard :_ conditions d'évolution liées à la météo (arrivera avec la météo, Phase 4) ; davantage d'espèces et de recettes (contenu, sans changement de moteur).
 
-## Phase 4 — Monde ⏳
-Phaser 3 pour les biomes · 8 biomes avec œufs, ressources et secrets · expéditions · météo · habitats et bâtiments améliorables · quêtes secondaires, quotidiennes, hebdomadaires, succès.
+## Phase 4 — Monde ✅
+
+| Élément | État |
+|---|---|
+| 8 biomes illustrés et animés, débloqués par la progression du Bestiaire, sur une carte du monde | ✅ |
+| Météo par biome et pour le sanctuaire (12 types, dont 4 événements rares : Pluie d'étoiles, Éruption, Aurore boréale, Marée lumineuse), change toutes les 3 h, déterministe | ✅ |
+| Expéditions : équipe de 1 à 3, trois durées, qualité selon puissance / éléments / météo, prévisions exactes avant départ, rappel possible | ✅ |
+| Fouille rapide par biome (recharge 20 min) | ✅ |
+| 8 matériaux, 4 œufs exclusifs à l'exploration, 4 créatures exclusives (40 espèces au total) | ✅ |
+| Zones secrètes (une par biome) révélées par l'exploration | ✅ |
+| Bâtiments améliorables : Nichoirs (capacité), Grenier (œufs), Jardin (nourriture), Bassin et Fournaise (zones aquatique et volcanique), Observatoire (essence) | ✅ |
+| Décorations visibles dans la scène, 5 terrains de sanctuaire débloqués par l'exploration | ✅ |
+| Effets météo animés dans le sanctuaire ; créatures en expédition absentes de la scène | ✅ |
+| Missions quotidiennes et hebdomadaires (3 + 3), quêtes secondaires de biome (16), succès / trophées (16), Chapitre V de la quête principale | ✅ |
+| Évolution liée à la météo (Champilou → Marécroc sous la pluie) | ✅ |
+| Sauvegarde v4 avec migration | ✅ |
+
+**Décision technique — Phaser non retenu (pour l'instant).** L'exploration a été conçue en expéditions et scènes illustrées (SVG + CSS), qui fonctionnent aussi bien sur mobile que sur PC sans moteur supplémentaire (~1 Mo). Phaser ne sera ajouté que si une exploration en temps réel (déplacement libre d'un personnage) est décidée ; le cœur du jeu reste indépendant du rendu.
+
+_Reste pour plus tard :_ musiques d'ambiance par biome (Phase 8), boss communautaires et événements saisonniers partagés (Phase 6, nécessitent un serveur).
 
 ## Phase 5 — Combats ⏳
 Tour par tour, équipes de 3, énergie, compétences, statuts · table des forces élémentaires (déjà dans `data/elements.ts`) · PNJ, arènes, boss, récompenses.

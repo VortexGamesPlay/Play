@@ -43,7 +43,7 @@ describe('Évolutions', () => {
   it('gère les branches : régime alimentaire', () => {
     const s = newGame();
     const c = withCreature(s, 'lichenou', { level: 14, diet: { fruit: 8 } });
-    const opts = evolutionOptions(s, c, 12);
+    const opts = evolutionOptions(s, c, NOON);
     expect(opts.find((o) => o.def.to === 'petalys')!.ready).toBe(true);
     expect(opts.find((o) => o.def.to === 'bosquelin')!.ready).toBe(false);
   });
@@ -65,8 +65,8 @@ describe('Évolutions', () => {
     const s = newGame();
     const cold = withCreature(s, 'sphingres', { level: 20 });
     const hot = withCreature(s, 'sphingres', { level: 20, origin: { kind: 'egg', eggType: 'volcanique', ambiance: 'chaleur', night: false } });
-    expect(evolutionOptions(s, cold, 12)[0]!.ready).toBe(false);
-    expect(evolutionOptions(s, hot, 12)[0]!.ready).toBe(true);
+    expect(evolutionOptions(s, cold, NOON)[0]!.ready).toBe(false);
+    expect(evolutionOptions(s, hot, NOON)[0]!.ready).toBe(true);
   });
 });
 

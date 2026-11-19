@@ -1,8 +1,8 @@
 import { useState, type CSSProperties } from 'react';
 import { EGGS } from '@data/eggs';
 import { ITEMS } from '@data/items';
-import { BALANCE } from '@data/balance';
 import { CURRENCY_NAMES } from '@core/systems/economy';
+import { eggCap } from '@core/systems/buildings';
 import { EggArt } from '../art/EggArt';
 import { CurrencyIcon, Icon } from '../art/Icons';
 import { RarityBadge } from '../components/Badges';
@@ -30,7 +30,7 @@ export function InventoryScreen() {
       </div>
       <div className="tabs">
         <button className={tab === 'items' ? 'active' : ''} onClick={() => setTab('items')}>Objets<span className="count">{items.reduce((s, [, q]) => s + q, 0)}</span></button>
-        <button className={tab === 'eggs' ? 'active' : ''} onClick={() => setTab('eggs')}>Œufs<span className="count">{state.eggs.length}/{BALANCE.maxEggStorage}</span></button>
+        <button className={tab === 'eggs' ? 'active' : ''} onClick={() => setTab('eggs')}>Œufs<span className="count">{state.eggs.length}/{eggCap(state)}</span></button>
         <button className={tab === 'ledger' ? 'active' : ''} onClick={() => setTab('ledger')}>Transactions</button>
       </div>
 
@@ -45,6 +45,8 @@ export function InventoryScreen() {
                 {d.kind === 'food' ? (
                   <div className="row"><span className="badge soft-badge">+{d.xp} XP</span><span className="badge soft-badge">+{d.affection} affection</span><span className="spacer" />
                     <button className="btn btn-mint btn-sm" disabled={state.creatures.length === 0} onClick={() => openModal({ kind: 'feed', item: id })}>Utiliser</button></div>
+                ) : d.kind === 'material' ? (
+                  <div className="row-wrap"><span className="badge soft-badge"><Icon name="hammer" />Matériau</span><span className="muted" style={{ fontSize: 12, fontWeight: 700 }}>Sert à construire et améliorer les bâtiments du sanctuaire.</span></div>
                 ) : (
                   <div className="row-wrap"><span className="badge soft-badge"><Icon name="sparkle" />Objet d'évolution</span><span className="muted" style={{ fontSize: 12, fontWeight: 700 }}>Consommé automatiquement lors de l'évolution qui l'exige.</span></div>
                 )}
