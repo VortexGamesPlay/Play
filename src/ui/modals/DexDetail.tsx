@@ -15,6 +15,7 @@ import { useUi } from '../../store/uiStore';
 import { conditionText, fmtDateTime, foodTagName } from '../format';
 import { formatPct } from './OddsModal';
 import { ELEMENTS } from '@data/elements';
+import { RECIPES } from '@data/recipes';
 
 /** Remonte jusqu'à la forme de base puis liste toute la lignée. */
 function evolutionLine(sp: SpeciesDef): SpeciesDef[] {
@@ -55,8 +56,10 @@ export function DexDetail({ speciesId }: { speciesId: string }) {
           {eggs.length > 0 && (
             <div className="status-panel"><Icon name="egg" /><div><b>Peut éclore de :</b><div className="row-wrap" style={{ marginTop: 6 }}>{eggs.map((e) => <button key={e.id} className="chip" onClick={() => openModal({ kind: 'odds', eggType: e.id })}>{e.name} · {formatPct(speciesOdds(e.id).find((o) => o.speciesId === speciesId)!.probability)}</button>)}</div></div></div>
           )}
-          {sp.obtainableBy.includes('evolution') && <div className="status-panel"><Icon name="sparkle" /><p>Cette créature naît de l'évolution d'une autre espèce (Phase 3).</p></div>}
-          {sp.obtainableBy.includes('breeding') && <div className="status-panel"><Icon name="flask" /><p>Aucun œuf connu ne la contient. Le Laboratoire génétique (Phase 3) pourrait percer ce mystère.</p></div>}
+          {sp.obtainableBy.includes('evolution') && <div className="status-panel"><Icon name="sparkle" /><p>Cette créature naît de l'évolution d'une autre espèce. Observe les fiches de tes créatures : leurs chemins d'évolution y sont décrits.</p></div>}
+          {RECIPES.filter((r) => r.result === speciesId).map((r) => (
+            <div key={r.id} className="status-panel"><Icon name="flask" /><p>Une recette du Laboratoire génétique murmure : <b>« {r.hint} »</b></p></div>
+          ))}
           <div className="status-panel"><ElementIcon element={sp.element} style={{ color: ELEMENTS[sp.element].color }} /><p>Une trace d'énergie <b>{ELEMENTS[sp.element].name}</b> a été relevée.</p></div>
         </div>
       </div>

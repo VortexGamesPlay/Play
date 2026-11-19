@@ -6,6 +6,10 @@ import { PERSONALITIES } from '@data/personalities';
 import { RARITIES } from '@data/rarities';
 import { computeStats, displayName, geneQuality, getSpecies, harvestRatePerHour, releaseValue } from '@core/systems/creatures';
 import { CreatureArt } from '../art/CreatureArt';
+import { SPECIES } from '@data/species';
+import { evolutionOptions } from '@core/systems/evolution';
+import { isDiscovered } from '@core/systems/dex';
+import { useNow } from '../hooks/useNow';
 import { EssenceIcon, Icon } from '../art/Icons';
 import { ElementBadge, MutationBadge, RarityBadge } from '../components/Badges';
 import { Bar } from '../components/Bar';
@@ -18,7 +22,9 @@ const ANIMS: [Anim, string][] = [['idle', 'Repos'], ['walk', 'Marche'], ['attack
 const STAT_MAX = 160;
 
 export function CreatureDetail({ uid }: { uid: string }) {
-  const c = useGame((s) => s.state.creatures.find((x) => x.uid === uid));
+  const state = useGame((s) => s.state);
+  const c = state.creatures.find((x) => x.uid === uid);
+  const now = useNow();
   const dispatch = useGame((s) => s.dispatch);
   const { openModal, closeModal } = useUi.getState();
   const [anim, setAnim] = useState<Anim>('idle');
@@ -33,6 +39,7 @@ export function CreatureDetail({ uid }: { uid: string }) {
   const st = computeStats(c);
   const pers = PERSONALITIES[c.personality];
   const maxed = c.level >= BALANCE.maxLevel;
+  const evoOptions = evolutionOptions(state, c, new Date(now).getHours());
 
   return (
     <div className="detail" style={{ ['--rc' as string]: r.color, ['--rg' as string]: r.glow } as CSSProperties}>
@@ -113,21 +120,38 @@ export function CreatureDetail({ uid }: { uid: string }) {
         )}
 
         <h3 className="detail-h">Évolutions</h3>
-        {sp.evolutions.length === 0 ? <p className="soft" style={{ fontSize: 14 }}>Aucune évolution connue pour cette espèce.</p> : (
+        {sp.evolutions.length === 0 ? <p className="soft" style={{ fontSize: 14 }}>Forme finale : aucune évolution connue pour cette espèce.</p> : (
           <div className="stack" style={{ gap: 8 }}>
-            {sp.evolutions.map((e) => (
-              <div key={e.to} className="evo-row">
-                <CreatureArt speciesId={e.to} size={44} anim="none" silhouette />
-                <div style={{ flex: 1 }}><b>???</b><div className="row-wrap" style={{ marginTop: 4 }}>{e.conditions.map((cd, i) => <span key={i} className="badge soft-badge">{conditionText(cd)}</span>)}</div></div>
-              </div>
-            ))}
-            <div className="status-panel"><Icon name="info" /><p style={{ fontSize: 13 }}><b>Évolutions : Phase 3.</b> Les conditions sont déjà suivies (niveau, régime alimentaire, affection) ; l'évolution elle-même sera activée avec sa cinématique en Phase 3.</p></div>
+            {evoOptions.map((o) => {
+              const known = isDiscovered(state, o.def.to);
+              return (
+                <div key={o.def.to} className={`evo-row ${o.ready ? 'ready' : ''}`}>
+                  <CreatureArt speciesId={o.def.to} size={52} anim={o.ready ? 'idle' : 'none'} silhouette={!known} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <b>{known ? SPECIES[o.def.to]?.name : '???'}</b>
+                    <div className="row-wrap" style={{ marginTop: 4 }}>
+                      {o.checks.map((ck, i) => (
+                        <span key={i} className={`badge cond ${ck.met ? 'met' : ''}`}><Icon name={ck.met ? 'check' : 'lock'} />{conditionText(ck.condition)}{ck.progress && !ck.met ? ` (${ck.progress})` : ''}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <button className="btn btn-pink btn-sm" disabled={!o.ready} onClick={() => openModal({
+                    kind: 'confirm', title: 'Lancer l\'évolution ?', confirmLabel: 'Évoluer',
+                    body: `${displayName(c)} va se transformer. Son niveau, ses gènes, sa personnalité et ses mutations sont conservés.${o.def.conditions.some((x) => x.type === 'item') ? ' L\'objet requis sera consommé.' : ''} L'évolution est définitive.`,
+                    onConfirm: () => dispatch({ type: 'evolve', uid, to: o.def.to }),
+                  })}><Icon name="sparkle" />Évoluer</button>
+                </div>
+              );
+            })}
+            {evoOptions.length > 1 && <p className="muted" style={{ fontSize: 12 }}>Plusieurs chemins possibles : un seul peut être choisi.</p>}
           </div>
         )}
 
         <h3 className="detail-h">Origine</h3>
         <dl className="kv">
           <dt>Éclosion</dt><dd>{fmtDateTime(c.hatchedAt)}</dd>
+          {c.origin.kind === 'breeding' && <><dt>Parents</dt><dd>{SPECIES[c.origin.parents[0]]?.name} × {SPECIES[c.origin.parents[1]]?.name}</dd><dt>Ambiance</dt><dd>{AMBIANCES[c.origin.ambiance]?.name}</dd></>}
+          <dt>Reproduction</dt><dd>{c.breedCount}/{BALANCE.breeding.maxBreeds} fusions{c.breedReadyAt > Date.now() ? ' · se repose' : ''}</dd>
           {c.origin.kind === 'egg' && <><dt>Œuf</dt><dd>{EGGS[c.origin.eggType]?.name}</dd><dt>Ambiance</dt><dd>{AMBIANCES[c.origin.ambiance]?.name}{c.origin.night ? ' · de nuit' : ' · de jour'}</dd></>}
           <dt>Production</dt><dd>{Math.round(harvestRatePerHour(c))} pièces / h</dd>
           <dt>Aliments préférés</dt><dd>{sp.favoriteFood.map(foodTagName).join(', ')}</dd>

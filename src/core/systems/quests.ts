@@ -16,6 +16,7 @@ export function questProgress(state: GameState, q: QuestDef): { current: number;
     case 'maxLevel': current = state.creatures.reduce((m, c) => Math.max(m, c.level), 0); break;
     case 'variantCount': current = variantCount(state); break;
     case 'incubators': current = state.incubators.length; break;
+    case 'recipeCount': current = state.recipesFound.length; break;
   }
   return { current: Math.min(current, g.target), target: g.target, done: current >= g.target };
 }

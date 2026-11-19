@@ -35,6 +35,7 @@ export interface Genes {
 
 export type CreatureOrigin =
   | { kind: 'egg'; eggType: EggTypeId; ambiance: AmbianceId; night: boolean }
+  | { kind: 'breeding'; parents: [SpeciesId, SpeciesId]; ambiance: AmbianceId; night: boolean }
   | { kind: 'starter' };
 
 export interface CreatureInstance {
@@ -56,6 +57,22 @@ export interface CreatureInstance {
   /** Compteur des aliments consommés par étiquette (servira aux évolutions — Phase 3). */
   diet: Record<string, number>;
   generation: number;
+  /** Nombre de reproductions déjà effectuées (limité). */
+  breedCount: number;
+  /** Horodatage avant lequel la créature se repose après une reproduction. */
+  breedReadyAt: number;
+}
+
+/** Contenu génétique d'un œuf issu du Laboratoire, déterminé au moment de la fusion. */
+export interface EggGenetics {
+  speciesId: SpeciesId;
+  genes: Genes;
+  /** Mutations héritées des parents (d'autres peuvent apparaître à l'éclosion). */
+  mutations: MutationId[];
+  generation: number;
+  parents: [SpeciesId, SpeciesId];
+  parentNames: [string, string];
+  recipeId: string | null;
 }
 
 export interface EggInstance {
@@ -63,6 +80,7 @@ export interface EggInstance {
   type: EggTypeId;
   obtainedAt: number;
   source: string;
+  genetics?: EggGenetics;
 }
 
 export interface IncubatorSlot {
@@ -107,6 +125,8 @@ export interface PlayerStats {
   released: number;
   dailyClaims: number;
   speedUps: number;
+  evolutions: number;
+  breedings: number;
 }
 
 export interface Settings {
@@ -130,6 +150,8 @@ export interface GameState {
   sanctuary: { lastHarvestAt: number };
   daily: { lastClaimDay: string | null; streak: number };
   unlocks: { ambiances: AmbianceId[] };
+  /** Recettes génétiques secrètes découvertes. */
+  recipesFound: string[];
   settings: Settings;
   uidCounter: number;
 }

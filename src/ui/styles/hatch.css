@@ -58,3 +58,24 @@
 .hatch-bonus { color: #1fa8d8; }
 .hatch-skip { position: absolute; bottom: calc(30px + var(--safe-bottom)); color: rgba(255, 255, 255, .6); font-size: 13px; font-weight: 800; z-index: 8; }
 @media (max-height: 700px) { .hatch-stage { width: 260px; height: 260px; } .hatch-creature .creature { width: 180px; height: 180px; } }
+
+/* ── Évolution ── */
+.evo-body { position: relative; z-index: 2; transition: filter .6s; }
+.evo.evo-0 .evo-body { filter: brightness(1.6) drop-shadow(0 0 18px white); animation: shake-s 1s ease-in-out infinite; }
+.evo.evo-1 .evo-body, .evo.evo-2 .evo-body { filter: brightness(0) invert(1) drop-shadow(0 0 22px var(--rg)); }
+.evo.evo-1 .hatch-light, .evo.evo-2 .hatch-light { opacity: 1; transform: scale(1.8); }
+.evo.evo-1 .hatch-rays { opacity: .6; }
+
+/* ── Fusion génétique ── */
+.fusion-stage { position: relative; width: min(90vw, 420px); height: 260px; }
+.fusion-parent { position: absolute; top: 40px; transition: all 1.4s var(--ease-out); z-index: 2; }
+.fusion-parent.a { left: 0; }
+.fusion-parent.b { right: 0; }
+.fusion-1 .fusion-parent.a, .fusion-2 .fusion-parent.a { left: calc(50% - 75px); opacity: .0; transform: scale(.4); filter: brightness(0) invert(1); }
+.fusion-1 .fusion-parent.b, .fusion-2 .fusion-parent.b { right: calc(50% - 75px); opacity: .0; transform: scale(.4); filter: brightness(0) invert(1); }
+.fusion-helix { position: absolute; left: 50%; top: 50%; width: 120px; height: 200px; transform: translate(-50%, -50%); opacity: 0; transition: opacity .5s; }
+.fusion-1 .fusion-helix { opacity: 1; animation: spin-y 1s linear infinite; }
+@keyframes spin-y { from { transform: translate(-50%, -50%) rotateY(0); } to { transform: translate(-50%, -50%) rotateY(360deg); } }
+.fusion-egg { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0); z-index: 3; }
+@keyframes egg-pop-in { to { transform: translate(-50%, -50%) scale(1); } }
+.fusion-2 .fusion-egg { animation: egg-pop-in .8s var(--ease-pop) forwards; }

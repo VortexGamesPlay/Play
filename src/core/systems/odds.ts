@@ -3,8 +3,9 @@ import { AMBIANCES } from '@data/ambiances';
 import { EGGS } from '@data/eggs';
 import { MUTATIONS } from '@data/mutations';
 import { RARITIES } from '@data/rarities';
-import { SPECIES } from '@data/species';
-import type { MutationDef } from '../content';
+import { SPECIES, SPECIES_LIST } from '@data/species';
+import { RECIPES } from '@data/recipes';
+import type { MutationDef, RecipeDef, RecipeMatcher } from '../content';
 import type { AmbianceId, EggTypeId, MutationId, SpeciesId } from '../types';
 
 /**
@@ -21,6 +22,7 @@ export interface SpeciesOdd {
 export function speciesOdds(eggType: EggTypeId): SpeciesOdd[] {
   const egg = EGGS[eggType];
   if (!egg) throw new Error(`Œuf inconnu : ${eggType}`);
+  if (egg.genetic) return []; // contenu fixé par les parents (voir breedingOdds)
   const weights = egg.pool.map((p) => {
     const sp = SPECIES[p.species]!;
     return { speciesId: p.species, weight: RARITIES[sp.rarity].hatchWeight * (p.weightMul ?? 1) };
@@ -80,4 +82,55 @@ export function anyMutationChance(eggType: EggTypeId, ambiance: AmbianceId, nigh
   let none = 1;
   for (const p of groups.values()) none *= 1 - p;
   return 1 - none;
+}
+
+// ───────────────────────── Reproduction ─────────────────────────
+
+/** Forme de base d'une lignée (on remonte les évolutions). */
+export function baseFormOf(speciesId: SpeciesId): SpeciesId {
+  let id = speciesId;
+  for (;;) {
+    const parent = SPECIES_LIST.find((s) => s.evolutions.some((e) => e.to === id));
+    if (!parent) return id;
+    id = parent.id;
+  }
+}
+
+function matches(m: RecipeMatcher, speciesId: SpeciesId): boolean {
+  if (m.species) return m.species === speciesId;
+  return SPECIES[speciesId]?.element === m.element;
+}
+
+export function recipeMatches(r: RecipeDef, a: SpeciesId, b: SpeciesId): boolean {
+  const [x, y] = r.parents;
+  return (matches(x, a) && matches(y, b)) || (matches(x, b) && matches(y, a));
+}
+
+export interface BreedingOdd {
+  speciesId: SpeciesId;
+  probability: number;
+  recipeId: string | null;
+}
+
+/**
+ * Issues possibles d'une fusion : recettes secrètes applicables, puis formes de base des deux parents (50/50).
+ * Utilisé à la fois par le tirage et par l'affichage du Laboratoire.
+ */
+export function breedingOdds(a: SpeciesId, b: SpeciesId): BreedingOdd[] {
+  const recipes = RECIPES.filter((r) => recipeMatches(r, a, b));
+  const out: BreedingOdd[] = [];
+  let recipeTotal = 0;
+  for (const r of recipes) {
+    const p = Math.min(r.chance, Math.max(0, BALANCE.breeding.recipeChanceCap - recipeTotal));
+    if (p <= 0) continue;
+    recipeTotal += p;
+    out.push({ speciesId: r.result, probability: p, recipeId: r.id });
+  }
+  const rest = 1 - recipeTotal;
+  for (const base of [baseFormOf(a), baseFormOf(b)]) {
+    const existing = out.find((o) => o.speciesId === base && o.recipeId === null);
+    if (existing) existing.probability += rest / 2;
+    else out.push({ speciesId: base, probability: rest / 2, recipeId: null });
+  }
+  return out.sort((x, y) => y.probability - x.probability);
 }

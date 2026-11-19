@@ -9,7 +9,7 @@ import { RarityBadge } from '../components/Badges';
 import { EmptyState } from '../components/EmptyState';
 import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
-import { groupEggs } from './IncubatorScreen';
+import { geneticsLabel, groupEggs } from './IncubatorScreen';
 import { fmtDateTime, foodTagName } from '../format';
 
 type Tab = 'items' | 'eggs' | 'ledger';
@@ -42,8 +42,12 @@ export function InventoryScreen() {
               <div key={id} className="card item-card">
                 <div className="row"><span className="food-ic" style={{ ['--fc' as string]: d.color } as CSSProperties} /><div style={{ flex: 1 }}><b>{d.name}</b><div className="muted" style={{ fontSize: 12 }}>×{q} · {d.tags.map(foodTagName).join(', ')}</div></div></div>
                 <p className="soft" style={{ fontSize: 13, margin: '8px 0' }}>{d.description}</p>
-                <div className="row"><span className="badge soft-badge">+{d.xp} XP</span><span className="badge soft-badge">+{d.affection} affection</span><span className="spacer" />
-                  <button className="btn btn-mint btn-sm" disabled={state.creatures.length === 0} onClick={() => openModal({ kind: 'feed', item: id })}>Utiliser</button></div>
+                {d.kind === 'food' ? (
+                  <div className="row"><span className="badge soft-badge">+{d.xp} XP</span><span className="badge soft-badge">+{d.affection} affection</span><span className="spacer" />
+                    <button className="btn btn-mint btn-sm" disabled={state.creatures.length === 0} onClick={() => openModal({ kind: 'feed', item: id })}>Utiliser</button></div>
+                ) : (
+                  <div className="row-wrap"><span className="badge soft-badge"><Icon name="sparkle" />Objet d'évolution</span><span className="muted" style={{ fontSize: 12, fontWeight: 700 }}>Consommé automatiquement lors de l'évolution qui l'exige.</span></div>
+                )}
               </div>
             );
           })}
@@ -53,8 +57,8 @@ export function InventoryScreen() {
       {tab === 'eggs' && (eggs.length === 0 ? <EmptyState icon="egg" title="Aucun œuf">Récompense quotidienne, quêtes et boutique te fourniront des œufs.</EmptyState> : (
         <div className="grid-auto" style={{ ['--min' as string]: '240px' } as CSSProperties}>
           {eggs.map(([type, list]) => (
-            <div key={type} className="card item-card">
-              <div className="row"><EggArt type={type} size={44} /><div style={{ flex: 1 }}><b>{EGGS[type]!.name}</b> <span className="muted">×{list.length}</span><div><RarityBadge rarity={EGGS[type]!.rarity} small /></div></div></div>
+            <div key={list[0]!.uid} className="card item-card">
+              <div className="row"><EggArt type={type} size={44} /><div style={{ flex: 1 }}><b>{EGGS[type]!.name}</b> <span className="muted">×{list.length}</span><div><RarityBadge rarity={EGGS[type]!.rarity} small /></div>{geneticsLabel(list[0]!) && <div className="muted" style={{ fontSize: 12, fontWeight: 700 }}>Parents : {geneticsLabel(list[0]!)}</div>}</div></div>
               <p className="soft" style={{ fontSize: 13, margin: '8px 0' }}>{EGGS[type]!.description}</p>
               <div className="row"><button className="btn btn-ghost btn-sm" onClick={() => openModal({ kind: 'odds', eggType: type })}><Icon name="dice" />Probabilités</button><span className="spacer" /><button className="btn btn-sm" onClick={() => navigate('incubateur')}>Incuber</button></div>
             </div>

@@ -22,7 +22,7 @@ export function HatchSequence({ event }: { event: Hatched }) {
   const sp = getSpecies(c.speciesId);
   const rarity = RARITIES[sp.rarity];
   const tier = rarity.tier;
-  const eggType = c.origin.kind === 'egg' ? c.origin.eggType : 'forestier';
+  const eggType = c.origin.kind === 'egg' ? c.origin.eggType : c.origin.kind === 'breeding' ? 'hybride' : 'forestier';
   const tease = tier >= 3 ? 900 : 0;
   const timeline = useMemo(() => [0, 800, 1500, 2200 + tease, 2900 + tease, 3300 + tease], [tease]);
   const [stage, setStage] = useState(0);

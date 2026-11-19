@@ -71,6 +71,12 @@ export const EGGS: Record<string, EggDef> = {
     mutationMultipliers: { cosmique: 4 }, affinity: [], requiresAmbiance: ['etoilee'],
     visual: { base: '#1d1650', secondary: '#7a5af0', pattern: 'galaxy', glow: '#b9a8ff' },
   },
+  hybride: {
+    id: 'hybride', name: 'Œuf génétique', rarity: 'epique', incubationMs: 8 * MINUTE, genetic: true,
+    description: 'Né au Laboratoire de la fusion de deux créatures. Son contenu dépend de la génétique de ses parents.',
+    pool: [], mutationMultipliers: {}, affinity: ['serre'],
+    visual: { base: '#e8f6ff', secondary: '#7b5cff', pattern: 'helix', glow: '#c8b8ff' },
+  },
   legendaire: {
     id: 'legendaire', name: 'Œuf légendaire', rarity: 'legendaire', incubationMs: 2 * HOUR,
     description: 'Couronné d\'or. Aucun gardien n\'a jamais su ce qu\'il contiendrait.',

@@ -111,7 +111,7 @@ export interface SpeciesDef {
 export interface EggVisual {
   base: string;
   secondary: string;
-  pattern: 'leaves' | 'waves' | 'lava' | 'clouds' | 'wisps' | 'runes' | 'veins' | 'prism' | 'galaxy' | 'crown';
+  pattern: 'leaves' | 'waves' | 'lava' | 'clouds' | 'wisps' | 'runes' | 'veins' | 'prism' | 'galaxy' | 'crown' | 'helix';
   glow: string;
 }
 
@@ -134,6 +134,8 @@ export interface EggDef {
   /** Si défini, l'œuf ne peut être incubé que dans l'une de ces ambiances. */
   requiresAmbiance?: AmbianceId[];
   visual: EggVisual;
+  /** Œuf génétique : son contenu vient des parents (Laboratoire), pas d'une table. */
+  genetic?: boolean;
 }
 
 export interface MutationDef {
@@ -161,7 +163,8 @@ export interface ItemDef {
   id: ItemId;
   name: string;
   description: string;
-  kind: 'food';
+  /** food : se mange ; evolution : consommé lors d'une évolution qui l'exige. */
+  kind: 'food' | 'evolution';
   xp: number;
   affection: number;
   tags: string[];
@@ -197,7 +200,8 @@ export type QuestGoal =
   | { kind: 'creatureCount'; target: number }
   | { kind: 'maxLevel'; target: number }
   | { kind: 'variantCount'; target: number }
-  | { kind: 'incubators'; target: number };
+  | { kind: 'incubators'; target: number }
+  | { kind: 'recipeCount'; target: number };
 
 export interface Reward {
   coins?: number;
@@ -205,6 +209,24 @@ export interface Reward {
   essence?: number;
   items?: Partial<Record<ItemId, number>>;
   eggs?: EggTypeId[];
+}
+
+/** Un parent de recette : par espèce précise ou par élément. */
+export interface RecipeMatcher {
+  species?: SpeciesId;
+  element?: ElementId;
+}
+
+/** Recette génétique secrète : une combinaison de parents peut donner une espèce particulière. */
+export interface RecipeDef {
+  id: string;
+  name: string;
+  /** Indice affiché tant que la recette n'est pas découverte. */
+  hint: string;
+  parents: [RecipeMatcher, RecipeMatcher];
+  result: SpeciesId;
+  /** Probabilité d'obtenir le résultat quand les parents correspondent. */
+  chance: number;
 }
 
 export interface QuestDef {

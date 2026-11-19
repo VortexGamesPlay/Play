@@ -24,6 +24,27 @@ export const BALANCE = {
   ledgerSize: 200,
   discoveryLogSize: 300,
   variantDiscoveryCrystals: 5,
+  breeding: {
+    minLevel: 10,
+    minAffection: 20,
+    /** Nombre maximal de reproductions par créature. */
+    maxBreeds: 4,
+    cooldownMs: 1 * HOUR,
+    coins: 150,
+    essenceBase: 15,
+    essencePerTier: 5,
+    /** Probabilité de transmettre chaque mutation d'un parent. */
+    inheritChance: 0.35,
+    /** Avec stabilisateur (coût en essence supplémentaire). */
+    stabilizedInheritChance: 0.7,
+    stabilizerEssence: 30,
+    /** Variation aléatoire d'un gène hérité (±). */
+    geneDrift: 3,
+    /** Chance qu'un gène hérité fasse un bond (+5). */
+    geneSurgeChance: 0.06,
+    /** Plafond de la somme des chances de recettes. */
+    recipeChanceCap: 0.9,
+  },
   daily: {
     baseCoins: 120,
     coinsPerStreakDay: 30,

@@ -57,8 +57,16 @@ Clic → useGame.dispatch(action)
 | Mutation | une entrée dans `data/mutations.ts` + son apparence dans `ui/art/mutationLook.ts` |
 | Ambiance | `data/ambiances.ts` + offre boutique |
 | Quête | `data/quests.ts` |
+| Évolution / embranchement | `evolutions` de l'espèce source dans `data/species.ts` (conditions : niveau, affection, jour/nuit, objet, alimentation, ambiance de naissance, mutation) |
+| Recette génétique secrète | `data/recipes.ts` (parents par espèce ou élément, chance) |
 
 `npm test` exécute `validateContent()` : toute référence cassée fait échouer les tests.
+
+## Génétique (Laboratoire)
+
+- `core/systems/breeding.ts` : règles (niveau, affection, fertilité, repos), coût, héritage des gènes et des mutations.
+- `breedingOdds(a, b)` dans `odds.ts` : recettes applicables puis formes de base des deux lignées. **Même fonction** pour le tirage et pour l'affichage du Laboratoire.
+- L'espèce, les gènes et les mutations héritées sont fixés au moment de la fusion et stockés dans l'œuf (`EggInstance.genetics`) ; l'ambiance d'incubation peut encore ajouter une mutation dans un groupe libre. Côté serveur (Phase 6), la fusion sera exécutée avec la RNG serveur : le client ne pourra pas « relancer » un œuf.
 
 ## Rendu des créatures
 

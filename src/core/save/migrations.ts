@@ -5,8 +5,12 @@
 type RawState = Record<string, unknown> & { schemaVersion?: number };
 
 export const MIGRATIONS: Record<number, (s: RawState) => RawState> = {
-  // Exemple pour la version 2 :
-  // 1: (s) => ({ ...s, schemaVersion: 2, nouveauChamp: valeurParDefaut }),
+  // v1 → v2 (Phase 3) : reproduction et recettes génétiques.
+  1: (s) => ({
+    ...s,
+    recipesFound: [],
+    creatures: ((s.creatures as Record<string, unknown>[] | undefined) ?? []).map((c) => ({ breedCount: 0, breedReadyAt: 0, ...c })),
+  }),
 };
 
 export function migrate(raw: RawState, targetVersion: number): RawState {

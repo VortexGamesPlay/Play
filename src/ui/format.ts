@@ -14,7 +14,7 @@ export function conditionText(c: EvolutionCondition): string {
     case 'item': return `Objet : ${ITEMS[c.item]?.name ?? c.item}`;
     case 'diet': return `${c.count} ${foodTagName(c.tag)} mangés`;
     case 'mutation': return `Mutation ${MUTATIONS[c.mutation]?.name ?? c.mutation}`;
-    case 'ambiance': return `Ambiance ${AMBIANCES[c.ambiance]?.name ?? c.ambiance}`;
+    case 'ambiance': return `Née en ambiance ${AMBIANCES[c.ambiance]?.name ?? c.ambiance}`;
   }
 }
 

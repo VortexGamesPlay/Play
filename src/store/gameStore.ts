@@ -63,6 +63,8 @@ function presentEvents(events: GameEvent[], state: GameState) {
       case 'fed': playSfx('tap'); break;
       case 'released': ui.toast({ kind: 'info', title: 'Créature libérée', body: `+${ev.essence} essence` }); break;
       case 'hatched': ui.openModal({ kind: 'hatch', event: ev }); break;
+      case 'evolved': ui.openModal({ kind: 'evolve', event: ev }); break;
+      case 'bred': ui.openModal({ kind: 'breedFx', parents: ev.parents, eggUid: ev.eggUid }); break;
     }
   }
 }

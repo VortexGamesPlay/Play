@@ -2,6 +2,8 @@ import { GameError } from './errors';
 import type { GameEvent } from './events';
 import { releaseCreature, renameCreature, toggleFavorite } from './systems/creatures';
 import { claimDaily } from './systems/daily';
+import { breed } from './systems/breeding';
+import { evolve } from './systems/evolution';
 import { grant } from './systems/economy';
 import { feed } from './systems/feeding';
 import { hatch } from './systems/hatching';
@@ -30,7 +32,9 @@ export type GameAction =
   | { type: 'toggleFavorite'; uid: string }
   | { type: 'release'; uid: string }
   | { type: 'setPlayerName'; name: string }
-  | { type: 'setSetting'; key: keyof Settings; value: boolean };
+  | { type: 'setSetting'; key: keyof Settings; value: boolean }
+  | { type: 'evolve'; uid: string; to: string }
+  | { type: 'breed'; a: string; b: string; stabilize: boolean };
 
 export interface ActionResult {
   state: GameState;
@@ -67,6 +71,8 @@ export function applyAction(state: GameState, action: GameAction, ctx: ActionCon
       break;
     }
     case 'setSetting': draft.settings[action.key] = action.value; break;
+    case 'evolve': evolve(draft, action.uid, action.to, ctx, events); break;
+    case 'breed': breed(draft, action.a, action.b, action.stabilize, ctx, events); break;
     default: {
       const never: never = action;
       throw new GameError('unknown_action', `Action inconnue : ${JSON.stringify(never)}`);

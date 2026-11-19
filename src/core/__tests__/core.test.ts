@@ -24,7 +24,7 @@ describe('RNG', () => {
 
 describe('Probabilités centralisées', () => {
   it('les probabilités d\'espèces de chaque œuf somment à 1', () => {
-    for (const egg of Object.keys(EGGS)) {
+    for (const egg of Object.keys(EGGS).filter((e) => !EGGS[e]!.genetic)) {
       const sum = speciesOdds(egg).reduce((s, o) => s + o.probability, 0);
       expect(sum).toBeCloseTo(1, 10);
     }

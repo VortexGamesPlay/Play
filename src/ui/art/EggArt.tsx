@@ -26,6 +26,8 @@ function PatternLayer({ v, rid }: { v: EggVisual; rid: string }): ReactNode {
       return <g opacity=".75">{['#ff6fb5', '#ffb03d', '#ffe66b', '#6ff0a8', '#5fc8ff', '#a87aff'].map((c, i) => <path key={c} d={`M${-20 + i * 22} 130L${20 + i * 22} -10`} stroke={c} strokeWidth="11" />)}</g>;
     case 'galaxy':
       return <g><ellipse cx="50" cy="64" rx="34" ry="14" transform="rotate(-25 50 64)" fill={s} opacity=".6" /><ellipse cx="50" cy="64" rx="18" ry="7" transform="rotate(-25 50 64)" fill="#ff8ae0" opacity=".5" />{[[24, 36], [72, 30], [30, 96], [76, 92], [50, 20], [62, 64], [40, 70]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r={i % 2 ? 1.4 : 2.2} fill="white" className="egg-twinkle" style={{ animationDelay: `${i * 0.3}s` }} />)}</g>;
+    case 'helix':
+      return <g fill="none" strokeWidth="4" strokeLinecap="round" className="egg-pulse"><path d="M30 0C70 20 30 40 70 60S30 100 70 130" stroke={s} /><path d="M70 0C30 20 70 40 30 60S70 100 30 130" stroke="#ff9fd0" />{[12, 34, 56, 78, 100].map((y) => <path key={y} d={`M38 ${y + 4}h24`} stroke={s} strokeWidth="2.5" opacity=".5" />)}</g>;
     case 'crown':
       return <g><rect x="0" y="58" width="100" height="14" fill={s} /><path d="M0 58h100" stroke="#fff3c4" strokeWidth="2" /><circle cx="30" cy="65" r="4" fill="#ff6fb5" /><circle cx="50" cy="65" r="5" fill="#5fc8ff" /><circle cx="70" cy="65" r="4" fill="#6ff0a8" /><path d="M34 30l6-10 10 8 10-8 6 10z" fill={s} opacity=".8" /></g>;
   }

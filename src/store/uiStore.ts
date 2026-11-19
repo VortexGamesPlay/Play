@@ -22,6 +22,9 @@ export type Modal =
   | { kind: 'odds'; eggType: string }
   | { kind: 'feed'; uid?: string; item?: string }
   | { kind: 'hatch'; event: Extract<GameEvent, { type: 'hatched' }> }
+  | { kind: 'evolve'; event: Extract<GameEvent, { type: 'evolved' }> }
+  | { kind: 'breedFx'; parents: [string, string]; eggUid: string }
+  | { kind: 'parentPicker'; exclude: string | null; onPick: (uid: string) => void }
   | { kind: 'confirm'; title: string; body: string; confirmLabel: string; danger?: boolean; onConfirm: () => void };
 
 interface UiState {
@@ -51,7 +54,7 @@ export const useUi = create<UiState>((set, get) => ({
   moreOpen: false,
   navigate(route) {
     if (location.hash !== `#/${route}`) location.hash = `/${route}`;
-    set({ route, moreOpen: false });
+    set({ route, moreOpen: false, modals: [] });
   },
   toast(t) {
     const id = ++toastId;
@@ -73,5 +76,9 @@ export const useUi = create<UiState>((set, get) => ({
 }));
 
 if (typeof window !== 'undefined') {
-  window.addEventListener('hashchange', () => useUi.setState({ route: routeFromHash() }));
+  window.addEventListener('hashchange', () => {
+    const route = routeFromHash();
+    // Changer d'écran ferme les fenêtres ouvertes (sauf si on reste sur le même écran).
+    if (route !== useUi.getState().route) useUi.setState({ route, modals: [], moreOpen: false });
+  });
 }

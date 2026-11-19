@@ -6,6 +6,8 @@ import { CreatureDetail } from './modals/CreatureDetail';
 import { DexDetail } from './modals/DexDetail';
 import { FeedModal } from './modals/FeedModal';
 import { HatchSequence } from './modals/HatchSequence';
+import { EvolutionSequence } from './modals/EvolutionSequence';
+import { BreedFx, ParentPickerModal } from './screens/LabScreen';
 import { OddsModal } from './modals/OddsModal';
 import { EggPickerModal } from './screens/IncubatorScreen';
 import { useGame } from '../store/gameStore';
@@ -16,6 +18,9 @@ function Render({ m }: { m: M }) {
   const state = useGame((s) => s.state);
   switch (m.kind) {
     case 'hatch': return <HatchSequence event={m.event} />;
+    case 'evolve': return <EvolutionSequence event={m.event} />;
+    case 'breedFx': return <BreedFx parents={m.parents} eggUid={m.eggUid} />;
+    case 'parentPicker': return <Modal title="Choisir un parent" width={560}><ParentPickerModal exclude={m.exclude} onPick={m.onPick} /></Modal>;
     case 'creature': return <Modal title="Fiche créature" width={620}><CreatureDetail uid={m.uid} /></Modal>;
     case 'dex': return <Modal title={isDiscovered(state, m.speciesId) ? `Ovidex — ${SPECIES[m.speciesId]?.name}` : 'Ovidex — ???'} width={600}><DexDetail speciesId={m.speciesId} /></Modal>;
     case 'eggPicker': return <Modal title={`Incubateur ${m.slot + 1} — choisir un œuf`} width={600}><EggPickerModal slot={m.slot} /></Modal>;

@@ -10,6 +10,12 @@ import { nextUid } from '../ids';
 import { pick, randFloat, randInt } from '../rng';
 import type { ActionContext, CreatureInstance, CreatureOrigin, GameState, Genes, MutationId, SpeciesId } from '../types';
 
+/** Taille et poids individuels : moyenne de l'espèce modulée par le gène de taille (et la mutation Mutante). */
+export function bodyMetrics(sp: SpeciesDef, genes: Genes, mutations: MutationId[]): { sizeCm: number; weightKg: number } {
+  const f = 0.8 + genes.size * 0.4 * (mutations.includes('mutante') ? 1.25 : 1);
+  return { sizeCm: Math.round(sp.sizeCm * f * 10) / 10, weightKg: Math.round(sp.weightKg * Math.pow(f, 3) * 100) / 100 };
+}
+
 export function getSpecies(id: SpeciesId): SpeciesDef {
   const s = SPECIES[id];
   if (!s) throw new Error(`Espèce inconnue : ${id}`);
@@ -33,10 +39,10 @@ export function createCreature(
   mutations: MutationId[],
   origin: CreatureOrigin,
   ctx: ActionContext,
+  opts: { genes?: Genes; generation?: number } = {},
 ): CreatureInstance {
   const sp = getSpecies(speciesId);
-  const genes = rollGenes(ctx);
-  const sizeFactor = 0.8 + genes.size * 0.4 * (mutations.includes('mutante') ? 1.25 : 1);
+  const genes = opts.genes ?? rollGenes(ctx);
   return {
     uid: nextUid(draft, 'cr'),
     speciesId,
@@ -46,14 +52,15 @@ export function createCreature(
     genes,
     personality: pick(ctx.rng, Object.keys(PERSONALITIES)),
     mutations,
-    sizeCm: Math.round(sp.sizeCm * sizeFactor * 10) / 10,
-    weightKg: Math.round(sp.weightKg * Math.pow(sizeFactor, 3) * 100) / 100,
+    ...bodyMetrics(sp, genes, mutations),
     affection: 10,
     hatchedAt: ctx.now,
     origin,
     favorite: false,
     diet: {},
-    generation: 1,
+    generation: opts.generation ?? 1,
+    breedCount: 0,
+    breedReadyAt: 0,
   };
 }
 

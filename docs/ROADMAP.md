@@ -31,11 +31,28 @@ Légende : ✅ terminé et vérifié · 🟡 partiel (détail indiqué) · ⏳ n
 
 ### Livré en avance (bases des phases suivantes)
 
-- 🟡 **Phase 3** : nourriture, XP, niveaux (50), affection et régime alimentaire. _Pas encore :_ évolutions, reproduction, génétique héritée.
 - 🟡 **Phase 4** : sanctuaire vivant (promenade, sommeil plus fréquent la nuit, repas, jeu, réaction au toucher), récolte passive de pièces, cycle jour/nuit, quête principale (14 étapes), récompense quotidienne avec série. _Pas encore :_ habitats, décorations, bâtiments, biomes, expéditions, météo, quêtes secondaires / hebdomadaires.
 
-## Phase 3 — Profondeur ⏳ (prochaine)
-Évolutions (conditions déjà dans les données) avec cinématique · Laboratoire : compatibilité, héritage des gènes / teintes / éléments / mutations, recettes secrètes (Brumavap, Néantis) · usages de l'Essence · plus d'espèces et de branches d'évolution.
+## Phase 3 — Profondeur ✅
+
+| Élément | État |
+|---|---|
+| Nourriture, XP, niveaux (1–50), affection, régime alimentaire suivi | ✅ |
+| Évolutions avec conditions : niveau, affection, jour/nuit, objet (consommé), alimentation, ambiance de naissance, mutation | ✅ |
+| Embranchements : Mousselin, Givrelot et Galetou ont chacun deux évolutions possibles (choix définitif) | ✅ |
+| 6 nouvelles espèces (36 au total) : Pétalys, Orolithe, Givrelune, Marécroc, Spectrelune, Sarcophor | ✅ |
+| Objets d'évolution (Pierre d'éveil, Larme de lune) achetables en essence | ✅ |
+| Cinématique d'évolution (lueur, alternance accélérée des silhouettes, éclair, révélation) | ✅ |
+| Laboratoire : choix des parents, compatibilité, prévisions exactes avant validation, coût | ✅ |
+| Règles : niveau 10+, affection 20+, 4 fusions max par créature, repos de 1 h | ✅ |
+| Héritage : chaque gène d'un parent (±3, bond +5 possible), teinte et taille moyennes, génération | ✅ |
+| Transmission des mutations (35 %, 70 % avec stabilisateur d'essence), groupes incompatibles respectés | ✅ |
+| 4 recettes secrètes (Brumavap, Cristalis, Astrélune, Néantis), carnet de recettes avec indices | ✅ |
+| Œuf génétique (motif ADN), animation de fusion, éclosion qui révèle la recette | ✅ |
+| Quêtes du Chapitre IV (évolution, fusion, recette, 22 espèces) | ✅ |
+| Sauvegarde : schéma v2 avec migration automatique depuis v1 | ✅ |
+
+_Reste pour plus tard :_ conditions d'évolution liées à la météo (arrivera avec la météo, Phase 4) ; davantage d'espèces et de recettes (contenu, sans changement de moteur).
 
 ## Phase 4 — Monde ⏳
 Phaser 3 pour les biomes · 8 biomes avec œufs, ressources et secrets · expéditions · météo · habitats et bâtiments améliorables · quêtes secondaires, quotidiennes, hebdomadaires, succès.

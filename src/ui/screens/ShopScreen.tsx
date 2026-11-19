@@ -26,7 +26,7 @@ function OfferVisual({ o }: { o: ShopOffer }) {
 function OfferDesc({ o }: { o: ShopOffer }) {
   switch (o.kind) {
     case 'egg': return <><RarityBadge rarity={EGGS[o.ref]!.rarity} small /><p className="soft offer-desc">{EGGS[o.ref]!.description}</p><span className="muted" style={{ fontSize: 12, fontWeight: 700 }}><Icon name="clock" width={12} height={12} style={{ display: 'inline', verticalAlign: '-2px' }} /> {formatDuration(incubationDuration(o.ref, 'neutre'))}</span></>;
-    case 'item': return <p className="soft offer-desc">{ITEMS[o.ref]!.description} (+{ITEMS[o.ref]!.xp} XP)</p>;
+    case 'item': return <p className="soft offer-desc">{ITEMS[o.ref]!.description}{ITEMS[o.ref]!.kind === 'food' ? ` (+${ITEMS[o.ref]!.xp} XP)` : ''}</p>;
     case 'ambiance': return <p className="soft offer-desc">{AMBIANCES[o.ref]!.description}</p>;
     case 'incubator_slot': return <p className="soft offer-desc">Un emplacement supplémentaire pour incuber plusieurs œufs en parallèle.</p>;
   }

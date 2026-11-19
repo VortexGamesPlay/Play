@@ -9,4 +9,6 @@ export type GameEvent =
   | { type: 'purchased'; offerId: string; label: string }
   | { type: 'harvested'; coins: number }
   | { type: 'fed'; uid: string; xp: number; favorite: boolean }
-  | { type: 'released'; uid: string; essence: number };
+  | { type: 'released'; uid: string; essence: number }
+  | { type: 'evolved'; uid: string; from: string; to: string; newSpecies: boolean; crystalsAwarded: number }
+  | { type: 'bred'; eggUid: string; parents: [string, string] };

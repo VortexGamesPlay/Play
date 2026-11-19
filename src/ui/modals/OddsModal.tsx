@@ -23,6 +23,25 @@ export function formatPct(p: number): string {
 
 /** Affichage transparent des probabilités : calculées par la même fonction que le tirage réel. */
 export function OddsModal({ eggType }: { eggType: string }) {
+  const egg = EGGS[eggType]!;
+  if (egg.genetic) return <GeneticEggInfo eggType={eggType} />;
+  return <TableOdds eggType={eggType} />;
+}
+
+function GeneticEggInfo({ eggType }: { eggType: string }) {
+  const egg = EGGS[eggType]!;
+  return (
+    <div className="stack">
+      <div className="row" style={{ gap: 14 }}>
+        <EggArt type={eggType} size={64} />
+        <div><b style={{ fontSize: 18 }}>{egg.name}</b><p className="soft" style={{ fontSize: 13 }}>{egg.description}</p></div>
+      </div>
+      <div className="status-panel"><Icon name="flask" /><p style={{ fontSize: 13 }}>Le contenu de cet œuf a été déterminé lors de la fusion, selon les probabilités affichées au Laboratoire avant validation : espèce, gènes et mutations héritées. L'ambiance de l'incubateur peut encore ajouter une mutation dans un groupe resté libre.</p></div>
+    </div>
+  );
+}
+
+function TableOdds({ eggType }: { eggType: string }) {
   const state = useGame((s) => s.state);
   const egg = EGGS[eggType]!;
   const [amb, setAmb] = useState<string>(egg.requiresAmbiance?.[0] ?? 'neutre');

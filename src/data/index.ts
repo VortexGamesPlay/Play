@@ -8,5 +8,6 @@ export { SPECIES, SPECIES_LIST } from './species';
 export { EGGS } from './eggs';
 export { SHOP_OFFERS } from './shop';
 export { MAIN_QUESTS } from './quests';
+export { RECIPES } from './recipes';
 export { BALANCE, xpToNext } from './balance';
 export { validateContent } from './validate';

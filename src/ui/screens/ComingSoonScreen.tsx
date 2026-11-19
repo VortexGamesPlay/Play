@@ -7,12 +7,6 @@ import { isDiscovered } from '@core/systems/dex';
 interface Plan { title: string; icon: IconName; phase: number; pitch: string; features: string[]; ready: string[]; art: string[] }
 
 const PLANS: Partial<Record<Route, Plan>> = {
-  laboratoire: {
-    title: 'Laboratoire génétique', icon: 'flask', phase: 3, art: ['pyroli', 'brumavap', 'aquabulle'],
-    pitch: 'Associe deux créatures compatibles pour obtenir un œuf héritant de leurs gènes, couleurs, éléments et mutations. Certaines espèces ne naissent que de recettes secrètes.',
-    features: ['Compatibilité génétique et limites de reproduction', 'Héritage des gènes, des teintes et des mutations', 'Recettes secrètes (ex. Feu + Eau → Vapeur)', 'Évolutions multiples avec cinématique', 'Utilisation de l\'Essence pour stabiliser les mutations'],
-    ready: ['Chaque créature possède déjà des gènes (PV, Att, Déf, Vit, teinte, taille)', 'Personnalités et régime alimentaire déjà enregistrés', 'Conditions d\'évolution déjà définies dans les données'],
-  },
   exploration: {
     title: 'Exploration des biomes', icon: 'compass', phase: 4, art: ['zephyrin', 'scarabor', 'givrelot'],
     pitch: 'Envoie tes créatures en expédition dans huit biomes pour y trouver des œufs exclusifs, des ressources et des secrets.',

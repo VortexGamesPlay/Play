@@ -2,7 +2,7 @@ import { BALANCE } from '@data/balance';
 import { addEgg } from './systems/inventory';
 import type { GameState } from './types';
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export function createInitialState(now: number): GameState {
   const state: GameState = {
@@ -19,11 +19,12 @@ export function createInitialState(now: number): GameState {
     quests: { claimed: [] },
     stats: {
       eggsObtained: 0, eggsHatched: 0, purchases: 0, harvests: 0, coinsHarvested: 0,
-      creaturesFed: 0, levelUps: 0, released: 0, dailyClaims: 0, speedUps: 0,
+      creaturesFed: 0, levelUps: 0, released: 0, dailyClaims: 0, speedUps: 0, evolutions: 0, breedings: 0,
     },
     sanctuary: { lastHarvestAt: now },
     daily: { lastClaimDay: null, streak: 0 },
     unlocks: { ambiances: ['neutre'] },
+    recipesFound: [],
     settings: { sound: true, reducedMotion: false },
     uidCounter: 0,
   };

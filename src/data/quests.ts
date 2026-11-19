@@ -33,4 +33,12 @@ export const MAIN_QUESTS: QuestDef[] = [
     goal: { kind: 'variantCount', target: 5 }, reward: { crystals: 40, essence: 80 } },
   { id: 'q14', chapter: 'Chapitre III — Les Mystères', title: 'Sous les étoiles', description: 'Découvre 15 espèces.',
     goal: { kind: 'dexCount', target: 15 }, reward: { crystals: 60, eggs: ['cosmique'] } },
+  { id: 'q15', chapter: 'Chapitre IV — Les Métamorphoses', title: 'Première métamorphose', description: 'Fais évoluer une créature.',
+    goal: { kind: 'stat', stat: 'evolutions', target: 1 }, reward: { essence: 60, crystals: 15 } },
+  { id: 'q16', chapter: 'Chapitre IV — Les Métamorphoses', title: 'Apprenti généticien', description: 'Lance une fusion au Laboratoire.',
+    goal: { kind: 'stat', stat: 'breedings', target: 1 }, reward: { coins: 800, essence: 40 } },
+  { id: 'q17', chapter: 'Chapitre IV — Les Métamorphoses', title: 'Formule interdite', description: 'Découvre une recette génétique secrète.',
+    goal: { kind: 'recipeCount', target: 1 }, reward: { crystals: 50, items: { pierre_eveil: 1 } } },
+  { id: 'q18', chapter: 'Chapitre IV — Les Métamorphoses', title: 'Grand naturaliste', description: 'Découvre 22 espèces.',
+    goal: { kind: 'dexCount', target: 22 }, reward: { crystals: 80, eggs: ['legendaire'] } },
 ];

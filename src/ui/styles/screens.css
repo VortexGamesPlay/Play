@@ -257,3 +257,30 @@
 .setting > div { flex: 1; display: flex; flex-direction: column; }
 .setting span { font-size: 12px; color: var(--ink-mute); font-weight: 700; }
 .item-card { display: flex; flex-direction: column; }
+.evo-row.ready { background: linear-gradient(90deg, #fff0f7, #f4efff); box-shadow: 0 0 0 2px rgba(255, 122, 182, .45); }
+.badge.cond { background: var(--paper-3); color: var(--ink-mute); }
+.badge.cond.met { background: #e3faf1; color: #12916a; }
+
+/* ── Laboratoire ── */
+.lab-grid { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 12px; align-items: stretch; }
+.lab-slot { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px; border-radius: var(--radius); background: white; box-shadow: var(--shadow); text-align: center; min-height: 250px; justify-content: center; }
+.lab-slot.empty { border: 2px dashed var(--line); background: rgba(255, 255, 255, .6); cursor: pointer; box-shadow: none; }
+.lab-slot.empty:hover { background: white; }
+.lab-clear { position: absolute; top: 10px; right: 10px; }
+.lab-center { display: grid; place-items: center; }
+.lab-helix { animation: spin-y 4s linear infinite; }
+.lab-forecast { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; align-items: start; }
+.compat { display: flex; gap: 10px; align-items: center; padding: 12px; border-radius: 16px; background: color-mix(in srgb, var(--cc) 12%, white); }
+.compat > svg { width: 22px; height: 22px; color: var(--cc); flex: none; }
+.odds-row.recipe { background: linear-gradient(90deg, #f6ecff, #fff0f8); }
+.recipe-card { display: flex; gap: 12px; align-items: center; }
+.recipe-card.found { background: linear-gradient(120deg, #fbf6ff, white); }
+@media (max-width: 760px) {
+  .lab-grid { grid-template-columns: 1fr 1fr; }
+  .lab-center { display: none; }
+  .lab-slot { min-height: 210px; padding: 12px; }
+  .lab-slot .creature { width: 90px; height: 90px; }
+  .lab-forecast { grid-template-columns: 1fr; }
+}
+.cr-evo { position: absolute; top: 40px; right: 8px; width: 24px; height: 24px; border-radius: 50%; background: var(--pink); color: white; display: grid; place-items: center; box-shadow: 0 2px 8px rgba(255, 122, 182, .6); animation: pulse-badge 1.6s infinite; }
+.cr-evo svg { width: 14px; height: 14px; }

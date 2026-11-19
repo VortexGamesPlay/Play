@@ -18,10 +18,20 @@ import { useUi } from '../../store/uiStore';
 import { useNow } from '../hooks/useNow';
 import { playSfx } from '../../services/audio';
 
-export function groupEggs(eggs: EggInstance[]) {
+/** Regroupe les œufs identiques ; chaque œuf génétique reste à part (contenu unique). */
+export function groupEggs(eggs: EggInstance[]): [string, EggInstance[]][] {
   const map = new Map<string, EggInstance[]>();
-  for (const e of eggs) map.set(e.type, [...(map.get(e.type) ?? []), e]);
-  return [...map.entries()].sort((a, b) => RARITIES[EGGS[a[0]]!.rarity].tier - RARITIES[EGGS[b[0]]!.rarity].tier);
+  for (const e of eggs) {
+    const key = e.genetics ? e.uid : e.type;
+    map.set(key, [...(map.get(key) ?? []), e]);
+  }
+  return [...map.values()]
+    .sort((a, b) => RARITIES[EGGS[a[0]!.type]!.rarity].tier - RARITIES[EGGS[b[0]!.type]!.rarity].tier)
+    .map((list) => [list[0]!.type, list]);
+}
+
+export function geneticsLabel(e: EggInstance): string | null {
+  return e.genetics ? `${e.genetics.parentNames[0]} × ${e.genetics.parentNames[1]}` : null;
 }
 
 function Ring({ value, color }: { value: number; color: string }) {
@@ -131,10 +141,11 @@ export function EggPickerModal({ slot }: { slot: number }) {
             const dur = incubationDuration(type, s.ambiance);
             const fast = egg.affinity.includes(s.ambiance);
             return (
-              <div key={type} className={`picker-row ${ok ? '' : 'disabled'}`}>
+              <div key={eggs[0]!.uid} className={`picker-row ${ok ? '' : 'disabled'}`}>
                 <EggArt type={type} size={48} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="row-wrap"><b>{egg.name}</b><RarityBadge rarity={egg.rarity} small /><span className="badge soft-badge">×{eggs.length}</span></div>
+                  {geneticsLabel(eggs[0]!) && <div className="soft" style={{ fontSize: 12, fontWeight: 700 }}>Parents : {geneticsLabel(eggs[0]!)}</div>}
                   <div className="muted" style={{ fontSize: 12, marginTop: 2 }}>
                     <Icon name="clock" width={12} height={12} style={{ display: 'inline', verticalAlign: '-2px' }} /> {formatDuration(dur)}
                     {fast && <b style={{ color: 'var(--mint)' }}> · ambiance favorable (−25 %)</b>}
@@ -189,7 +200,7 @@ export function IncubatorScreen() {
         </EmptyState>
       ) : (
         <div className="grid-auto" style={{ ['--min' as string]: '150px' } as CSSProperties}>
-          {groups.map(([type, eggs]) => <EggBagCard key={type} type={type} count={eggs.length} firstUid={eggs[0]!.uid} />)}
+          {groups.map(([type, eggs]) => <EggBagCard key={eggs[0]!.uid} type={type} count={eggs.length} firstUid={eggs[0]!.uid} label={geneticsLabel(eggs[0]!)} />)}
         </div>
       )}
 
@@ -213,7 +224,7 @@ export function IncubatorScreen() {
   );
 }
 
-function EggBagCard({ type, count, firstUid }: { type: string; count: number; firstUid: string }) {
+function EggBagCard({ type, count, firstUid, label }: { type: string; count: number; firstUid: string; label: string | null }) {
   const state = useGame((s) => s.state);
   const dispatch = useGame((s) => s.dispatch);
   const openModal = useUi((s) => s.openModal);
@@ -225,6 +236,7 @@ function EggBagCard({ type, count, firstUid }: { type: string; count: number; fi
       <EggArt type={type} size={64} />
       <b style={{ fontSize: 14, textAlign: 'center' }}>{egg.name}</b>
       <RarityBadge rarity={egg.rarity} small />
+      {label && <span className="muted" style={{ fontSize: 11, fontWeight: 800, textAlign: 'center' }}>{label}</span>}
       <div className="row" style={{ marginTop: 6 }}>
         <button className="icon-btn tip" data-tip="Probabilités" onClick={() => openModal({ kind: 'odds', eggType: type })}><Icon name="dice" /></button>
         <button className="btn btn-sm" disabled={freeSlot < 0} title={freeSlot < 0 ? 'Aucun incubateur libre compatible' : undefined}
