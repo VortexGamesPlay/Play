@@ -72,8 +72,29 @@ _Reste pour plus tard :_ conditions d'évolution liées à la météo (arrivera 
 
 _Reste pour plus tard :_ musiques d'ambiance par biome (Phase 8), boss communautaires et événements saisonniers partagés (Phase 6, nécessitent un serveur).
 
-## Phase 5 — Combats ⏳
-Tour par tour, équipes de 3, énergie, compétences, statuts · table des forces élémentaires (déjà dans `data/elements.ts`) · PNJ, arènes, boss, récompenses.
+## Phase 5 — Combats ✅
+
+| Élément | État |
+|---|---|
+| « Combat en formation » : 3 contre 3, tous présents, ordre par vitesse, énergie (5 max, +1 par tour) | ✅ |
+| 47 compétences (2 communes + 3 par élément, apprises aux niveaux 1/5/10/20) : attaques, zones, soins, protections, bonus | ✅ |
+| 9 états (dégâts sur la durée, ralentissement, étourdissement, affaiblissement, bonus d'attaque, rempart, régénération, accélération) | ✅ |
+| Avantages élémentaires (×1,5 / ×0,75), coups critiques, guide des éléments | ✅ |
+| IA adverse (soins, finisseurs, éléments), mode automatique et vitesse ×2 pour le joueur | ✅ |
+| Ligue des Coquilles : 4 arènes, 20 combats dont 4 champions, récompenses de première victoire et de revanche | ✅ |
+| 8 gardiens anciens (boss) débusqués par l'exploration, récompense quotidienne | ✅ |
+| Tour des épreuves infinie (record personnel) | ✅ |
+| Animations : attaque, impact, K.O., chiffres flottants, « Efficace ! », « Critique ! » | ✅ |
+| Anti-triche : la victoire est vérifiée en rejouant le combat (graine + ordres) avant toute récompense | ✅ |
+| Expérience, quêtes du Chapitre VI, missions et succès de combat ; sauvegarde v5 avec migration | ✅ |
+
+_Reste pour plus tard :_ classements en ligne et combats entre joueurs (Phase 6, nécessitent le serveur).
+
+## Économie premium (prévue, décidée avec le porteur du projet)
+
+Décisions : boutique « mélange de tout » en **achats simples, sans abonnement** ; **passe de saison** à prix unique (niveaux gagnés en jouant, récompenses par palier) ; **packs de cristaux** pour aller plus vite ; cosmétiques et confort. **Aucune créature vendue** ; tout reste obtenable gratuitement ; aucun œuf aléatoire vendu contre de l'argent réel.
+Paiements : **PayPal** sur web/PC, **paiements intégrés Apple / Google** sur mobile (obligatoires sur les stores).
+Prérequis : serveur (Supabase) pour vérifier chaque paiement et lier les achats à un compte ; compte **PayPal Business** (le compte actuel est personnel — conversion gratuite). Développement en mode test (sandbox) en attendant.
 
 ## Phase 6 — Multijoueur ⏳
 Supabase (comptes, synchronisation, validation serveur) · amis, visites, échanges sécurisés, marché, classements, événements communautaires. Voir ARCHITECTURE.md.

@@ -16,7 +16,8 @@ Toute nouvelle créature respecte les règles ci-dessous (elles sont appliquées
 ## Noms (anti-plagiat)
 
 - Chaque nom de créature est un mot inventé, à consonance française, propre à EGGVERSE.
-- `npm run check:names` compare automatiquement tous les noms à la liste publique des noms d'espèces d'une licence existante (5 langues, ~2 700 noms, téléchargée à l'exécution et **jamais stockée dans le dépôt**). Un nom est refusé s'il est identique, à 2 lettres près, ou s'il partage une racine de 5 lettres. Les libellés en français courant (familles, objets, œufs) ne sont refusés qu'en cas d'identité exacte.
+- `npm run check:names` compare automatiquement les noms de créatures, de compétences, d'états de combat, d'objets et tous les autres libellés aux listes publiques d'espèces, d'attaques, de talents et d'objets (5 langues). Les noms de personnages (rivaux) ne figurent pas dans ces listes : ils sont choisis à la main parmi des prénoms français peu courants, en évitant les noms de personnages connus.
+- Détail du contrôle : il compare automatiquement tous les noms à la liste publique des noms d'espèces d'une licence existante (5 langues, ~2 700 noms, téléchargée à l'exécution et **jamais stockée dans le dépôt**). Un nom est refusé s'il est identique, à 2 lettres près, ou s'il partage une racine de 5 lettres. Les libellés en français courant (familles, objets, œufs) ne sont refusés qu'en cas d'identité exacte.
 - Vocabulaire maison : **Bestiaire** (encyclopédie), **mutation Irisée** (variante de couleur), **Coquille d'éveil** et **Rosée lunaire** (objets d'évolution), **Fruit rose**. On n'emploie pas le vocabulaire propre à une licence existante (« -dex », « chromatique » au sens de variante, pierres d'évolution, « baies », balles de capture, dresseurs…).
 
 ## Interdits (anti-plagiat)

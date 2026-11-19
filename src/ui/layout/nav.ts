@@ -19,7 +19,7 @@ export const NAV_MAIN: NavEntry[] = [
 export const NAV_WORLD: NavEntry[] = [
   { route: 'laboratoire', label: 'Laboratoire', icon: 'flask' },
   { route: 'exploration', label: 'Exploration', icon: 'compass' },
-  { route: 'arene', label: 'Arène', icon: 'swords', phase: 5 },
+  { route: 'arene', label: 'Arène', icon: 'swords' },
 ];
 
 export const NAV_OTHER: NavEntry[] = [

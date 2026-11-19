@@ -38,6 +38,7 @@ export function normalizeState(raw: Partial<GameState>, now: number): GameState 
     expeditions: raw.expeditions ?? [],
     achievements: raw.achievements ?? [],
     sideQuests: raw.sideQuests ?? [],
+    combat: { ...base.combat, ...raw.combat },
     daily: { ...base.daily, ...raw.daily },
     unlocks: { ...base.unlocks, ...raw.unlocks },
     settings: { ...base.settings, ...raw.settings },

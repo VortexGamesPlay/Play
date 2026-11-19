@@ -13,4 +13,5 @@ export type GameEvent =
   | { type: 'evolved'; uid: string; from: string; to: string; newSpecies: boolean; crystalsAwarded: number }
   | { type: 'bred'; eggUid: string; parents: [string, string] }
   | { type: 'expeditionDone'; biomeId: string; reward: Reward; secretFound: boolean; xp: number; team: string[] }
-  | { type: 'foraged'; biomeId: string; reward: Reward };
+  | { type: 'foraged'; biomeId: string; reward: Reward }
+  | { type: 'battleEnded'; won: boolean; kind: 'league' | 'boss' | 'tower'; ref: string; reward: Reward; xp: number; rounds: number };

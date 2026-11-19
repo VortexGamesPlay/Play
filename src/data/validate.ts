@@ -9,6 +9,9 @@ import { RECIPES } from './recipes';
 import { BIOMES } from './biomes';
 import { BUILDINGS, DECORATIONS, THEMES } from './buildings';
 import { WEATHERS } from './weather';
+import { BOSSES, LEAGUES } from './arena';
+import { ELEMENT_SKILLS, SKILLS } from './skills';
+import { STATUSES } from './statuses';
 import { ACHIEVEMENTS, DAILY_MISSIONS, SIDE_QUESTS, WEEKLY_MISSIONS } from './missions';
 import { SHOP_OFFERS } from './shop';
 import { SPECIES_LIST, SPECIES } from './species';
@@ -110,6 +113,30 @@ export function validateContent(): string[] {
   for (const q of SIDE_QUESTS) if (q.goal.kind === 'biomeExpeditions' && !BIOMES.some((b) => b.id === (q.goal as { biome: string }).biome)) errors.push(`Quête ${q.id} : biome inconnu`);
   if (new Set(ACHIEVEMENTS.map((a) => a.id)).size !== ACHIEVEMENTS.length) errors.push('Succès en double');
   for (const s of SPECIES_LIST) for (const e of s.evolutions) for (const c of e.conditions) if (c.type === 'weather' && !WEATHERS[c.weather]) errors.push(`${s.id} : météo inconnue ${c.weather}`);
+
+  // Combats
+  for (const [el, list] of Object.entries(ELEMENT_SKILLS)) {
+    if (!ELEMENTS[el as keyof typeof ELEMENTS]) errors.push(`Compétences : élément inconnu ${el}`);
+    if (list.length !== 3) errors.push(`Compétences ${el} : 3 attendues`);
+  }
+  for (const sk of Object.values(SKILLS)) {
+    if (sk.status && !STATUSES[sk.status.id]) errors.push(`Compétence ${sk.id} : état inconnu`);
+    if (sk.energy < 0 || sk.energy > 5) errors.push(`Compétence ${sk.id} : énergie invalide`);
+  }
+  for (const s of SPECIES_LIST) if (!ELEMENT_SKILLS[s.element]) errors.push(`${s.id} : aucune compétence pour l'élément ${s.element}`);
+  const fightIds = new Set<string>();
+  for (const l of LEAGUES) {
+    if (l.requires && !LEAGUES.some((x) => x.id === l.requires)) errors.push(`Ligue ${l.id} : prérequis inconnu`);
+    for (const f of l.fights) {
+      if (fightIds.has(f.id)) errors.push(`Combat en double : ${f.id}`);
+      fightIds.add(f.id);
+      for (const en of f.enemies) if (!SPECIES[en.species]) errors.push(`Combat ${f.id} : espèce inconnue ${en.species}`);
+    }
+  }
+  for (const b of BOSSES) {
+    if (!BIOMES.some((x) => x.id === b.biomeId)) errors.push(`Gardien ${b.id} : biome inconnu`);
+    for (const en of b.enemies) if (!SPECIES[en.species]) errors.push(`Gardien ${b.id} : espèce inconnue ${en.species}`);
+  }
 
   for (const q of MAIN_QUESTS) {
     for (const e of q.reward.eggs ?? []) if (!EGGS[e]) errors.push(`Quête ${q.id} : œuf inconnu ${e}`);

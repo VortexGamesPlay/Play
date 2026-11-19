@@ -7,6 +7,7 @@ export const DAILY_MISSIONS: MissionDef[] = [
   { id: 'd_harvest', title: 'Récolter 2 fois', stat: 'harvests', target: 2, reward: { coins: 100, essence: 5 } },
   { id: 'd_expe', title: 'Terminer 1 expédition', stat: 'expeditions', target: 1, reward: { coins: 150, crystals: 2 } },
   { id: 'd_forage', title: 'Fouiller 3 fois', stat: 'forages', target: 3, reward: { coins: 120, essence: 5 } },
+  { id: 'd_battle', title: 'Remporter 2 combats', stat: 'battlesWon', target: 2, reward: { coins: 150, crystals: 2 } },
   { id: 'd_level', title: 'Gagner 3 niveaux', stat: 'levelUps', target: 3, reward: { coins: 150, items: { graine_soleil: 2 } } },
 ];
 
@@ -17,6 +18,8 @@ export const WEEKLY_MISSIONS: MissionDef[] = [
   { id: 'w_breed', title: 'Réaliser 2 fusions', stat: 'breedings', target: 2, reward: { essence: 60, crystals: 10 } },
   { id: 'w_evo', title: 'Faire évoluer 2 créatures', stat: 'evolutions', target: 2, reward: { essence: 50, crystals: 10 } },
   { id: 'w_feed', title: 'Donner 35 repas', stat: 'creaturesFed', target: 35, reward: { coins: 700, items: { cristal_sucre: 3 } } },
+  { id: 'w_battle', title: 'Remporter 15 combats', stat: 'battlesWon', target: 15, reward: { coins: 900, crystals: 15 } },
+  { id: 'w_boss', title: 'Vaincre 2 gardiens anciens', stat: 'bossesDefeated', target: 2, reward: { essence: 60, crystals: 10 } },
   { id: 'w_build', title: 'Améliorer 1 bâtiment', stat: 'buildingUpgrades', target: 1, reward: { coins: 800, crystals: 10 } },
 ];
 
@@ -46,5 +49,8 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'a_expe25', title: 'Aventurier', description: 'Terminer 25 expéditions.', goal: { kind: 'stat', stat: 'expeditions', target: 25 }, reward: { crystals: 25 } },
   { id: 'a_biomes', title: 'Cartographe', description: 'Atteindre les 8 biomes.', goal: { kind: 'biomesUnlocked', target: 8 }, reward: { crystals: 50 } },
   { id: 'a_secret', title: 'Gardien des secrets', description: 'Trouver 3 zones secrètes.', goal: { kind: 'secretsFound', target: 3 }, reward: { crystals: 40 } },
+  { id: 'a_win25', title: 'Combattant', description: 'Remporter 25 combats.', goal: { kind: 'stat', stat: 'battlesWon', target: 25 }, reward: { crystals: 25 } },
+  { id: 'a_win100', title: 'Vétéran de l\'Arène', description: 'Remporter 100 combats.', goal: { kind: 'stat', stat: 'battlesWon', target: 100 }, reward: { crystals: 60 } },
+  { id: 'a_boss8', title: 'Pourfendeur d\'anciens', description: 'Vaincre 8 gardiens anciens.', goal: { kind: 'stat', stat: 'bossesDefeated', target: 8 }, reward: { crystals: 80 } },
   { id: 'a_build', title: 'Bâtisseur', description: 'Cumuler 12 niveaux de bâtiments.', goal: { kind: 'buildingLevels', target: 12 }, reward: { crystals: 30 } },
 ];

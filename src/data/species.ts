@@ -211,7 +211,7 @@ export const SPECIES_LIST: SpeciesDef[] = [
       palette: { primary: '#a6d65a', secondary: '#6b9e2e', accent: '#c46fe0', belly: '#e6f5c4', eye: '#2a3a10' } }),
   },
   {
-    id: 'linceulet', dex: 22, name: 'Linceulet', family: 'Revenant', element: 'spectre', rarity: 'rare', stage: 'bebe',
+    id: 'linceulet', dex: 22, name: 'Linceulet', family: 'Spectre farceur', element: 'spectre', rarity: 'rare', stage: 'bebe',
     description: 'Un petit fantôme timide qui emprunte les chaussettes. Il les rend toujours… parfois des années plus tard.',
     baseStats: { hp: 50, atk: 62, def: 44, spd: 70 }, sizeCm: 34, weightKg: 0.1, favoriteFood: ['champi', 'nectar'],
     evolutions: [{ to: 'voilunaire', conditions: [{ type: 'level', value: 24 }, { type: 'item', item: 'rosee_lune' }] }], obtainableBy: ['egg'],
@@ -316,7 +316,7 @@ export const SPECIES_LIST: SpeciesDef[] = [
       palette: { primary: '#7fb04a', secondary: '#3e6a2a', accent: '#b45fe0', belly: '#d6ecb0', eye: '#1e2a10' } }),
   },
   {
-    id: 'voilunaire', dex: 35, name: 'Voilunaire', family: 'Revenant', element: 'spectre', rarity: 'epique', stage: 'adulte',
+    id: 'voilunaire', dex: 35, name: 'Voilunaire', family: 'Spectre farceur', element: 'spectre', rarity: 'epique', stage: 'adulte',
     description: 'Une goutte de Rosée lunaire a donné un visage au petit fantôme. Il garde désormais les rêves au lieu des chaussettes.',
     baseStats: { hp: 70, atk: 90, def: 62, spd: 96 }, sizeCm: 110, weightKg: 0.2, favoriteFood: ['nectar'],
     evolutions: [], obtainableBy: ['evolution'],

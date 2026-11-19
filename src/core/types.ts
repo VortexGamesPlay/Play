@@ -130,6 +130,18 @@ export interface PlayerStats {
   expeditions: number;
   forages: number;
   buildingUpgrades: number;
+  battlesWon: number;
+  battlesLost: number;
+  bossesDefeated: number;
+}
+
+export interface PendingBattle {
+  kind: 'league' | 'boss' | 'tower';
+  ref: string;
+  seed: number;
+  startedAt: number;
+  /** Instantané des combattants au lancement (rejoué tel quel pour vérification). */
+  combatants: import('./combat/engine').CombatantInit[];
 }
 
 export type ExpeditionDuration = 'court' | 'moyen' | 'long';
@@ -188,6 +200,15 @@ export interface GameState {
   achievements: string[];
   /** Quêtes secondaires réclamées. */
   sideQuests: string[];
+  combat: {
+    team: string[];
+    pending: PendingBattle | null;
+    /** Nombre de combats remportés dans chaque arène (progression séquentielle). */
+    league: Record<string, number>;
+    bossFirst: string[];
+    bossDaily: Record<string, string>;
+    towerFloor: number;
+  };
   daily: { lastClaimDay: string | null; streak: number };
   unlocks: { ambiances: AmbianceId[] };
   /** Recettes génétiques secrètes découvertes. */

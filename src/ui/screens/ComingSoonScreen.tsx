@@ -7,12 +7,6 @@ import { isDiscovered } from '@core/systems/dex';
 interface Plan { title: string; icon: IconName; phase: number; pitch: string; features: string[]; ready: string[]; art: string[] }
 
 const PLANS: Partial<Record<Route, Plan>> = {
-  arene: {
-    title: 'Arène', icon: 'swords', phase: 5, art: ['fournaillon', 'orageline', 'clapotine'],
-    pitch: 'Combats au tour par tour en équipe : avantages élémentaires, compétences, statuts, boss et classements.',
-    features: ['Équipes de 3 créatures, énergie et compétences', 'Table des avantages élémentaires', 'Combats PNJ, arènes et boss', 'Récompenses et classements'],
-    ready: ['Statistiques calculées (base d\'espèce + gènes + niveau + personnalité + mutations)', 'Table des forces élémentaires déjà définie', 'Animation d\'attaque visible dans chaque fiche créature'],
-  },
   communaute: {
     title: 'Communauté', icon: 'people', phase: 6, art: ['lucilet', 'songelin', 'lichenou'],
     pitch: 'Comptes, amis, visites de sanctuaires, échanges sécurisés côté serveur, marché, classements et découvertes mondiales.',

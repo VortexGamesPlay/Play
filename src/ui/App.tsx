@@ -14,6 +14,7 @@ import { ProfileScreen } from './screens/ProfileScreen';
 import { ComingSoonScreen } from './screens/ComingSoonScreen';
 import { LabScreen } from './screens/LabScreen';
 import { ExplorationScreen } from './screens/ExplorationScreen';
+import { ArenaScreen } from './screens/ArenaScreen';
 
 function Screen() {
   const route = useUi((s) => s.route);
@@ -27,7 +28,8 @@ function Screen() {
     case 'profil': return <ProfileScreen />;
     case 'laboratoire': return <LabScreen />;
     case 'exploration': return <ExplorationScreen />;
-    case 'arene': case 'communaute': return <ComingSoonScreen route={route} />;
+    case 'arene': return <ArenaScreen />;
+    case 'communaute': return <ComingSoonScreen route={route} />;
   }
 }
 

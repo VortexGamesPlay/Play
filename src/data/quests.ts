@@ -49,4 +49,10 @@ export const MAIN_QUESTS: QuestDef[] = [
     goal: { kind: 'biomesUnlocked', target: 4 }, reward: { coins: 800, eggs: ['glacial'] } },
   { id: 'q22', chapter: 'Chapitre V — Le Vaste Monde', title: 'Ce que cachent les cartes', description: 'Trouve une zone secrète.',
     goal: { kind: 'secretsFound', target: 1 }, reward: { crystals: 40, essence: 40 } },
+  { id: 'q23', chapter: 'Chapitre VI — L\'Arène', title: 'Premier duel', description: 'Remporte un combat dans l\'Arène.',
+    goal: { kind: 'stat', stat: 'battlesWon', target: 1 }, reward: { coins: 400, items: { cristal_sucre: 2 } } },
+  { id: 'q24', chapter: 'Chapitre VI — L\'Arène', title: 'Graine de champion', description: 'Remporte 10 combats.',
+    goal: { kind: 'stat', stat: 'battlesWon', target: 10 }, reward: { crystals: 25, essence: 30 } },
+  { id: 'q25', chapter: 'Chapitre VI — L\'Arène', title: 'Face aux anciens', description: 'Vaincs un gardien ancien.',
+    goal: { kind: 'stat', stat: 'bossesDefeated', target: 1 }, reward: { crystals: 40, eggs: ['prismatique'] } },
 ];

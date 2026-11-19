@@ -8,6 +8,9 @@ import { claimExpedition, forage, recallExpedition, startExpedition } from './sy
 import { setTheme, toggleDecoration, upgradeBuilding } from './systems/buildings';
 import { claimAchievement, claimMission, claimSideQuest, syncPeriods } from './systems/missions';
 import { assertPresent } from './systems/exploration';
+import { abandonBattle, finishBattle, setTeam, startBattle } from './systems/battles';
+import type { BattleInput } from './combat/engine';
+import type { PendingBattle } from './types';
 import { grant } from './systems/economy';
 import { feed } from './systems/feeding';
 import { hatch } from './systems/hatching';
@@ -48,7 +51,11 @@ export type GameAction =
   | { type: 'setTheme'; theme: string }
   | { type: 'claimMission'; id: string; period: 'day' | 'week' }
   | { type: 'claimAchievement'; id: string }
-  | { type: 'claimSideQuest'; id: string };
+  | { type: 'claimSideQuest'; id: string }
+  | { type: 'setTeam'; uids: string[] }
+  | { type: 'startBattle'; kind: PendingBattle['kind']; ref: string }
+  | { type: 'finishBattle'; inputs: BattleInput[] }
+  | { type: 'abandonBattle' };
 
 export interface ActionResult {
   state: GameState;
@@ -98,6 +105,10 @@ export function applyAction(state: GameState, action: GameAction, ctx: ActionCon
     case 'claimMission': claimMission(draft, action.id, action.period, ctx, events); break;
     case 'claimAchievement': claimAchievement(draft, action.id, ctx, events); break;
     case 'claimSideQuest': claimSideQuest(draft, action.id, ctx, events); break;
+    case 'setTeam': setTeam(draft, action.uids); break;
+    case 'startBattle': startBattle(draft, action.kind, action.ref, ctx); break;
+    case 'finishBattle': finishBattle(draft, action.inputs, ctx, events); break;
+    case 'abandonBattle': abandonBattle(draft); break;
     default: {
       const never: never = action;
       throw new GameError('unknown_action', `Action inconnue : ${JSON.stringify(never)}`);

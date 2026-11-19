@@ -14,6 +14,7 @@ import './ui/styles/components.css';
 import './ui/styles/art.css';
 import './ui/styles/screens.css';
 import './ui/styles/hatch.css';
+import './ui/styles/battle.css';
 import { App } from './ui/App';
 import { validateContent } from './data/validate';
 

@@ -59,6 +59,8 @@ export const MIGRATIONS: Record<number, (s: RawState) => RawState> = {
       sideQuests: [],
     };
   },
+  // v4 → v5 (Phase 5) : combats.
+  4: (s) => ({ ...s, combat: { team: [], pending: null, league: {}, bossFirst: [], bossDaily: {}, towerFloor: 0 } }),
 };
 
 export function migrate(raw: RawState, targetVersion: number): RawState {
