@@ -155,6 +155,15 @@ export interface ExpeditionInstance {
   endsAt: number;
 }
 
+export interface PurchaseRecord {
+  orderId: string;
+  productId: string;
+  provider: 'paypal' | 'store' | 'test';
+  amountCents: number;
+  currency: string;
+  at: number;
+}
+
 export interface MissionsState {
   dayKey: string | null;
   dayBaseline: PlayerStats | null;
@@ -200,6 +209,20 @@ export interface GameState {
   achievements: string[];
   /** Quêtes secondaires réclamées. */
   sideQuests: string[];
+  season: {
+    id: string | null;
+    /** Statistiques au début de la saison (les points se calculent par différence). */
+    baseline: PlayerStats | null;
+    premium: boolean;
+    claimedFree: number[];
+    claimedPremium: number[];
+  };
+  premium: {
+    purchases: PurchaseRecord[];
+    /** Limite de dépenses mensuelle choisie par le joueur (centimes), null = aucune. */
+    spendLimitCents: number | null;
+    ownedThemes: string[];
+  };
   combat: {
     team: string[];
     pending: PendingBattle | null;
@@ -210,7 +233,7 @@ export interface GameState {
     towerFloor: number;
   };
   daily: { lastClaimDay: string | null; streak: number };
-  unlocks: { ambiances: AmbianceId[] };
+  unlocks: { ambiances: AmbianceId[]; perks: string[] };
   /** Recettes génétiques secrètes découvertes. */
   recipesFound: string[];
   settings: Settings;

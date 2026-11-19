@@ -96,6 +96,22 @@ Décisions : boutique « mélange de tout » en **achats simples, sans abonnemen
 Paiements : **PayPal** sur web/PC, **paiements intégrés Apple / Google** sur mobile (obligatoires sur les stores).
 Prérequis : serveur (Supabase) pour vérifier chaque paiement et lier les achats à un compte ; compte **PayPal Business** (le compte actuel est personnel — conversion gratuite). Développement en mode test (sandbox) en attendant.
 
+**État : 🟡 construit, en attente des identifiants.**
+
+| Élément | État |
+|---|---|
+| Catalogue unique (jeu + serveur) : 4 packs de cristaux, Trousse du jeune gardien, passe de saison, 2 cosmétiques | ✅ |
+| Saison 1 (30 paliers, piste gratuite + piste du passe, points gagnés en jouant, cosmétiques exclusifs) | ✅ |
+| Boutique « Cristaux & extras », fenêtre de paiement avec consentement légal, historique, limite de dépenses, restauration des achats | ✅ |
+| Amélioration en cristaux : Sac d'explorateur (+1 expédition) | ✅ |
+| Serveur : table des achats sécurisée, création / encaissement PayPal vérifiés, webhook de remboursement (typage Deno vérifié) | ✅ |
+| Mode test (faux argent) en développement ; sans serveur, achats « bientôt disponibles » | ✅ |
+| Branchement réel : identifiants PayPal sandbox + projet Supabase, déploiement, test de bout en bout en sandbox | ⏳ en attente |
+| Paiements intégrés Apple / Google | ⏳ Phase 7 |
+| Documents légaux définitifs (brouillon : `docs/LEGAL_BROUILLON.md`) | ⏳ |
+
+Détails : `docs/PAIEMENTS.md`.
+
 ## Phase 6 — Multijoueur ⏳
 Supabase (comptes, synchronisation, validation serveur) · amis, visites, échanges sécurisés, marché, classements, événements communautaires. Voir ARCHITECTURE.md.
 

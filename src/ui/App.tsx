@@ -15,6 +15,7 @@ import { ComingSoonScreen } from './screens/ComingSoonScreen';
 import { LabScreen } from './screens/LabScreen';
 import { ExplorationScreen } from './screens/ExplorationScreen';
 import { ArenaScreen } from './screens/ArenaScreen';
+import { SeasonScreen } from './premium/SeasonScreen';
 
 function Screen() {
   const route = useUi((s) => s.route);
@@ -29,6 +30,7 @@ function Screen() {
     case 'laboratoire': return <LabScreen />;
     case 'exploration': return <ExplorationScreen />;
     case 'arene': return <ArenaScreen />;
+    case 'saison': return <SeasonScreen />;
     case 'communaute': return <ComingSoonScreen route={route} />;
   }
 }
@@ -36,7 +38,9 @@ function Screen() {
 export function App() {
   const ready = useGame((s) => s.ready);
   const init = useGame((s) => s.init);
-  useEffect(() => { void init(); }, [init]);
+  useEffect(() => {
+    void init().then(() => import('./premium/restore').then((m) => m.restorePurchases()).catch(() => { /* hors ligne : réessayé plus tard */ }));
+  }, [init]);
   if (!ready) {
     return <div className="boot"><div className="boot-egg" /><p>Chargement du sanctuaire…</p></div>;
   }

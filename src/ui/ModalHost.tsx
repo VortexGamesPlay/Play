@@ -11,6 +11,7 @@ import { BreedFx, ParentPickerModal } from './screens/LabScreen';
 import { BiomeModal, ExpeditionModal, ExpeditionResult } from './screens/ExplorationScreen';
 import { BIOME_BY_ID } from '@data/biomes';
 import { BattleView } from './battle/BattleView';
+import { CheckoutModal } from './premium/PremiumShop';
 import { ElementGuideModal, TeamPickerModal } from './screens/ArenaScreen';
 import { OddsModal } from './modals/OddsModal';
 import { EggPickerModal } from './screens/IncubatorScreen';
@@ -26,6 +27,7 @@ function Render({ m }: { m: M }) {
     case 'expedition': return <Modal title={`Expédition : ${BIOME_BY_ID[m.biomeId]?.name}`} width={720}><ExpeditionModal biomeId={m.biomeId} /></Modal>;
     case 'expeditionResult': return <Modal title="Retour d'expédition" width={560}><ExpeditionResult event={m.event} /></Modal>;
     case 'battle': return <BattleView />;
+    case 'checkout': return <Modal title="Paiement" width={520}><CheckoutModal productId={m.productId} /></Modal>;
     case 'teamPicker': return <Modal title="Équipe de combat" width={680}><TeamPickerModal /></Modal>;
     case 'elementGuide': return <Modal title="Guide des éléments" width={640}><ElementGuideModal /></Modal>;
     case 'evolve': return <EvolutionSequence event={m.event} />;

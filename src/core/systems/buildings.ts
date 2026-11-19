@@ -64,7 +64,7 @@ export function toggleDecoration(draft: GameState, id: string): void {
 }
 
 export function unlockedThemes(state: GameState): string[] {
-  const out = new Set(['prairie']);
+  const out = new Set(['prairie', ...state.premium.ownedThemes]);
   for (const b of BIOMES) if ((state.exploration.expeditionsByBiome[b.id] ?? 0) > 0) out.add(b.theme);
   return [...out].filter((t) => THEMES[t]);
 }

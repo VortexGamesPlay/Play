@@ -2,7 +2,7 @@ import { BALANCE } from '@data/balance';
 import { addEgg } from './systems/inventory';
 import type { GameState } from './types';
 
-export const SCHEMA_VERSION = 5;
+export const SCHEMA_VERSION = 6;
 
 export function createInitialState(now: number): GameState {
   const state: GameState = {
@@ -29,7 +29,9 @@ export function createInitialState(now: number): GameState {
     sideQuests: [],
     combat: { team: [], pending: null, league: {}, bossFirst: [], bossDaily: {}, towerFloor: 0 },
     daily: { lastClaimDay: null, streak: 0 },
-    unlocks: { ambiances: ['neutre'] },
+    unlocks: { ambiances: ['neutre'], perks: [] },
+    season: { id: null, baseline: null, premium: false, claimedFree: [], claimedPremium: [] },
+    premium: { purchases: [], spendLimitCents: null, ownedThemes: [] },
     recipesFound: [],
     settings: { sound: true, reducedMotion: false },
     uidCounter: 0,

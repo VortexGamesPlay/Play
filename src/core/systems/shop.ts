@@ -19,6 +19,7 @@ export function offerLabel(o: ShopOffer): string {
     case 'incubator_slot': return `Incubateur n°${o.slotNumber}`;
     case 'ambiance': return `Module « ${AMBIANCES[o.ref]!.name} »`;
     case 'decoration': return DECORATIONS.find((d) => d.id === o.ref)?.name ?? o.ref;
+    case 'perk': return o.name;
   }
 }
 
@@ -32,6 +33,7 @@ export function offerStatus(state: GameState, o: ShopOffer): OfferStatus {
   if (o.kind === 'incubator_slot' && state.incubators.length >= o.slotNumber) return { state: 'owned' };
   if (o.kind === 'ambiance' && state.unlocks.ambiances.includes(o.ref)) return { state: 'owned' };
   if (o.kind === 'decoration' && o.ref in state.sanctuary.decorations) return { state: 'owned' };
+  if (o.kind === 'perk' && state.unlocks.perks.includes(o.ref)) return { state: 'owned' };
   if (o.requires?.dexCount && dexCount(state) < o.requires.dexCount) {
     return { state: 'locked', reason: `Découvre ${o.requires.dexCount} espèces` };
   }
@@ -57,6 +59,7 @@ export function buy(draft: GameState, offerId: string, ctx: ActionContext, event
     case 'incubator_slot': addIncubator(draft); break;
     case 'ambiance': draft.unlocks.ambiances.push(o.ref); break;
     case 'decoration': draft.sanctuary.decorations[o.ref] = true; break;
+    case 'perk': draft.unlocks.perks.push(o.ref); break;
   }
   draft.stats.purchases += 1;
   events.push({ type: 'purchased', offerId, label });

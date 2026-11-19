@@ -10,7 +10,7 @@ import type { BiomeDef, Reward } from '@core/content';
 import type { GameEvent } from '@core/events';
 import { computeStats, displayName, getSpecies } from '@core/systems/creatures';
 import { dexCount } from '@core/systems/dex';
-import { expeditionForecast, forageReadyAt, isAway, isBiomeUnlocked, secretFound } from '@core/systems/exploration';
+import { expeditionForecast, forageReadyAt, isAway, isBiomeUnlocked, maxExpeditions, secretFound } from '@core/systems/exploration';
 import { questProgress } from '@core/systems/quests';
 import { biomeWeather, nextWeatherChange, weatherOdds } from '@core/systems/weather';
 import { formatDuration } from '@core/time';
@@ -61,7 +61,7 @@ function ActiveExpeditions() {
   if (state.expeditions.length === 0) return null;
   return (
     <div className="stack" style={{ gap: 10 }}>
-      <div className="section-title" style={{ marginTop: 0 }}><Icon name="compass" width={22} height={22} style={{ color: 'var(--violet)' }} /><h2>Expéditions en cours</h2><span className="muted">{state.expeditions.length}/{X.maxConcurrent}</span></div>
+      <div className="section-title" style={{ marginTop: 0 }}><Icon name="compass" width={22} height={22} style={{ color: 'var(--violet)' }} /><h2>Expéditions en cours</h2><span className="muted">{state.expeditions.length}/{maxExpeditions(state)}</span></div>
       {state.expeditions.map((e) => {
         const b = BIOME_BY_ID[e.biomeId]!;
         const done = now >= e.endsAt;
@@ -161,7 +161,7 @@ export function BiomeModal({ biomeId }: { biomeId: string }) {
         <div className="status-panel"><Icon name="lock" /><p>Découvre <b>{b.unlockDex} espèces</b> dans le Bestiaire pour atteindre ce biome ({dexCount(state)}/{b.unlockDex}).</p></div>
       ) : (
         <div className="row-wrap">
-          <button className="btn btn-pink" disabled={state.expeditions.length >= X.maxConcurrent} onClick={() => openModal({ kind: 'expedition', biomeId: b.id })}><Icon name="compass" />Préparer une expédition</button>
+          <button className="btn btn-pink" disabled={state.expeditions.length >= maxExpeditions(state)} onClick={() => openModal({ kind: 'expedition', biomeId: b.id })}><Icon name="compass" />Préparer une expédition</button>
           <button className="btn btn-ghost" disabled={now < forageAt} onClick={() => dispatch({ type: 'forage', biomeId: b.id })}>
             <Icon name="search" />{now < forageAt ? `Fouille dans ${formatDuration(forageAt - now)}` : 'Fouiller les environs'}
           </button>

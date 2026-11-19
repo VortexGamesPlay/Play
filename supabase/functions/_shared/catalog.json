@@ -1,0 +1,13 @@
+{
+  "currency": "EUR",
+  "products": [
+    { "id": "cristaux_60", "name": "Poignée de cristaux", "kind": "crystals", "priceCents": 99, "once": false, "grants": { "crystals": 60 } },
+    { "id": "cristaux_330", "name": "Bourse de cristaux", "kind": "crystals", "priceCents": 499, "once": false, "grants": { "crystals": 330 }, "badge": "+10 %" },
+    { "id": "cristaux_700", "name": "Coffret de cristaux", "kind": "crystals", "priceCents": 999, "once": false, "grants": { "crystals": 700 }, "badge": "+17 %" },
+    { "id": "cristaux_1500", "name": "Malle de cristaux", "kind": "crystals", "priceCents": 1999, "once": false, "grants": { "crystals": 1500 }, "badge": "+25 %" },
+    { "id": "pack_debutant", "name": "Trousse du jeune gardien", "kind": "bundle", "priceCents": 299, "once": true, "grants": { "crystals": 250, "items": { "cristal_sucre": 5, "nectar_etoile": 2 }, "decorations": ["arche_aurore"] } },
+    { "id": "passe_s1", "name": "Passe de saison : L'Éveil des Coquilles", "kind": "season", "priceCents": 499, "once": true, "grants": { "season": "s1" } },
+    { "id": "terrain_aurore", "name": "Terrain « Jardin d'aurore »", "kind": "cosmetic", "priceCents": 199, "once": true, "grants": { "themes": ["aurore"] } },
+    { "id": "lanternes_celestes", "name": "Lanternes célestes", "kind": "cosmetic", "priceCents": 149, "once": true, "grants": { "decorations": ["lanternes_celestes"] } }
+  ]
+}

@@ -65,12 +65,16 @@ for (const { label } of [...labels('skills'), ...labels('statuses')]) {
   }
 }
 // 3. Tous les autres libellés
-for (const file of ['species', 'eggs', 'items', 'mutations', 'ambiances', 'recipes', 'personalities', 'biomes', 'weather', 'buildings', 'arena']) {
+for (const file of ['species', 'eggs', 'items', 'mutations', 'ambiances', 'recipes', 'personalities', 'biomes', 'weather', 'buildings', 'arena', 'seasons']) {
   for (const { field, label } of labels(file)) {
     if (file === 'species' && field === 'name') continue;
     count++;
     if (anyRef.has(norm(label))) problems.push(`« ${label} » (${file}) : identique à un nom existant`);
   }
+}
+for (const p of JSON.parse(readFileSync('supabase/functions/_shared/catalog.json', 'utf8')).products) {
+  count++;
+  if (anyRef.has(norm(p.name))) problems.push(`Produit « ${p.name} » : identique à un nom existant`);
 }
 const unique = [...new Set(problems)];
 console.log(`${count} noms vérifiés contre ${anyRef.size} noms de référence (espèces, attaques, talents, objets).`);

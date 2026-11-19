@@ -3,9 +3,9 @@ import type { GameEvent } from '@core/events';
 
 export type Route =
   | 'sanctuaire' | 'incubateur' | 'collection' | 'bestiaire' | 'laboratoire'
-  | 'exploration' | 'arene' | 'boutique' | 'inventaire' | 'communaute' | 'profil';
+  | 'exploration' | 'arene' | 'boutique' | 'inventaire' | 'communaute' | 'profil' | 'saison';
 
-export const ROUTES: Route[] = ['sanctuaire', 'incubateur', 'collection', 'bestiaire', 'laboratoire', 'exploration', 'arene', 'boutique', 'inventaire', 'communaute', 'profil'];
+export const ROUTES: Route[] = ['sanctuaire', 'incubateur', 'collection', 'bestiaire', 'laboratoire', 'exploration', 'arene', 'boutique', 'inventaire', 'communaute', 'profil', 'saison'];
 
 export type ToastKind = 'info' | 'success' | 'error' | 'reward';
 export interface Toast {
@@ -26,6 +26,7 @@ export type Modal =
   | { kind: 'breedFx'; parents: [string, string]; eggUid: string }
   | { kind: 'biome'; biomeId: string }
   | { kind: 'battle' }
+  | { kind: 'checkout'; productId: string }
   | { kind: 'teamPicker' }
   | { kind: 'elementGuide' }
   | { kind: 'expedition'; biomeId: string }

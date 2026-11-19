@@ -79,8 +79,9 @@ export function BuildPanel() {
         {Object.values(THEMES).map((t) => {
           const ok = themes.includes(t.id);
           const from = BIOMES.find((b) => b.theme === t.id && t.id !== 'prairie');
+          const hint = from ? `Débloqué après une expédition : ${from.name}` : 'Récompense du passe de saison ou cosmétique de la boutique';
           return (
-            <button key={t.id} className={`theme-chip ${state.sanctuary.theme === t.id ? 'active' : ''} ${ok ? '' : 'locked'}`} disabled={!ok} title={ok ? '' : `Débloqué après une expédition : ${from?.name}`}
+            <button key={t.id} className={`theme-chip ${state.sanctuary.theme === t.id ? 'active' : ''} ${ok ? '' : 'locked'}`} disabled={!ok} title={ok ? '' : hint}
               onClick={() => dispatch({ type: 'setTheme', theme: t.id })} style={{ ['--t1' as string]: t.sky[0], ['--t2' as string]: t.ground[1] } as CSSProperties}>
               <i />{t.name}{!ok && <Icon name="lock" width={12} height={12} />}
             </button>

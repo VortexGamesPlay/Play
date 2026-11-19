@@ -10,7 +10,9 @@ import { claimAchievement, claimMission, claimSideQuest, syncPeriods } from './s
 import { assertPresent } from './systems/exploration';
 import { abandonBattle, finishBattle, setTeam, startBattle } from './systems/battles';
 import type { BattleInput } from './combat/engine';
-import type { PendingBattle } from './types';
+import type { PendingBattle, PurchaseRecord } from './types';
+import { applyPurchase, setSpendLimit } from './systems/premium';
+import { claimSeasonReward, syncSeason } from './systems/season';
 import { grant } from './systems/economy';
 import { feed } from './systems/feeding';
 import { hatch } from './systems/hatching';
@@ -55,7 +57,10 @@ export type GameAction =
   | { type: 'setTeam'; uids: string[] }
   | { type: 'startBattle'; kind: PendingBattle['kind']; ref: string }
   | { type: 'finishBattle'; inputs: BattleInput[] }
-  | { type: 'abandonBattle' };
+  | { type: 'abandonBattle' }
+  | { type: 'applyPurchase'; purchase: Omit<PurchaseRecord, 'at'> }
+  | { type: 'claimSeasonReward'; level: number; track: 'free' | 'premium' }
+  | { type: 'setSpendLimit'; cents: number | null };
 
 export interface ActionResult {
   state: GameState;
@@ -70,6 +75,7 @@ export function applyAction(state: GameState, action: GameAction, ctx: ActionCon
   const draft = structuredClone(state);
   const events: GameEvent[] = [];
   syncPeriods(draft, ctx);
+  syncSeason(draft, ctx);
   switch (action.type) {
     case 'placeEgg': placeEgg(draft, action.eggUid, action.slot, ctx); break;
     case 'removeEgg': removeEgg(draft, action.slot); break;
@@ -109,6 +115,9 @@ export function applyAction(state: GameState, action: GameAction, ctx: ActionCon
     case 'startBattle': startBattle(draft, action.kind, action.ref, ctx); break;
     case 'finishBattle': finishBattle(draft, action.inputs, ctx, events); break;
     case 'abandonBattle': abandonBattle(draft); break;
+    case 'applyPurchase': applyPurchase(draft, action.purchase, ctx, events); break;
+    case 'claimSeasonReward': claimSeasonReward(draft, action.level, action.track, ctx, events); break;
+    case 'setSpendLimit': setSpendLimit(draft, action.cents); break;
     default: {
       const never: never = action;
       throw new GameError('unknown_action', `Action inconnue : ${JSON.stringify(never)}`);

@@ -15,6 +15,11 @@ import { biomeWeather } from './weather';
 
 const X = BALANCE.expedition;
 
+/** Expéditions simultanées : 3, +1 avec le Sac d'explorateur. */
+export function maxExpeditions(state: GameState): number {
+  return X.maxConcurrent + (state.unlocks.perks.includes('expedition_slot') ? 1 : 0);
+}
+
 export function isBiomeUnlocked(state: GameState, b: BiomeDef): boolean {
   return dexCount(state) >= b.unlockDex;
 }
@@ -92,7 +97,7 @@ export function startExpedition(draft: GameState, biomeId: string, uids: string[
   assertGame(X.durations[duration], 'bad_duration', 'Durée invalide.');
   const unique = [...new Set(uids)];
   assertGame(unique.length >= 1 && unique.length <= X.maxTeam, 'bad_team', `Choisis entre 1 et ${X.maxTeam} créatures.`);
-  assertGame(draft.expeditions.length < X.maxConcurrent, 'too_many', `${X.maxConcurrent} expéditions au maximum en même temps.`);
+  assertGame(draft.expeditions.length < maxExpeditions(draft), 'too_many', `${maxExpeditions(draft)} expéditions au maximum en même temps.`);
   for (const uid of unique) {
     const c = findCreature(draft, uid);
     if (isAway(draft, uid)) throw new GameError('away', `${displayName(c)} est déjà en expédition.`);

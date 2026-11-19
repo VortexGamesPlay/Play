@@ -4,6 +4,10 @@ import { dexCount, variantCount } from '@core/systems/dex';
 import { ACHIEVEMENTS } from '@data/missions';
 import { questProgress } from '@core/systems/quests';
 import { Bar } from '../components/Bar';
+import { PRODUCT_BY_ID, formatPrice } from '@data/products';
+import { spentThisMonth } from '@core/systems/premium';
+import { paymentsConfig } from '../../services/payments';
+import { restorePurchases } from '../premium/restore';
 import { Icon } from '../art/Icons';
 import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
@@ -17,6 +21,10 @@ export function ProfileScreen() {
   const { openModal, toast } = useUi.getState();
   const [name, setName] = useState(state.player.name);
   const fileRef = useRef<HTMLInputElement>(null);
+  const restore = async () => {
+    try { const n = await restorePurchases(); toast({ kind: 'success', title: 'Achats vérifiés', body: n ? `${n} achat(s) récupéré(s).` : 'Tous tes achats sont déjà crédités.' }); }
+    catch (e) { toast({ kind: 'error', title: 'Restauration impossible', body: (e as Error).message }); }
+  };
 
   const doExport = () => {
     const blob = new Blob([exportSave()], { type: 'application/json' });
@@ -87,6 +95,26 @@ export function ProfileScreen() {
           <div className="setting"><Icon name="motion" /><div><b>Animations réduites</b><span>Limite les mouvements à l'écran</span></div>
             <button className={`toggle ${state.settings.reducedMotion ? 'on' : ''}`} aria-pressed={state.settings.reducedMotion} aria-label="Animations réduites" onClick={() => dispatch({ type: 'setSetting', key: 'reducedMotion', value: !state.settings.reducedMotion })} /></div>
           <p className="muted" style={{ fontSize: 12, marginTop: 8 }}>Musiques d'ambiance par biome : Phase 8.</p>
+        </div>
+
+        <div className="card">
+          <div className="card-title"><Icon name="gift" /><h2>Achats</h2></div>
+          <div className="setting"><Icon name="lock" /><div><b>Limite de dépenses mensuelle</b><span>Dépensé ce mois-ci : {formatPrice(spentThisMonth(state, Date.now()))}</span></div>
+            <select id="spend-limit" className="select" value={state.premium.spendLimitCents ?? ''} onChange={(e) => dispatch({ type: 'setSpendLimit', cents: e.target.value === '' ? null : Number(e.target.value) })} aria-label="Limite de dépenses mensuelle">
+              <option value="">Aucune</option><option value="0">Bloquer les achats</option><option value="1000">10 €</option><option value="2000">20 €</option><option value="5000">50 €</option><option value="10000">100 €</option>
+            </select>
+          </div>
+          {state.premium.purchases.length === 0 ? <p className="muted" style={{ fontSize: 13, marginTop: 8 }}>Aucun achat pour l'instant.</p> : (
+            <div className="ledger" style={{ padding: 0, marginTop: 8 }}>
+              {[...state.premium.purchases].reverse().map((p) => (
+                <div key={p.orderId} className="ledger-row">
+                  <div style={{ flex: 1, minWidth: 0 }}><b style={{ fontSize: 14 }}>{PRODUCT_BY_ID[p.productId]?.name ?? p.productId}</b><div className="muted" style={{ fontSize: 12 }}>{fmtDateTime(p.at)} · {p.provider === 'test' ? 'mode test' : p.provider === 'paypal' ? 'PayPal' : 'magasin d\'applications'} · n° {p.orderId}</div></div>
+                  <b className="num">{formatPrice(p.amountCents)}</b>
+                </div>
+              ))}
+            </div>
+          )}
+          {paymentsConfig.paypal && <button className="btn btn-ghost btn-sm" style={{ marginTop: 10 }} onClick={() => void restore()}><Icon name="download" />Restaurer mes achats</button>}
         </div>
 
         <div className="card">

@@ -61,6 +61,13 @@ export const MIGRATIONS: Record<number, (s: RawState) => RawState> = {
   },
   // v4 → v5 (Phase 5) : combats.
   4: (s) => ({ ...s, combat: { team: [], pending: null, league: {}, bossFirst: [], bossDaily: {}, towerFloor: 0 } }),
+  // v5 → v6 : saison, achats, améliorations permanentes.
+  5: (s) => ({
+    ...s,
+    unlocks: { ...((s.unlocks as Obj | undefined) ?? { ambiances: ['neutre'] }), perks: [] },
+    season: { id: null, baseline: null, premium: false, claimedFree: [], claimedPremium: [] },
+    premium: { purchases: [], spendLimitCents: null, ownedThemes: [] },
+  }),
 };
 
 export function migrate(raw: RawState, targetVersion: number): RawState {

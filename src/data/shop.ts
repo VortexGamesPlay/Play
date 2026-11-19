@@ -35,6 +35,8 @@ export const SHOP_OFFERS: ShopOffer[] = [
   { id: 'deco_statue', kind: 'decoration', ref: 'statue', price: { currency: 'coins', amount: 2000 }, requires: { dexCount: 12 } },
   { id: 'deco_guirlande', kind: 'decoration', ref: 'guirlande', price: { currency: 'essence', amount: 50 }, requires: { dexCount: 14 } },
 
+  { id: 'perk_sac', kind: 'perk', ref: 'expedition_slot', name: 'Sac d\'explorateur', description: 'Une 4ᵉ expédition simultanée, pour toujours.', price: { currency: 'crystals', amount: 120 }, requires: { dexCount: 6 } },
+
   { id: 'slot_3', kind: 'incubator_slot', slotNumber: 3, price: { currency: 'coins', amount: 600 } },
   { id: 'slot_4', kind: 'incubator_slot', slotNumber: 4, price: { currency: 'coins', amount: 1800 }, requires: { dexCount: 5 } },
   { id: 'slot_5', kind: 'incubator_slot', slotNumber: 5, price: { currency: 'coins', amount: 4500 }, requires: { dexCount: 9 } },

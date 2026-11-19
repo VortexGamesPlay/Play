@@ -3,6 +3,7 @@ import { canClaimDaily } from '@core/systems/daily';
 import { activeQuest, questProgress } from '@core/systems/quests';
 import { dayKeyOf } from '@core/time';
 import { canEvolve } from '@core/systems/evolution';
+import { currentSeason, seasonLevel } from '@core/systems/season';
 import { dailyMissions, missionProgress } from '@core/systems/missions';
 import { useGame } from '../../store/gameStore';
 import type { Route } from '../../store/uiStore';
@@ -18,5 +19,12 @@ export function useBadges(): Partial<Record<Route, number>> {
   const evo = state.creatures.filter((c) => canEvolve(state, c, now)).length;
   const back = state.expeditions.filter((e) => now >= e.endsAt).length;
   const missions = dailyMissions(dayKeyOf(new Date(now))).filter((m) => { const p = missionProgress(state, m, 'day', now); return p.done && !p.claimed; }).length;
-  return { incubateur: ready || undefined, sanctuaire: (sanct + missions) || undefined, collection: evo || undefined, exploration: back || undefined };
+  const season = currentSeason(dayKeyOf(new Date(now)));
+  const lvl = seasonLevel(state, season);
+  let seasonClaims = 0;
+  for (let l = 1; l <= lvl; l++) {
+    if (!state.season.claimedFree.includes(l)) seasonClaims++;
+    if (state.season.premium && !state.season.claimedPremium.includes(l)) seasonClaims++;
+  }
+  return { saison: seasonClaims || undefined, incubateur: ready || undefined, sanctuaire: (sanct + missions) || undefined, collection: evo || undefined, exploration: back || undefined };
 }

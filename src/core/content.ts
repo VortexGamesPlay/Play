@@ -188,7 +188,8 @@ export type ShopOffer =
   | { id: string; kind: 'item'; ref: ItemId; quantity: number; price: Price; requires?: Requirement }
   | { id: string; kind: 'incubator_slot'; slotNumber: number; price: Price; requires?: Requirement }
   | { id: string; kind: 'ambiance'; ref: AmbianceId; price: Price; requires?: Requirement }
-  | { id: string; kind: 'decoration'; ref: string; price: Price; requires?: Requirement };
+  | { id: string; kind: 'decoration'; ref: string; price: Price; requires?: Requirement }
+  | { id: string; kind: 'perk'; ref: string; name: string; description: string; price: Price; requires?: Requirement };
 
 export interface Price {
   currency: CurrencyId;
@@ -300,6 +301,8 @@ export interface DecorationDef {
   description: string;
   shape: 'lantern' | 'arch' | 'statue' | 'mushrooms' | 'crystals' | 'bench' | 'fountain' | 'garland';
   color: string;
+  /** Décoration exclusive (passe de saison ou achat cosmétique) : jamais en boutique de pièces. */
+  exclusive?: 'season' | 'premium';
 }
 
 export interface ThemeDef {

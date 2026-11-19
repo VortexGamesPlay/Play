@@ -84,6 +84,11 @@ export const DECORATIONS: DecorationDef[] = [
   { id: 'banc', name: 'Banc du gardien', shape: 'bench', color: '#c08a52', description: 'Pour regarder tes créatures jouer.' },
   { id: 'fontaine', name: 'Fontaine aux vœux', shape: 'fountain', color: '#7fd0ff', description: 'On dit qu\'y jeter une pièce porte bonheur aux œufs.' },
   { id: 'guirlande', name: 'Guirlande d\'étoiles', shape: 'garland', color: '#ffe680', description: 'Une guirlande qui scintille doucement.' },
+  // Exclusivités cosmétiques (aucun avantage de jeu)
+  { id: 'arche_aurore', name: 'Arche d\'aurore', shape: 'arch', color: '#c6a7ff', exclusive: 'premium', description: 'Une arche aux couleurs de l\'aube, offerte dans la Trousse du jeune gardien.' },
+  { id: 'lanternes_celestes', name: 'Lanternes célestes', shape: 'lantern', color: '#9fe8ff', exclusive: 'premium', description: 'Des lanternes bleutées qui dansent comme des lucioles.' },
+  { id: 'statue_eveil', name: 'Statue de l\'Éveil', shape: 'statue', color: '#ffd84a', exclusive: 'season', description: 'Souvenir de la saison 1, L\'Éveil des Coquilles.' },
+  { id: 'fontaine_nacree', name: 'Fontaine nacrée', shape: 'fountain', color: '#f6dcff', exclusive: 'season', description: 'Souvenir de la saison 1, en nacre irisée.' },
 ];
 
 /** Terrains du sanctuaire, débloqués par l'exploration. */
@@ -92,5 +97,6 @@ export const THEMES: Record<string, ThemeDef> = {
   lagon: { id: 'lagon', name: 'Lagon', sky: ['#8fe8ff', '#fff4d6'], ground: ['#ffe9b8', '#f0d090'], hill: ['#6fd8d0', '#3fb8b0'], nightSky: ['#1a2a5c', '#3a6aa8'] },
   neige: { id: 'neige', name: 'Plaine enneigée', sky: ['#cfe6ff', '#f6f0ff'], ground: ['#ffffff', '#dfe8f8'], hill: ['#e8f0ff', '#b8cbe8'], nightSky: ['#1a2050', '#4a5aa8'] },
   cendres: { id: 'cendres', name: 'Terres de cendres', sky: ['#ffc8a0', '#ffe8c8'], ground: ['#d8a878', '#a8784a'], hill: ['#c08a5a', '#8a5a3a'], nightSky: ['#2a1420', '#6a3a4a'] },
+  aurore: { id: 'aurore', name: 'Jardin d\'aurore', sky: ['#ffc8e8', '#ffeec8'], ground: ['#f0d8ff', '#d8b8f0'], hill: ['#ffd0e8', '#e8a8d8'], nightSky: ['#2a1a50', '#7a4aa8'] },
   lune: { id: 'lune', name: 'Jardin lunaire', sky: ['#6a5ae0', '#c8b8ff'], ground: ['#a89ae8', '#7a6ad0'], hill: ['#8a7ae0', '#5a4ab8'], nightSky: ['#0e0a2a', '#3a2d9e'] },
 };
