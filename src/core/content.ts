@@ -35,12 +35,14 @@ export interface RarityDef {
 
 export type BodyShape = 'round' | 'pear' | 'drop' | 'blob' | 'tall' | 'ghost' | 'gem' | 'serpent';
 export type EarShape = 'none' | 'cat' | 'bunny' | 'round' | 'fin' | 'leaf' | 'flame' | 'horn' | 'antenna' | 'crystal' | 'feather' | 'mushroom';
-export type CrestShape = 'none' | 'sprout' | 'flame' | 'star' | 'halo' | 'gem' | 'bubble' | 'spikes' | 'crown' | 'moon';
+export type CrestShape = 'none' | 'sprout' | 'flame' | 'star' | 'halo' | 'gem' | 'bubble' | 'spikes' | 'crown' | 'moon' | 'ember' | 'lure';
 export type TailShape = 'none' | 'flame' | 'fish' | 'leaf' | 'bolt' | 'curl' | 'fluffy' | 'star' | 'spike' | 'wisp';
 export type WingShape = 'none' | 'small' | 'bat' | 'feather' | 'fairy' | 'fin';
 export type EyeStyle = 'round' | 'sparkle' | 'sleepy' | 'fierce' | 'void' | 'gem';
 export type MouthStyle = 'smile' | 'fang' | 'o' | 'cat' | 'tiny';
-export type PatternStyle = 'none' | 'spots' | 'stripes' | 'belly' | 'stars' | 'scales' | 'runes';
+export type PatternStyle = 'none' | 'spots' | 'stripes' | 'belly' | 'stars' | 'scales' | 'runes' | 'cracks';
+/** Signature EGGVERSE : fragment de coquille conservé (par défaut selon le stade). */
+export type ShellStyle = 'base' | 'cap' | 'shard' | 'none';
 
 export interface Palette {
   primary: string;
@@ -64,6 +66,10 @@ export interface ArtSpec {
   scale: number;
   palette: Palette;
   aura?: string;
+  /** Fragment de coquille ; défaut : bébé → base, juvénile → chapeau, adulte/ancestral → éclat. */
+  shell?: ShellStyle;
+  /** Œuf dont la coquille donne sa couleur au fragment (défaut : premier œuf qui contient l'espèce). */
+  nativeEgg?: string;
 }
 
 export type EvolutionCondition =

@@ -1,6 +1,8 @@
 import { memo, useId, type CSSProperties, type ReactNode } from 'react';
-import type { ArtSpec, BodyShape, Palette } from '@core/content';
-import { SPECIES } from '@data/species';
+import type { ArtSpec, BodyShape, EggDef, Palette, ShellStyle, SpeciesDef } from '@core/content';
+import { SPECIES, SPECIES_LIST } from '@data/species';
+import { EGGS } from '@data/eggs';
+import { ELEMENTS } from '@data/elements';
 import { darken, hashString, lighten } from './color';
 import { resolveLook, type Overlay } from './mutationLook';
 
@@ -39,7 +41,7 @@ function Pair({ children, x, y, cls }: { children: ReactNode; x: number; y: numb
 
 function Ears({ a, g, p, o }: { a: ArtSpec; g: Geo; p: Palette; o: string }) {
   const x = 100 - g.earX, y = g.earY;
-  const st = { stroke: o, strokeWidth: 3, strokeLinejoin: 'round' as const };
+  const st = { stroke: o, strokeWidth: 2.5, strokeLinejoin: 'round' as const };
   switch (a.ears) {
     case 'cat': return <Pair x={x} y={y}><path d="M-16 12L-8-26L14 4Z" fill={p.primary} {...st} /><path d="M-10 5L-7-13L5 2Z" fill={p.accent} opacity=".85" /></Pair>;
     case 'bunny': return <Pair x={x + 4} y={y}><path d="M-8 10C-20-20-14-48-4-48C6-48 8-20 8 8Z" fill={p.primary} {...st} /><path d="M-4 4C-11-18-8-38-3-38C2-38 3-18 3 4Z" fill={p.belly} opacity=".9" /></Pair>;
@@ -69,21 +71,23 @@ function Crest({ a, g, p, o }: { a: ArtSpec; g: Geo; p: Palette; o: string }) {
   const st = { stroke: o, strokeWidth: 2.5, strokeLinejoin: 'round' as const };
   switch (a.crest) {
     case 'sprout': return <g transform={`translate(100 ${t + 4})`}><path d="M0 0V-16" stroke={darken(p.secondary, 10)} strokeWidth="4" strokeLinecap="round" /><path d="M0-14C-6-26-22-26-24-18C-16-12-6-12 0-14Z" fill={p.secondary} {...st} /><path d="M0-16C6-30 22-30 24-22C16-14 6-14 0-16Z" fill={lighten(p.secondary, 10)} {...st} /></g>;
-    case 'flame': return <g transform={`translate(100 ${t + 6})`} className="cr-flicker"><path d="M0 4C-16-2-16-20-6-36C-4-24 2-24 4-30C14-18 14-2 0 4Z" fill={p.accent} {...st} /><path d="M0 0C-6-4-6-12-2-18C0-12 4-12 4-8C4-4 2-1 0 0Z" fill="white" opacity=".7" /></g>;
-    case 'star': return <g transform={`translate(100 ${t - 10})`} className="cr-float"><path d="m0-12 3.5 7.5 8 1-6 5.5 1.6 8L0 6l-7 4 1.6-8-6-5.5 8-1Z" fill={p.accent} {...st} /></g>;
+    case 'flame': return <g className="cr-flicker"><g transform={`translate(100 ${t + 6})`}><path d="M0 4C-16-2-16-20-6-36C-4-24 2-24 4-30C14-18 14-2 0 4Z" fill={p.accent} {...st} /><path d="M0 0C-6-4-6-12-2-18C0-12 4-12 4-8C4-4 2-1 0 0Z" fill="white" opacity=".7" /></g></g>;
+    case 'star': return <g className="cr-float"><g transform={`translate(100 ${t - 10})`}><path d="m0-12 3.5 7.5 8 1-6 5.5 1.6 8L0 6l-7 4 1.6-8-6-5.5 8-1Z" fill={p.accent} {...st} /></g></g>;
     case 'halo': return <g className="cr-float"><ellipse cx="100" cy={t - 14} rx="26" ry="7" fill="none" stroke="#ffd84a" strokeWidth="5" /><ellipse cx="100" cy={t - 14} rx="26" ry="7" fill="none" stroke="#fff6c8" strokeWidth="2" /></g>;
     case 'gem': return <g transform={`translate(100 ${g.faceY - 30})`}><path d="M0-10 8 0 0 10-8 0Z" fill={p.accent} {...st} /><path d="M-3-3 0-6" stroke="white" strokeWidth="2" strokeLinecap="round" /></g>;
     case 'bubble': return <g className="cr-bubbles"><circle cx="112" cy={t - 6} r="7" fill={p.accent} opacity=".75" stroke="white" strokeWidth="1.5" /><circle cx="124" cy={t - 20} r="4.5" fill={p.accent} opacity=".7" stroke="white" strokeWidth="1.2" /><circle cx="116" cy={t - 32} r="3" fill={p.accent} opacity=".6" /></g>;
     case 'spikes': return <g fill={p.secondary} {...st}><path d={`M84 ${t + 6}L90 ${t - 14}L98 ${t + 2}Z`} /><path d={`M96 ${t + 2}L104 ${t - 20}L110 ${t + 2}Z`} /><path d={`M108 ${t + 4}L116 ${t - 12}L120 ${t + 8}Z`} /></g>;
     case 'crown': return <g transform={`translate(100 ${t + 2})`}><path d="M-20 4-24-16-10-6 0-22 10-6 24-16 20 4Z" fill="#ffd84a" stroke="#c9901a" strokeWidth="2.5" strokeLinejoin="round" /><circle cx="0" cy="-4" r="3.5" fill={p.accent} /><circle cx="-12" cy="-2" r="2.2" fill="#ff6fb5" /><circle cx="12" cy="-2" r="2.2" fill="#5fd8ff" /></g>;
-    case 'moon': return <g transform={`translate(100 ${t - 8})`} className="cr-float"><path d="M6-12A12 12 0 1 0 6 12 9 9 0 1 1 6-12Z" fill={p.accent} {...st} /></g>;
+    case 'ember': return <g className="cr-float"><g transform={`translate(100 ${t - 20})`}><g><path d="M0 8C-10 4-11-6-4-16C-3-9 2-9 3-13C9-6 9 4 0 8Z" fill={p.accent} {...st} /><circle cx="0" cy="1" r="2.6" fill="white" opacity=".8" /></g></g></g>;
+    case 'lure': return <g><path d={`M100 ${t + 4}C102 ${t - 18} 118 ${t - 30} 132 ${t - 22}`} stroke={o} strokeWidth="3" fill="none" strokeLinecap="round" /><circle cx="134" cy={t - 18} r="10" fill={p.accent} opacity=".3" className="cr-core-glow" /><circle cx="134" cy={t - 18} r="6" fill={p.accent} stroke="white" strokeWidth="1.5" /></g>;
+    case 'moon': return <g className="cr-float"><g transform={`translate(100 ${t - 8})`}><path d="M6-12A12 12 0 1 0 6 12 9 9 0 1 1 6-12Z" fill={p.accent} {...st} /></g></g>;
     default: return null;
   }
 }
 
 function Tail({ a, g, p, o }: { a: ArtSpec; g: Geo; p: Palette; o: string }) {
   const [tx, ty] = g.tail;
-  const st = { stroke: o, strokeWidth: 3, strokeLinejoin: 'round' as const };
+  const st = { stroke: o, strokeWidth: 2.5, strokeLinejoin: 'round' as const };
   let shape: ReactNode = null;
   switch (a.tail) {
     case 'flame': shape = <><path d="M0 0C20-6 30-24 26-44C36-36 44-20 38-4C34 8 14 12 0 8Z" fill={p.accent} {...st} /><path d="M10 2C22-2 28-12 28-24C34-16 36-6 32 2C28 6 18 8 10 6Z" fill={p.secondary} /></>; break;
@@ -102,7 +106,7 @@ function Tail({ a, g, p, o }: { a: ArtSpec; g: Geo; p: Palette; o: string }) {
 
 function Wings({ a, g, p, o }: { a: ArtSpec; g: Geo; p: Palette; o: string }) {
   const x = 100 - g.sideX + 8, y = g.sideY - 16;
-  const st = { stroke: o, strokeWidth: 3, strokeLinejoin: 'round' as const };
+  const st = { stroke: o, strokeWidth: 2.5, strokeLinejoin: 'round' as const };
   let shape: ReactNode = null;
   switch (a.wings) {
     case 'small': shape = <path d="M0 0C-20-20-38-14-34 4C-24 2-14 6 0 10Z" fill={p.secondary} {...st} />; break;
@@ -115,41 +119,140 @@ function Wings({ a, g, p, o }: { a: ArtSpec; g: Geo; p: Palette; o: string }) {
   return <Pair x={x} y={y} cls="cr-wing">{shape}</Pair>;
 }
 
+/**
+ * Visage EGGVERSE : yeux en amande petits et écartés, cil extérieur, reflet unique,
+ * taches de rousseur. (Pas de grands yeux étoilés façon mascotte.)
+ */
 function Eyes({ a, g, p, o }: { a: ArtSpec; g: Geo; p: Palette; o: string }) {
-  const y = g.faceY;
-  const gap = a.body === 'blob' ? 22 : 19;
-  const one = (x: number, mirrored: boolean) => {
+  const y = g.faceY + 4;
+  const gap = a.body === 'blob' ? 27 : 23;
+  const one = (x: number, right: boolean) => {
+    const out = right ? 1 : -1;
     switch (a.eyes) {
       case 'sleepy':
-        return <path d={`M${x - 9} ${y + 1}Q${x} ${y - 8} ${x + 9} ${y + 1}`} stroke={p.eye} strokeWidth="4" fill="none" strokeLinecap="round" />;
+        return <path d={`M${x - 6} ${y}Q${x} ${y + 5} ${x + 6} ${y}`} stroke={p.eye} strokeWidth="3" fill="none" strokeLinecap="round" />;
       case 'fierce':
-        return (<g><ellipse cx={x} cy={y} rx="9" ry="10" fill={p.eye} /><circle cx={x - 3} cy={y - 4} r="3" fill="white" />
-          <path d={mirrored ? `M${x - 12} ${y - 12}L${x + 10} ${y - 4}L${x + 12} ${y - 14}Z` : `M${x + 12} ${y - 12}L${x - 10} ${y - 4}L${x - 12} ${y - 14}Z`} fill={o} /></g>);
+        return (<g><ellipse cx={x} cy={y} rx="5.5" ry="7" fill={p.eye} /><circle cx={x + out * 1.5} cy={y - 3} r="1.7" fill="white" />
+          <path d={`M${x + out * 8} ${y - 12}L${x - out * 6} ${y - 8}`} stroke={o} strokeWidth="3" strokeLinecap="round" /></g>);
       case 'void':
-        return <g><ellipse cx={x} cy={y} rx="8" ry="12" fill={p.eye} /><circle cx={x - 2} cy={y - 5} r="2" fill="white" opacity=".9" /></g>;
+        return <ellipse cx={x} cy={y} rx="4.5" ry="9" fill={p.eye} />;
       case 'gem':
-        return (<g><ellipse cx={x} cy={y} rx="9.5" ry="11" fill={p.eye} stroke={o} strokeWidth="2" /><ellipse cx={x} cy={y + 1} rx="3" ry="7" fill={darken(p.eye, 45)} />
-          <circle cx={x - 3.5} cy={y - 5} r="2.6" fill="white" /></g>);
+        return (<g><ellipse cx={x} cy={y} rx="7.5" ry="8.5" fill={p.eye} opacity=".3" /><ellipse cx={x} cy={y} rx="5" ry="6.5" fill={p.eye} />
+          <ellipse cx={x} cy={y - 1} rx="2" ry="2.8" fill="white" opacity=".9" /></g>);
       case 'sparkle':
-        return (<g><ellipse cx={x} cy={y} rx="10" ry="12" fill={p.eye} /><circle cx={x - 3.5} cy={y - 5} r="3.6" fill="white" /><circle cx={x + 3.5} cy={y + 4} r="1.8" fill="white" />
-          <path d={`M${x + 4} ${y - 9}l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1Z`} fill="white" /></g>);
+        return (<g><ellipse cx={x} cy={y} rx="6" ry="8" fill={p.eye} /><path d={`M${x - 4} ${y + 4}Q${x} ${y + 7.5} ${x + 4} ${y + 4}`} stroke={p.accent} strokeWidth="2" fill="none" opacity=".8" />
+          <circle cx={x + out * 2} cy={y - 3.5} r="2" fill="white" /><circle cx={x - out * 2} cy={y + 1} r="1" fill="white" opacity=".8" />
+          <path d={`M${x + out * 5} ${y - 6}l${out * 4} -3`} stroke={o} strokeWidth="2" strokeLinecap="round" /></g>);
       default:
-        return <g><ellipse cx={x} cy={y} rx="9" ry="11" fill={p.eye} /><circle cx={x - 3} cy={y - 4} r="3.4" fill="white" /><circle cx={x + 3} cy={y + 4} r="1.5" fill="white" /></g>;
+        return (<g><ellipse cx={x} cy={y} rx="5.5" ry="7.5" fill={p.eye} /><circle cx={x + out * 1.8} cy={y - 3} r="1.8" fill="white" />
+          <path d={`M${x + out * 5} ${y - 5.5}l${out * 4} -3`} stroke={o} strokeWidth="2" strokeLinecap="round" /></g>);
     }
   };
   return <g className="cr-eyes" style={{ transformOrigin: `100px ${y}px` }}>{one(100 - gap, false)}{one(100 + gap, true)}</g>;
 }
 
+function Freckles({ g, p }: { g: Geo; p: Palette }) {
+  const y = g.faceY + 15;
+  const gap = 33;
+  const c = darken(p.primary, 22);
+  return (
+    <g fill={c} opacity=".55">
+      {[-1, 1].map((side) => [[0, 0], [5, -3], [6, 3]].map(([dx, dy], i) => <circle key={`${side}${i}`} cx={100 + side * (gap + dx!)} cy={y + dy!} r="1.6" />))}
+    </g>
+  );
+}
+
 function Mouth({ a, g, p }: { a: ArtSpec; g: Geo; p: Palette }) {
-  const y = g.faceY + 18;
-  const c = a.eyes === 'void' ? p.eye : '#3a2440';
+  const y = g.faceY + 15;
+  const c = a.eyes === 'void' ? p.eye : darken(p.primary, 45);
   switch (a.mouth) {
-    case 'fang': return <g><path d={`M92 ${y}Q100 ${y + 8} 108 ${y}`} stroke={c} strokeWidth="3" fill="none" strokeLinecap="round" /><path d={`M95 ${y + 2.5}l2 5 2-4.2Z`} fill="white" /></g>;
-    case 'o': return <ellipse cx="100" cy={y + 2} rx="4.5" ry="5.5" fill={c} />;
-    case 'cat': return <path d={`M91 ${y}Q95.5 ${y + 6} 100 ${y}Q104.5 ${y + 6} 109 ${y}`} stroke={c} strokeWidth="3" fill="none" strokeLinecap="round" />;
-    case 'tiny': return <path d={`M96 ${y + 1}Q100 ${y + 4} 104 ${y + 1}`} stroke={c} strokeWidth="2.5" fill="none" strokeLinecap="round" />;
-    default: return <path d={`M92 ${y}Q100 ${y + 9} 108 ${y}`} stroke={c} strokeWidth="3" fill="none" strokeLinecap="round" />;
+    case 'fang': return <g><path d={`M95 ${y}Q100 ${y + 4} 105 ${y}`} stroke={c} strokeWidth="2.4" fill="none" strokeLinecap="round" /><path d={`M101.5 ${y + 1.5}l1.5 3.5 1.4-3Z`} fill="white" /></g>;
+    case 'o': return <ellipse cx="100" cy={y + 1} rx="3" ry="3.6" fill={c} />;
+    case 'cat': return <path d={`M94 ${y}Q97 ${y + 3.5} 100 ${y}Q103 ${y + 3.5} 106 ${y}`} stroke={c} strokeWidth="2.4" fill="none" strokeLinecap="round" />;
+    case 'tiny': return <path d={`M97.5 ${y}h5`} stroke={c} strokeWidth="2.4" strokeLinecap="round" />;
+    default: return <path d={`M95 ${y}Q100 ${y + 5} 105 ${y}`} stroke={c} strokeWidth="2.4" fill="none" strokeLinecap="round" />;
   }
+}
+
+/** Œuf d'origine d'une espèce (pour la couleur de son fragment de coquille). */
+const nativeCache = new Map<string, EggDef>();
+function nativeEggOf(sp: SpeciesDef): EggDef {
+  const hit = nativeCache.get(sp.id);
+  if (hit) return hit;
+  let egg: EggDef | undefined = sp.art.nativeEgg ? EGGS[sp.art.nativeEgg] : undefined;
+  egg ??= Object.values(EGGS).find((e) => e.pool.some((x) => x.species === sp.id));
+  if (!egg) {
+    const parent = SPECIES_LIST.find((s) => s.evolutions.some((e) => e.to === sp.id));
+    egg = parent ? nativeEggOf(parent) : EGGS.legendaire!;
+  }
+  nativeCache.set(sp.id, egg);
+  return egg;
+}
+
+const CAP_W: Record<BodyShape, number> = { round: 42, pear: 38, drop: 24, blob: 48, tall: 38, ghost: 42, gem: 36, serpent: 38 };
+const BASE_W: Record<BodyShape, number> = { round: 62, pear: 58, drop: 60, blob: 74, tall: 56, ghost: 62, gem: 64, serpent: 66 };
+
+function zigzag(x1: number, x2: number, y: number, teeth: number, depth: number): string {
+  const pts: string[] = [];
+  for (let i = 0; i <= teeth; i++) pts.push(`L${(x1 + ((x2 - x1) * i) / teeth).toFixed(1)} ${i % 2 ? y - depth : y}`);
+  return pts.join('');
+}
+
+function ShellSpots({ egg, cx, cy, spread }: { egg: EggDef; cx: number; cy: number; spread: number }) {
+  return (
+    <g fill={egg.visual.secondary} opacity=".75">
+      <circle cx={cx - spread * 0.5} cy={cy} r="4" /><circle cx={cx + spread * 0.15} cy={cy + 5} r="3" /><circle cx={cx + spread * 0.6} cy={cy - 2} r="3.6" />
+    </g>
+  );
+}
+
+/** Signature EGGVERSE : chaque créature garde un morceau de la coquille dont elle est née. */
+function Shell({ style, g, a, egg }: { style: ShellStyle; g: Geo; a: ArtSpec; egg: EggDef }) {
+  const base = egg.visual.base;
+  const line = darken(base, 28);
+  if (style === 'base') {
+    const w = BASE_W[a.body];
+    const top = Math.max(g.bottom - 26, g.faceY + 24);
+    const d = `M${100 - w} ${top}${zigzag(100 - w, 100 + w, top, 10, 8)}C${100 + w + 2} ${g.bottom + 20} ${100 - w - 2} ${g.bottom + 20} ${100 - w} ${top}Z`;
+    return (
+      <g className="cr-shell">
+        <path d={d} fill={base} stroke={line} strokeWidth="2.5" strokeLinejoin="round" />
+        <ShellSpots egg={egg} cx={100} cy={top + 16} spread={w} />
+        <path d={`M${100 - w + 10} ${top + 10}Q${100 - w + 14} ${g.bottom + 2} ${100 - w + 30} ${g.bottom + 8}`} stroke="white" strokeWidth="3" fill="none" opacity=".45" strokeLinecap="round" />
+      </g>
+    );
+  }
+  if (style === 'cap') {
+    const w = CAP_W[a.body];
+    const t = g.top;
+    const by = t + 18;
+    const d = `M${100 - w} ${by}C${100 - w} ${t - 8} ${100 - w * 0.5} ${t - 15} 100 ${t - 15}C${100 + w * 0.5} ${t - 15} ${100 + w} ${t - 8} ${100 + w} ${by}${zigzag(100 + w, 100 - w, by, 8, 7)}Z`;
+    return (
+      <g className="cr-shell" transform={`rotate(-9 100 ${t})`}>
+        <path d={d} fill={base} stroke={line} strokeWidth="2.5" strokeLinejoin="round" />
+        <ShellSpots egg={egg} cx={100} cy={t} spread={w * 0.9} />
+        <path d={`M${100 - w * 0.55} ${t + 2}Q${100 - w * 0.45} ${t - 9} ${100 - w * 0.1} ${t - 11}`} stroke="white" strokeWidth="3" fill="none" opacity=".5" strokeLinecap="round" />
+      </g>
+    );
+  }
+  return null;
+}
+
+/** Le noyau : gemme élémentaire sur la poitrine (dans un éclat de coquille chez les adultes). */
+function Core({ x, y, color, shard, egg }: { x: number; y: number; color: string; shard: boolean; egg: EggDef }) {
+  return (
+    <g>
+      {shard && (
+        <g transform={`translate(${x} ${y}) scale(.72) translate(${-x} ${-y})`}>
+          <path d={`M${x - 20} ${y - 16}Q${x} ${y - 6} ${x + 20} ${y - 16}`} stroke={darken(egg.visual.base, 35)} strokeWidth="1.8" fill="none" />
+          <path d={`M${x - 10} ${y - 8}L${x - 4} ${y - 12}L${x + 2} ${y - 8}L${x + 8} ${y - 12}L${x + 11} ${y - 6}L${x + 7} ${y + 10}L${x - 7} ${y + 11}Z`} fill={egg.visual.base} stroke={darken(egg.visual.base, 28)} strokeWidth="2" strokeLinejoin="round" />
+        </g>
+      )}
+      <circle cx={x} cy={y} r="9" fill={color} opacity=".28" className="cr-core-glow" />
+      <path d={`M${x} ${y - 6.5}L${x + 4.5} ${y}L${x} ${y + 6.5}L${x - 4.5} ${y}Z`} fill={color} stroke="white" strokeWidth="1.4" strokeLinejoin="round" />
+      <circle cx={x - 1} cy={y - 2} r="1.2" fill="white" />
+    </g>
+  );
 }
 
 function Pattern({ a, g, p }: { a: ArtSpec; g: Geo; p: Palette }) {
@@ -161,6 +264,7 @@ function Pattern({ a, g, p }: { a: ArtSpec; g: Geo; p: Palette }) {
     case 'stripes': return <g>{belly}<g stroke={p.secondary} strokeWidth="6" strokeLinecap="round" fill="none" opacity=".6"><path d={`M82 ${t + 2}q4 12 0 22`} /><path d={`M100 ${t - 2}v26`} /><path d={`M118 ${t + 2}q-4 12 0 22`} /><path d={`M46 ${b - 70}q12 4 18 14`} /><path d={`M154 ${b - 70}q-12 4-18 14`} /></g></g>;
     case 'scales': return <g>{belly}<g stroke={p.secondary} strokeWidth="2.5" fill="none" opacity=".5">{[0, 1, 2].map((r) => [0, 1, 2, 3].map((i) => <path key={`${r}${i}`} d={`M${76 + i * 14 + (r % 2) * 7} ${b - 50 + r * 12}q7 8 14 0`} />))}</g></g>;
     case 'stars': return <g fill={p.accent} opacity=".9">{[[68, t + 30, 1], [130, t + 40, 0.8], [116, t + 18, 0.6], [60, b - 46, 0.9], [142, b - 54, 1.1], [100, b - 30, 0.7]].map(([x, y, s], i) => <path key={i} transform={`translate(${x} ${y}) scale(${s})`} d="M0-6 1.6-1.6 6 0 1.6 1.6 0 6-1.6 1.6-6 0-1.6-1.6Z" />)}</g>;
+    case 'cracks': return <g>{belly}<g stroke={p.accent} strokeWidth="2.6" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity=".85"><path d={`M58 ${t + 36}l10 6-3 9 9 5`} /><path d={`M146 ${t + 30}l-9 8 5 8`} /><path d={`M52 ${b - 44}l10-4 4 8`} /><path d={`M148 ${b - 50}l-8 2-2 9`} /></g></g>;
     case 'runes': return <g>{belly}<g stroke={p.accent} strokeWidth="2.5" fill="none" strokeLinecap="round" opacity=".75"><path d={`M60 ${t + 44}l6-10 6 10M63 ${t + 40}h6`} /><path d={`M132 ${t + 36}v12l6-6`} /><circle cx="140" cy={b - 52} r="5" /><path d={`M56 ${b - 58}h10M61 ${b - 63}v10`} /></g></g>;
     default: return null;
   }
@@ -203,7 +307,12 @@ function CreatureArtImpl({ speciesId, mutations = [], hue = 0, size = 160, anim 
   const look = resolveLook(a.palette, silhouette ? [] : mutations, silhouette ? 0 : hue);
   const SIL = '#2b2350';
   const p: Palette = silhouette ? { primary: SIL, secondary: SIL, accent: SIL, belly: SIL, eye: SIL } : look.palette;
-  const o = silhouette ? SIL : darken(p.primary, 28);
+  const o = silhouette ? SIL : darken(p.primary, 30);
+  const shellStyle: ShellStyle = a.shell ?? (sp.stage === 'bebe' ? 'base' : sp.stage === 'juvenile' ? 'cap' : 'shard');
+  const egg = nativeEggOf(sp);
+  // Bébés : noyau serti dans la coquille ; sinon sur la poitrine.
+  const coreY = shellStyle === 'base' ? g.bottom - 10 : g.faceY + 32;
+  const crestGeo = shellStyle === 'cap' ? { ...g, top: g.top - 14 } : g;
   const clip = `${rid}-clip`;
   const delay = seed ? -((hashString(seed) % 4000) / 1000) : 0;
   const bodyFill = silhouette ? SIL : look.cosmicBody ? `url(#${rid}-cosmos)` : `url(#${rid}-body)`;
@@ -248,26 +357,24 @@ function CreatureArtImpl({ speciesId, mutations = [], hue = 0, size = 160, anim 
           <Wings a={a} g={g} p={p} o={o} />
           <Tail a={a} g={g} p={p} o={o} />
           {a.ears !== 'mushroom' && <Ears a={a} g={g} p={p} o={o} />}
-          {a.crest === 'halo' && <Crest a={a} g={g} p={p} o={o} />}
+          {a.crest === 'halo' && <Crest a={a} g={crestGeo} p={p} o={o} />}
           {a.body === 'serpent' && <ellipse cx="100" cy={g.bottom} rx="64" ry="17" fill={p.secondary} stroke={o} strokeWidth="3" />}
-          {a.feet && <g fill={p.secondary} stroke={o} strokeWidth="3"><ellipse cx="76" cy={g.bottom - 2} rx="14" ry="9" /><ellipse cx="124" cy={g.bottom - 2} rx="14" ry="9" /></g>}
+          {a.feet && shellStyle !== 'base' && <g fill={p.secondary} stroke={o} strokeWidth="2.5"><ellipse cx="76" cy={g.bottom - 2} rx="14" ry="9" /><ellipse cx="124" cy={g.bottom - 2} rx="14" ry="9" /></g>}
 
-          <path d={g.d} fill={bodyFill} stroke={o} strokeWidth={a.body === 'gem' ? 6 : 3.5} strokeLinejoin="round" />
+          <path d={g.d} fill={bodyFill} stroke={o} strokeWidth={a.body === 'gem' ? 5 : 2.6} strokeLinejoin="round" />
           {!silhouette && <g clipPath={`url(#${clip})`}><Pattern a={a} g={g} p={p} /><ellipse cx="78" cy={g.top + 26} rx="18" ry="10" fill="white" opacity=".28" transform={`rotate(-25 78 ${g.top + 26})`} /></g>}
-          {a.body !== 'ghost' && a.body !== 'gem' && (
-            <g fill={p.primary} stroke={o} strokeWidth="2.5"><ellipse cx="74" cy={g.faceY + 42} rx="9" ry="7" /><ellipse cx="126" cy={g.faceY + 42} rx="9" ry="7" /></g>
-          )}
           {a.ears === 'mushroom' && <Mushroom g={g} p={p} o={o} />}
-          {a.crest !== 'halo' && <Crest a={a} g={g} p={p} o={o} />}
+          <Shell style={shellStyle} g={g} a={a} egg={egg} />
+          {a.crest !== 'halo' && <Crest a={a} g={crestGeo} p={p} o={o} />}
 
           {!silhouette && (
             <g className="cr-face">
-              <ellipse cx="66" cy={g.faceY + 13} rx="8" ry="5" fill="#ff7aa8" opacity=".45" />
-              <ellipse cx="134" cy={g.faceY + 13} rx="8" ry="5" fill="#ff7aa8" opacity=".45" />
+              <Freckles g={g} p={p} />
               <Eyes a={anim === 'sleep' ? { ...a, eyes: 'sleepy' } : a} g={g} p={p} o={o} />
               <Mouth a={a} g={g} p={p} />
             </g>
           )}
+          {!silhouette && <Core x={100} y={coreY} color={ELEMENTS[sp.element].color} shard={shellStyle === 'shard'} egg={egg} />}
           {!silhouette && <Overlays overlays={look.overlays} g={g} p={p} clip={clip} uid={rid} />}
         </g>
       </g>

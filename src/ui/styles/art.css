@@ -56,3 +56,5 @@
 .egg-crack { stroke-dasharray: 80; stroke-dashoffset: 80; animation: egg-crack .35s ease-out forwards; }
 @keyframes egg-wobble { 0%, 70%, 100% { transform: rotate(0); } 76% { transform: rotate(-7deg); } 82% { transform: rotate(6deg); } 88% { transform: rotate(-4deg); } 94% { transform: rotate(2deg); } }
 @keyframes egg-crack { to { stroke-dashoffset: 0; } }
+.cr-core-glow { animation: cr-core 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes cr-core { 0%, 100% { opacity: .2; transform: scale(.85); } 50% { opacity: .45; transform: scale(1.15); } }

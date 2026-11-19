@@ -24,3 +24,4 @@ Laboratoire, Exploration, Arène et Communauté affichent clairement leur état 
 - [docs/ANALYSE.md](docs/ANALYSE.md) — rapport d'analyse initial, choix techniques, risques
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — couches, flux des actions, probabilités, sauvegarde, plan serveur
 - [docs/ROADMAP.md](docs/ROADMAP.md) — phases et état réel de chaque fonctionnalité
+- [docs/DIRECTION_ARTISTIQUE.md](docs/DIRECTION_ARTISTIQUE.md) — style Coquille des créatures, règles anti-plagiat
