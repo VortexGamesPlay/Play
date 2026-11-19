@@ -59,7 +59,7 @@ export const useUi = create<UiState>((set, get) => ({
   modals: [],
   moreOpen: false,
   navigate(route) {
-    if (location.hash !== `#/${route}`) location.hash = `/${route}`;
+    if (location.hash !== `#${route}`) location.hash = route;
     set({ route, moreOpen: false, modals: [] });
   },
   toast(t) {

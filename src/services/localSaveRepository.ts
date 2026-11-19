@@ -4,11 +4,40 @@ import type { GameState } from '@core/types';
 import type { LoadResult, SaveRepository } from './saveRepository';
 
 const MAIN_KEY = 'eggverse.save.main';
+
+/** Stockage de secours en mémoire (si le navigateur bloque le stockage local). */
+class MemoryStorage implements Storage {
+  private data = new Map<string, string>();
+  get length() { return this.data.size; }
+  clear() { this.data.clear(); }
+  getItem(k: string) { return this.data.get(k) ?? null; }
+  key(i: number) { return [...this.data.keys()][i] ?? null; }
+  removeItem(k: string) { this.data.delete(k); }
+  setItem(k: string, v: string) { this.data.set(k, v); }
+}
+
+/** Retourne le stockage local s'il fonctionne réellement, sinon null. */
+export function usableLocalStorage(): Storage | null {
+  try {
+    const ls = window.localStorage;
+    const probe = '__eggverse_probe__';
+    ls.setItem(probe, '1');
+    ls.removeItem(probe);
+    return ls;
+  } catch {
+    return null;
+  }
+}
+
+export function createSaveStorage(): { storage: Storage; persistent: boolean } {
+  const ls = usableLocalStorage();
+  return ls ? { storage: ls, persistent: true } : { storage: new MemoryStorage(), persistent: false };
+}
 const BACKUP_KEY = 'eggverse.save.backup';
 
 /** Sauvegarde locale avec copie de secours : une écriture corrompue n'efface jamais la précédente. */
 export class LocalSaveRepository implements SaveRepository {
-  constructor(private readonly storage: Storage = window.localStorage) {}
+  constructor(private readonly storage: Storage) {}
 
   async load(now: number): Promise<LoadResult> {
     const main = this.storage.getItem(MAIN_KEY);

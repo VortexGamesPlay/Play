@@ -11,7 +11,7 @@ import { getSpecies } from '@core/systems/creatures';
 import { CURRENCY_NAMES } from '@core/systems/economy';
 import { ITEMS } from '@data/items';
 import { EGGS } from '@data/eggs';
-import { LocalSaveRepository } from '../services/localSaveRepository';
+import { createSaveStorage, LocalSaveRepository } from '../services/localSaveRepository';
 import type { SaveRepository } from '../services/saveRepository';
 import { playSfx, setSoundEnabled } from '../services/audio';
 import { useUi } from './uiStore';
@@ -88,7 +88,11 @@ export const useGame = create<GameStore>((set, get) => {
     lastSavedAt: null,
 
     async init() {
-      repo = new LocalSaveRepository();
+      const { storage, persistent } = createSaveStorage();
+      repo = new LocalSaveRepository(storage);
+      if (!persistent) {
+        useUi.getState().toast({ kind: 'error', title: 'Sauvegarde limitée', body: 'Ton navigateur bloque le stockage : la partie sera perdue à la fermeture. Évite la navigation privée, ou exporte ta sauvegarde depuis le Profil.' });
+      }
       const res = await repo.load(Date.now());
       setSoundEnabled(res.state.settings.sound);
       set({ state: res.state, ready: true, lastSavedAt: res.savedAt });
