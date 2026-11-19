@@ -1,0 +1,26 @@
+/**
+ * Migrations de schéma de sauvegarde. Chaque entrée transforme la version N en N+1.
+ * Ne jamais modifier une migration publiée : en ajouter une nouvelle.
+ */
+type RawState = Record<string, unknown> & { schemaVersion?: number };
+
+export const MIGRATIONS: Record<number, (s: RawState) => RawState> = {
+  // Exemple pour la version 2 :
+  // 1: (s) => ({ ...s, schemaVersion: 2, nouveauChamp: valeurParDefaut }),
+};
+
+export function migrate(raw: RawState, targetVersion: number): RawState {
+  let s = raw;
+  let v = typeof s.schemaVersion === 'number' ? s.schemaVersion : 1;
+  if (v > targetVersion) {
+    throw new Error(`Sauvegarde créée par une version plus récente du jeu (schéma ${v}). Mets le jeu à jour.`);
+  }
+  while (v < targetVersion) {
+    const step = MIGRATIONS[v];
+    if (!step) throw new Error(`Migration manquante depuis le schéma ${v}.`);
+    s = step(s);
+    v += 1;
+    s.schemaVersion = v;
+  }
+  return s;
+}

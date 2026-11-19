@@ -1,0 +1,41 @@
+:root {
+  --ink: #2b2350;
+  --ink-soft: #5d5486;
+  --ink-mute: #8f88b0;
+  --paper: #ffffff;
+  --paper-2: #f7f4ff;
+  --paper-3: #efe9ff;
+  --line: #e6defb;
+
+  --violet: #7b5cff;
+  --violet-d: #5a3ee0;
+  --pink: #ff7ab6;
+  --mint: #3fcf9f;
+  --sky: #5cb8ff;
+  --gold: #ffc23d;
+  --coral: #ff7a5c;
+  --danger: #ff5470;
+
+  --coin: #ffc23d;
+  --crystal: #4fd8ff;
+  --essence: #c36bff;
+
+  --radius-s: 12px;
+  --radius: 20px;
+  --radius-l: 28px;
+  --shadow-s: 0 2px 8px rgba(70, 40, 160, 0.08);
+  --shadow: 0 8px 28px rgba(70, 40, 160, 0.12);
+  --shadow-l: 0 18px 50px rgba(50, 20, 130, 0.22);
+
+  --font-title: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --sidebar-w: 248px;
+  --topbar-h: 64px;
+  --bottombar-h: 72px;
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}

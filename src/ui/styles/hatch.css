@@ -1,0 +1,60 @@
+/* ── Séquence d'éclosion ── */
+.hatch { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; animation: fade-in .3s; }
+.hatch-bg { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, #3a2a7a, #140c30 75%); transition: background 1s; }
+.hatch.hs-5 .hatch-bg { background: radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--rg) 70%, #3a2a7a), #140c30 78%); }
+.hatch.tier-0.hs-5 .hatch-bg, .hatch.tier-1.hs-5 .hatch-bg { background: radial-gradient(circle at 50% 42%, #5a4aa8, #1d1440 78%); }
+.hatch-stage { position: relative; width: 320px; height: 320px; display: grid; place-items: center; }
+.hatch-egg { position: relative; z-index: 2; }
+.hatch.hs-0 .hatch-egg { animation: shake-s .5s ease-in-out infinite; }
+.hatch.hs-1 .hatch-egg { animation: shake-m .35s ease-in-out infinite; }
+.hatch.hs-2 .hatch-egg { animation: shake-m .25s ease-in-out infinite; }
+.hatch.hs-3 .hatch-egg { animation: shake-l .12s linear infinite; }
+@keyframes shake-s { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+@keyframes shake-m { 0%, 100% { transform: rotate(0) translateY(0); } 25% { transform: rotate(-8deg) translateY(-3px); } 75% { transform: rotate(8deg) translateY(-3px); } }
+@keyframes shake-l { 0%, 100% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(-4px, -2px) rotate(-6deg); } 50% { transform: translate(3px, 2px) rotate(5deg); } 75% { transform: translate(-2px, 3px) rotate(-3deg); } }
+
+.hatch-light { position: absolute; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 70%); opacity: 0; transform: scale(.4); transition: all .6s; z-index: 1; }
+.hatch.hs-2 .hatch-light { opacity: .6; transform: scale(1); }
+.hatch.hs-3 .hatch-light { opacity: 1; transform: scale(1.6); background: radial-gradient(circle, white, color-mix(in srgb, var(--rg) 80%, transparent) 40%, transparent 70%); }
+.hatch.tier-0.hs-3 .hatch-light, .hatch.tier-1.hs-3 .hatch-light, .hatch.tier-2.hs-3 .hatch-light { background: radial-gradient(circle, white, rgba(255, 255, 255, .5) 40%, transparent 70%); }
+.hatch.hs-4 .hatch-light, .hatch.hs-5 .hatch-light { opacity: .9; transform: scale(2.2); }
+
+.hatch-rays { position: absolute; width: 640px; height: 640px; opacity: 0; transition: opacity .6s; border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--rg) 60%, transparent) 0 8deg, transparent 8deg 22deg);
+  mask: radial-gradient(circle, black 10%, transparent 65%); -webkit-mask: radial-gradient(circle, black 10%, transparent 65%); animation: spin 14s linear infinite; }
+.hatch.hs-5:not(.tier-0):not(.tier-1) .hatch-rays { opacity: .8; }
+.hatch.hs-3.tier-4 .hatch-rays, .hatch.hs-3.tier-5 .hatch-rays, .hatch.hs-3.tier-6 .hatch-rays, .hatch.hs-3.tier-7 .hatch-rays, .hatch.hs-3.tier-8 .hatch-rays { opacity: .5; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.hatch-half { position: absolute; z-index: 3; }
+.hatch-half.top { clip-path: polygon(0 0, 100% 0, 100% 50%, 82% 44%, 64% 53%, 46% 44%, 28% 53%, 12% 45%, 0 50%); animation: half-top .8s var(--ease-out) forwards; }
+.hatch-half.bottom { clip-path: polygon(0 50%, 12% 45%, 28% 53%, 46% 44%, 64% 53%, 82% 44%, 100% 50%, 100% 100%, 0 100%); animation: half-bottom .8s var(--ease-out) forwards; }
+@keyframes half-top { to { transform: translate(-60px, -170px) rotate(-38deg); opacity: 0; } }
+@keyframes half-bottom { to { transform: translate(40px, 150px) rotate(24deg); opacity: 0; } }
+.hatch-flash { position: fixed; inset: 0; background: white; z-index: 4; pointer-events: none; animation: flash .7s ease-out forwards; }
+@keyframes flash { from { opacity: .95; } to { opacity: 0; } }
+
+.hatch-particles { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.hatch-particles i { position: absolute; left: 50%; top: 50%; border-radius: 50%; background: var(--rg); box-shadow: 0 0 12px var(--rc); animation: particle 1.4s var(--ease-out) forwards; }
+.hatch.tier-0 .hatch-particles i, .hatch.tier-1 .hatch-particles i { background: white; box-shadow: 0 0 10px #ffe6a8; }
+.hatch-particles i.star { border-radius: 2px; transform: rotate(45deg); background: white; }
+@keyframes particle { from { transform: translate(-50%, -50%) scale(1); opacity: 1; } to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.2); opacity: 0; } }
+
+.hatch-creature { position: relative; z-index: 6; animation: creature-pop .8s var(--ease-pop); filter: drop-shadow(0 10px 30px rgba(0, 0, 0, .35)); }
+@keyframes creature-pop { 0% { transform: scale(0) translateY(40px); } 60% { transform: scale(1.15) translateY(-10px); } 100% { transform: scale(1); } }
+.hatch.fx-glitch .hatch-creature { animation: creature-pop .8s var(--ease-pop), glitch-text 1.4s 1s infinite; }
+.hatch.fx-divine .hatch-bg, .hatch.fx-nebula .hatch-bg, .hatch.fx-aurora .hatch-bg { animation: aurora 6s ease-in-out infinite alternate; }
+@keyframes aurora { to { filter: hue-rotate(40deg) brightness(1.1); } }
+
+.hatch-tease { position: absolute; top: 12%; z-index: 7; color: var(--rg); font-family: var(--font-title); font-size: 20px; text-align: center; padding: 0 20px; animation: fade-in .6s, cr-pulse 1.2s infinite; text-shadow: 0 0 18px var(--rc); }
+.hatch-panel { position: relative; z-index: 8; margin-top: 12px; width: min(92vw, 440px); background: white; border-radius: 26px; padding: 18px 20px; text-align: center; box-shadow: var(--shadow-l); animation: modal-in .5s var(--ease-pop); cursor: default; }
+.ribbon { display: inline-flex; align-items: center; gap: 6px; margin-top: -36px; margin-bottom: 8px; padding: 6px 16px; border-radius: 99px; background: linear-gradient(90deg, var(--pink), var(--violet)); color: white; font-weight: 800; font-size: 13px; box-shadow: 0 6px 18px rgba(123, 92, 255, .45); }
+.ribbon svg { width: 16px; height: 16px; }
+.hatch-dex { font-size: 12px; font-weight: 800; }
+.hatch-name { font-size: 30px; margin: 2px 0 8px; }
+.hatch-variant, .hatch-bonus { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; font-weight: 800; font-size: 14px; }
+.hatch-variant { color: var(--pink); }
+.hatch-variant svg { width: 18px; height: 18px; }
+.hatch-bonus { color: #1fa8d8; }
+.hatch-skip { position: absolute; bottom: calc(30px + var(--safe-bottom)); color: rgba(255, 255, 255, .6); font-size: 13px; font-weight: 800; z-index: 8; }
+@media (max-height: 700px) { .hatch-stage { width: 260px; height: 260px; } .hatch-creature .creature { width: 180px; height: 180px; } }

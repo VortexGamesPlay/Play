@@ -1,0 +1,46 @@
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: #efeaff;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+h1, h2, h3, h4 { font-family: var(--font-title); margin: 0; font-weight: 600; letter-spacing: 0.2px; }
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+input, select { font: inherit; }
+img, svg { display: block; }
+::selection { background: rgba(123, 92, 255, 0.25); }
+:focus-visible { outline: 3px solid rgba(123, 92, 255, 0.55); outline-offset: 2px; border-radius: 10px; }
+
+.app-bg {
+  position: fixed; inset: 0; z-index: -1; overflow: hidden;
+  background:
+    radial-gradient(1200px 700px at 10% -10%, #ffe3f3 0%, transparent 60%),
+    radial-gradient(900px 600px at 110% 10%, #d9f3ff 0%, transparent 60%),
+    radial-gradient(900px 700px at 50% 120%, #e2ffef 0%, transparent 60%),
+    linear-gradient(180deg, #f3eeff 0%, #ece6ff 100%);
+}
+.app-bg .blob { position: absolute; border-radius: 50%; filter: blur(40px); opacity: 0.45; animation: drift 28s ease-in-out infinite alternate; }
+@keyframes drift { from { transform: translate(0, 0) scale(1); } to { transform: translate(60px, -40px) scale(1.15); } }
+
+.reduced-motion *, .reduced-motion *::before, .reduced-motion *::after {
+  animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-bg .blob { animation: none; }
+}
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.muted { color: var(--ink-mute); }
+.soft { color: var(--ink-soft); }
+.row { display: flex; align-items: center; gap: 8px; }
+.row-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.spacer { flex: 1; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.grid-auto { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(var(--min, 160px), 1fr)); }
+.num { font-variant-numeric: tabular-nums; }
