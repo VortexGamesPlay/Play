@@ -15,9 +15,15 @@ type Receipt = Omit<PurchaseRecord, 'at'>;
 const env = import.meta.env;
 const PAYPAL_CLIENT_ID = env.VITE_PAYPAL_CLIENT_ID as string | undefined;
 
+/**
+ * Boutique payante fermée pour le moment : aucun achat en argent réel possible.
+ * Pour la rouvrir : construire avec VITE_PAID_SHOP=1.
+ */
+export const PAID_SHOP_OPEN = env.VITE_PAID_SHOP === '1';
+
 export const paymentsConfig = {
   /** Le Client ID peut venir du build OU du serveur (fonction paypal-config). */
-  paypal: !!(SUPABASE_URL && SUPABASE_ANON_KEY),
+  paypal: PAID_SHOP_OPEN && !!(SUPABASE_URL && SUPABASE_ANON_KEY),
   test: env.DEV || env.VITE_PAYMENTS_TEST === '1',
   paypalSandbox: env.VITE_PAYPAL_ENV !== 'live',
 };

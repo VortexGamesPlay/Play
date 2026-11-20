@@ -1,3 +1,4 @@
+import { paymentsAvailable } from '../../services/payments';
 import type { CSSProperties } from 'react';
 import { DECORATIONS, THEMES } from '@data/buildings';
 import { ITEMS } from '@data/items';
@@ -61,7 +62,9 @@ export function SeasonScreen() {
             <>
               <b>{tr('Passe de saison')}</b>
               <span className="muted" style={{ fontSize: 12 }}>{tr('≈ 500 cristaux, 3 cosmétiques exclusifs')}</span>
-              <button className="btn btn-gold" onClick={() => openModal({ kind: 'checkout', productId: pass.id })}>{formatPrice(pass.priceCents)}</button>
+              {paymentsAvailable()
+                ? <button className="btn btn-gold" onClick={() => openModal({ kind: 'checkout', productId: pass.id })}>{formatPrice(pass.priceCents)}</button>
+                : <button className="btn btn-gold" disabled>{tr('Bientôt disponible')}</button>}
             </>
           )}
         </div>

@@ -41,7 +41,7 @@ export function PremiumShop() {
     <div className="stack" style={{ gap: 16 }}>
       {paymentsConfig.test && !paymentsConfig.paypal && <TestBanner />}
       {!paymentsAvailable() && (
-        <div className="status-panel"><Icon name="info" /><p style={{ fontSize: 14 }}><b>{tr('Achats en argent réel : bientôt disponibles.')}</b> {tr('Le serveur de paiement n\'est pas encore branché sur cette version. Tout reste obtenable en jouant gratuitement.')}</p></div>
+        <div className="status-panel"><Icon name="info" /><p style={{ fontSize: 14 }}><b>{tr('Achats en argent réel : bientôt disponibles.')}</b> {tr('La boutique payante est fermée pour le moment. Tout reste obtenable en jouant gratuitement.')}</p></div>
       )}
       <div className="status-panel fair"><Icon name="check" /><p style={{ fontSize: 13 }}>{tr('Les cristaux servent à aller plus vite (accélérer l\'incubation, objets rares, confort).')} <b>{tr('Aucune créature et aucun œuf ne sont vendus')}</b> {tr(': tout s\'obtient aussi en jouant.')}</p></div>
       {groups.map(([title, list]) => (

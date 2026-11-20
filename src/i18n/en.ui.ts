@@ -819,4 +819,6 @@ export const EN_UI: Record<string, string> = {
   '{n} cadeaux t\'attendent !': '{n} gifts are waiting for you!',
   '{n} créature': '{n} creature',
   '{n} créatures': '{n} creatures',
+  'La boutique payante est fermée pour le moment. Tout reste obtenable en jouant gratuitement.': 'The paid shop is closed for now. Everything can still be earned by playing for free.',
+  'Bientôt disponible': 'Coming soon',
 };
