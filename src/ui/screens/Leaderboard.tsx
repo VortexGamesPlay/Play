@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Icon } from '../art/Icons';
 import { tr } from '../../i18n';
+import { keeperName } from '../format';
 import { currentAccount, getClient, serverAvailable } from '../../services/supabase';
 
 type Board = 'tower' | 'wins' | 'dex';
@@ -45,7 +46,7 @@ export function Leaderboard() {
             {rows.map((r, i) => (
               <li key={r.user_id} className={r.user_id === me ? 'me' : ''}>
                 <span className="lb-rank num">{i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}</span>
-                <span className="lb-name">{r.name === 'Gardien' ? tr('Gardien (nom par défaut)') : r.name}{r.user_id === me ? ` · ${tr('toi')}` : ''}</span>
+                <span className="lb-name">{keeperName(r.name)}{r.user_id === me ? ` · ${tr('toi')}` : ''}</span>
                 <b className="lb-score num">{board === 'tower' ? tr('Étage {n}', { n: r.tower }) : board === 'wins' ? r.wins : `${r.dex}/40`}</b>
               </li>
             ))}

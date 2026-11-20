@@ -27,7 +27,7 @@ export const NAV_OTHER: NavEntry[] = [
   { route: 'saison', label: 'Saison', icon: 'trophy' },
   { route: 'boutique', label: 'Boutique', icon: 'bag' },
   { route: 'inventaire', label: 'Inventaire', icon: 'backpack' },
-  { route: 'communaute', label: 'Communauté', icon: 'people', phase: 6 },
+  { route: 'communaute', label: 'Communauté', icon: 'people' },
   { route: 'profil', label: 'Profil', icon: 'gear' },
 ];
 

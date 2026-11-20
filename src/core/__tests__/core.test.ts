@@ -218,3 +218,13 @@ describe('Réglages audio', () => {
     expect(loaded.settings.sfxVolume).toBe(0.8);
   });
 });
+
+describe('Cadeaux d\'amis', () => {
+  it('donne 40 pièces et 1 Fruit rose par cadeau, et refuse un nombre invalide', () => {
+    const s0 = newGame();
+    const s = run(s0, { type: 'claimFriendGifts', count: 3 }).state;
+    expect(s.wallet.coins - s0.wallet.coins).toBe(120);
+    expect((s.inventory.fruit_rose ?? 0) - (s0.inventory.fruit_rose ?? 0)).toBe(3);
+    expect(() => run(s0, { type: 'claimFriendGifts', count: 999 })).toThrow(GameError);
+  });
+});

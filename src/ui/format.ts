@@ -3,7 +3,7 @@ import { AMBIANCES } from '@data/ambiances';
 import { ITEMS } from '@data/items';
 import { MUTATIONS } from '@data/mutations';
 import { WEATHERS } from '@data/weather';
-import { intlLocale } from '../i18n';
+import { intlLocale, tr, getLocale } from '../i18n';
 
 const TAGS: Record<string, string> = { fruit: 'fruits', graine: 'graines', poisson: 'poissons', champi: 'champignons', mineral: 'minéraux', nectar: 'nectars' };
 export const foodTagName = (t: string) => TAGS[t] ?? t;
@@ -23,3 +23,6 @@ export function conditionText(c: EvolutionCondition): string {
 
 export const fmtDate = (t: number) => new Date(t).toLocaleDateString(intlLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
 export const fmtDateTime = (t: number) => new Date(t).toLocaleString(intlLocale(), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+/** Nom affiché d'un gardien : « Gardien » (nom par défaut) est traduit, un nom choisi reste tel quel. */
+export const keeperName = (n: string) => (n === 'Gardien' ? (getLocale() === 'fr' ? 'Gardien' : tr('Gardien (nom par défaut)')) : n);

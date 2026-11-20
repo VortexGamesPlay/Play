@@ -15,7 +15,7 @@ import { canClaimDaily, dailyReward, nextStreak } from '@core/systems/daily';
 import { activeQuest, questProgress } from '@core/systems/quests';
 import { pendingHarvest, totalHarvestRate } from '@core/systems/sanctuary';
 import { dayKeyOf, formatDuration, HOUR, isNight } from '@core/time';
-import type { CreatureInstance } from '@core/types';
+import type { GameState, CreatureInstance } from '@core/types';
 import type { Reward } from '@core/content';
 import { CreatureArt } from '../art/CreatureArt';
 import { CurrencyIcon, Icon } from '../art/Icons';
@@ -24,6 +24,7 @@ import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
 import { useNow } from '../hooks/useNow';
 import { playSfx } from '../../services/audio';
+import { keeperName } from '../format';
 import { tr, intlLocale, tp } from '../../i18n';
 
 type Behavior = 'walk' | 'idle' | 'sleep' | 'play' | 'eat';
@@ -91,8 +92,11 @@ function useActors(creatures: CreatureInstance[], night: boolean) {
 }
 
 /** Fond du sanctuaire : terrain choisi, jour/nuit, bâtiments construits et décorations. */
-function SceneBackdrop({ night }: { night: boolean }) {
-  const sanct = useGame((s) => s.state.sanctuary);
+function SceneBackdrop({ night, sanctuary }: { night: boolean; sanctuary?: Partial<GameState['sanctuary']> }) {
+  const own = useGame((s) => s.state.sanctuary);
+  const sanct = (sanctuary
+    ? { ...own, theme: sanctuary.theme ?? own.theme, buildings: sanctuary.buildings ?? {}, decorations: sanctuary.decorations ?? {} }
+    : own) as GameState['sanctuary'];
   const level = (id: string) => sanct.buildings[id] ?? 0;
   const t = THEMES[sanct.theme] ?? THEMES.prairie!;
   const sky = night ? t.nightSky : t.sky;
@@ -187,7 +191,8 @@ function SceneBackdrop({ night }: { night: boolean }) {
   );
 }
 
-function SanctuaryScene({ creatures }: { creatures: CreatureInstance[] }) {
+/** Scène vivante du sanctuaire. `visit` : sanctuaire d'un ami (lecture seule, ses décorations à lui). */
+export function SanctuaryScene({ creatures, visit }: { creatures: CreatureInstance[]; visit?: Partial<GameState['sanctuary']> }) {
   const now = useNow();
   const night = isNight(new Date(now).getHours());
   const weather = sanctuaryWeather(now);
@@ -198,7 +203,7 @@ function SanctuaryScene({ creatures }: { creatures: CreatureInstance[] }) {
 
   return (
     <div className={`scene ${night ? 'night' : ''}`}>
-      <SceneBackdrop night={night} />
+      <SceneBackdrop night={night} sanctuary={visit} />
       <WeatherFx fx={weather.fx} density={0.7} />
       {actors.map((a) => {
         const c = byId.get(a.uid);
@@ -209,7 +214,7 @@ function SanctuaryScene({ creatures }: { creatures: CreatureInstance[] }) {
             key={a.uid}
             className={`actor b-${a.behavior}`}
             style={{ left: `${a.x}%`, top: `${a.y}%`, zIndex: Math.round(a.y), transitionDuration: `${a.moveMs}ms, ${a.moveMs}ms` }}
-            onClick={() => { playSfx('happy'); react(a.uid); openModal({ kind: 'creature', uid: c.uid }); }}
+            onClick={() => { playSfx('happy'); react(a.uid); if (!visit) openModal({ kind: 'creature', uid: c.uid }); }}
             aria-label={`${displayName(c)} — ${a.behavior === 'sleep' ? 'dort' : a.behavior === 'eat' ? 'mange' : a.behavior === 'play' ? 'joue' : a.behavior === 'walk' ? 'se promène' : 'se repose'}`}
           >
             <div className="actor-flip" style={{ transform: a.flip ? 'scaleX(-1)' : undefined }}>
@@ -221,7 +226,7 @@ function SanctuaryScene({ creatures }: { creatures: CreatureInstance[] }) {
           </button>
         );
       })}
-      {creatures.length > MAX_ACTORS && <div className="scene-note">+{creatures.length - MAX_ACTORS} {tr('autres créatures se reposent dans les habitats')}</div>}
+      {!visit && creatures.length > MAX_ACTORS && <div className="scene-note">+{creatures.length - MAX_ACTORS} {tr('autres créatures se reposent dans les habitats')}</div>}
     </div>
   );
 }
@@ -333,7 +338,7 @@ export function SanctuaryScreen() {
       <div className="card scene-card">
         <div className="scene-head">
           <div>
-            <h2>{tr('Sanctuaire de')} {state.player.name === 'Gardien' ? tr('Gardien (nom par défaut)') : state.player.name}</h2>
+            <h2>{tr('Sanctuaire de')} {keeperName(state.player.name)}</h2>
             <p className="soft" style={{ fontSize: 14 }}>{tp(present.length, '{n} présente', '{n} présentes')}{state.expeditions.length ? tr(' · {p0} en expédition', { p0: state.creatures.length - present.length }) : ''} · <Icon name={WEATHER_ICON[weather.fx]} width={14} height={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> {weather.name}</p>
           </div>
           <span className="spacer" />

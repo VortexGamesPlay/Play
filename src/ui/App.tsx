@@ -12,7 +12,7 @@ import { DexScreen } from './screens/DexScreen';
 import { ShopScreen } from './screens/ShopScreen';
 import { InventoryScreen } from './screens/InventoryScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
-import { ComingSoonScreen } from './screens/ComingSoonScreen';
+import { CommunityScreen } from './screens/CommunityScreen';
 import { LabScreen } from './screens/LabScreen';
 import { ExplorationScreen } from './screens/ExplorationScreen';
 import { ArenaScreen } from './screens/ArenaScreen';
@@ -41,7 +41,7 @@ function Screen() {
     case 'exploration': return <ExplorationScreen />;
     case 'arene': return <ArenaScreen />;
     case 'saison': return <SeasonScreen />;
-    case 'communaute': return <ComingSoonScreen route={route} />;
+    case 'communaute': return <CommunityScreen />;
   }
 }
 

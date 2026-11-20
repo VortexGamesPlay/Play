@@ -45,6 +45,8 @@ export type GameAction =
   | { type: 'setPlayerName'; name: string }
   | { type: 'setSetting'; key: 'sound' | 'reducedMotion'; value: boolean }
   | { type: 'setVolume'; key: 'musicVolume' | 'sfxVolume'; value: number }
+  /** Cadeaux d'amis récupérés sur le serveur (le serveur limite à 1 par ami et par jour). */
+  | { type: 'claimFriendGifts'; count: number }
   | { type: 'setLocale'; locale: 'en' | 'fr' }
   | { type: 'evolve'; uid: string; to: string }
   | { type: 'breed'; a: string; b: string; stabilize: boolean }
@@ -103,6 +105,14 @@ export function applyAction(state: GameState, action: GameAction, ctx: ActionCon
       break;
     }
     case 'setSetting': draft.settings[action.key] = action.value; break;
+    case 'claimFriendGifts': {
+      assertGame(Number.isInteger(action.count) && action.count >= 1 && action.count <= 20, 'bad_gifts', tr('Nombre de cadeaux invalide.'));
+      const reward = { coins: 40 * action.count, items: { fruit_rose: action.count } };
+      grant(draft, 'coins', reward.coins, tr('Cadeaux d\'amis'), ctx.now);
+      draft.inventory.fruit_rose = (draft.inventory.fruit_rose ?? 0) + action.count;
+      events.push({ type: 'reward', reason: tr('Cadeaux d\'amis'), reward });
+      break;
+    }
     case 'setVolume':
       assertGame(Number.isFinite(action.value) && action.value >= 0 && action.value <= 1, 'bad_volume', t('Volume invalide.'));
       draft.settings[action.key] = Math.round(action.value * 100) / 100;
