@@ -731,4 +731,7 @@ export const EN_UI: Record<string, string> = {
   'Donner un repas': 'Give a meal',
   'Récompense quotidienne': 'Daily reward',
   'Améliorer un bâtiment': 'Upgrade a building',
+  'Mutation': 'Mutation',
+  'Toutes les mutations': 'All mutations',
+  'Aucune variante': 'No variants',
 };

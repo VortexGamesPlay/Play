@@ -24,6 +24,7 @@ export function DexScreen() {
   const [q, setQ] = useState('');
   const [el, setEl] = useState<ElementId | null>(null);
   const [rar, setRar] = useState<RarityId | null>(null);
+  const [mut, setMut] = useState<string | null>(null);
 
   const known = dexCount(state);
   const pct = Math.round(dexCompletion(state) * 100);
@@ -33,7 +34,7 @@ export function DexScreen() {
     ['all', tr('Toutes'), SPECIES_LIST.length],
     ['known', tr('Découvertes'), known],
     ['unknown', tr('Inconnues'), SPECIES_LIST.length - known],
-    ['variants', tr('Variantes'), variantCount(state)],
+    ['variants', tr('Variantes'), totalVariants],
     ['legend', tr('Légendaires'), SPECIES_LIST.filter((s) => RARITIES[s.rarity].tier >= LEGEND_TIERS && s.rarity !== 'secret').length],
     ['secret', tr('Secrètes'), SPECIES_LIST.filter((s) => s.rarity === 'secret').length],
     ['history', tr('Historique'), state.discoveries.length],
@@ -43,7 +44,6 @@ export function DexScreen() {
     const k = isDiscovered(state, s.id);
     if (cat === 'known' && !k) return false;
     if (cat === 'unknown' && k) return false;
-    if (cat === 'variants' && !(state.dex[s.id]?.variants.length)) return false;
     if (cat === 'legend' && !(RARITIES[s.rarity].tier >= LEGEND_TIERS && s.rarity !== 'secret')) return false;
     if (cat === 'secret' && s.rarity !== 'secret') return false;
     if (el && s.element !== el) return false;
@@ -55,6 +55,10 @@ export function DexScreen() {
     }
     return true;
   }), [state, cat, el, rar, q]);
+
+  /** Onglet Variantes : toutes les combinaisons espèce × mutation, trouvées ou non (comme les espèces). */
+  const variantCells = useMemo(() => cat !== 'variants' ? [] : list.flatMap((s) =>
+    Object.values(MUTATIONS).filter((m) => !mut || m.id === mut).map((m) => ({ s, m, found: !!state.dex[s.id]?.variants.includes(m.id) }))), [cat, list, mut, state]);
 
   return (
     <div className="stack" style={{ gap: 16 }}>
@@ -96,6 +100,12 @@ export function DexScreen() {
               {RARITY_ORDER.map((r) => <option key={r} value={r}>{RARITIES[r].name}</option>)}
             </select>
           </div>
+          {cat === 'variants' && (
+            <select className="select" value={mut ?? ''} onChange={(e) => setMut(e.target.value || null)} aria-label={tr('Mutation')}>
+              <option value="">{tr('Toutes les mutations')}</option>
+              {Object.values(MUTATIONS).map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+            </select>
+          )}
           <div className="el-filter">
             {Object.values(ELEMENTS).map((e) => (
               <button key={e.id} className={`chip ${el === e.id ? 'active' : ''}`} style={{ ['--cc' as string]: e.color } as CSSProperties} onClick={() => setEl(el === e.id ? null : e.id)}>
@@ -103,7 +113,21 @@ export function DexScreen() {
               </button>
             ))}
           </div>
-          {list.length === 0 ? <EmptyState icon="search" title={tr('Aucune espèce')}>{tr('Aucune entrée ne correspond à ces filtres.')}</EmptyState> : (
+          {cat === 'variants' ? (variantCells.length === 0 ? <EmptyState icon="search" title={tr('Aucune variante')}>{tr('Aucune entrée ne correspond à ces filtres.')}</EmptyState> : (
+            <div className="dex-grid">
+              {variantCells.map(({ s, m, found }) => {
+                const r = RARITIES[s.rarity];
+                return (
+                  <button key={`${s.id}-${m.id}`} className={`dex-cell variant-cell ${found ? 'known' : 'unknown'} t${r.tier}`} style={{ ['--rc' as string]: r.color, ['--rg' as string]: r.glow, ['--mc' as string]: m.color } as CSSProperties} onClick={() => openModal({ kind: 'dex', speciesId: s.id })}>
+                    <span className="dex-num num">{String(s.dex).padStart(3, '0')}</span>
+                    <CreatureArt speciesId={s.id} mutations={found ? [m.id] : []} size={92} anim="none" silhouette={!found} seed={`${s.id}-${m.id}`} />
+                    <b className="dex-name">{found ? s.name : '???'}</b>
+                    <span className="dex-meta"><span className="mut-dot" />{m.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )) : list.length === 0 ? <EmptyState icon="search" title={tr('Aucune espèce')}>{tr('Aucune entrée ne correspond à ces filtres.')}</EmptyState> : (
             <div className="dex-grid">
               {list.map((s) => {
                 const k = isDiscovered(state, s.id);
