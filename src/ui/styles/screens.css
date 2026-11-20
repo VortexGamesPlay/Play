@@ -397,3 +397,14 @@
 .variant-cell.known { box-shadow: inset 0 0 0 2px var(--mc), var(--shadow-s); }
 .dex-cell { min-width: 0; }
 .variant-cell .dex-meta { max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+/* ── Sanctuaire immersif 2.5D ── */
+.scene { isolation: isolate; background: linear-gradient(180deg, #a8d7ee 0%, #cde7d5 58%, #83bd79 100%); }
+.scene-bg { filter: saturate(1.08); }
+.sanctuary-island { filter: drop-shadow(0 16px 13px rgba(27, 58, 49, .28)); }
+.scene::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(180deg, rgba(255,255,255,.08), transparent 42%, rgba(24,54,45,.10)); }
+.scene.night::after { background: linear-gradient(180deg, rgba(20,25,72,.22), rgba(33,39,83,.06) 42%, rgba(16,31,48,.28)); }
+.actor { filter: drop-shadow(0 5px 4px rgba(31, 54, 43, .24)); will-change: left, top; }
+.actor .creature { filter: drop-shadow(0 2px 2px rgba(24, 37, 40, .16)); }
+.actor:focus-visible { outline: 2px solid #fff; outline-offset: 4px; border-radius: 18px; }
+@media (prefers-reduced-motion: reduce) { .sanctuary-island *, .actor, .actor-flip { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
