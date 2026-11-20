@@ -8,8 +8,8 @@
 import { readFileSync } from 'node:fs';
 
 const BASE = 'https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/';
-const FILES = { species: 'pokemon_species_names.csv', moves: 'move_names.csv', abilities: 'ability_names.csv', items: 'item_names.csv' };
-const LOCAL = { species: 'names.csv', moves: 'moves.csv', abilities: 'abilities.csv', items: 'items.csv' };
+const FILES = { species: 'pokemon_species_names.csv', moves: 'move_names.csv', abilities: 'ability_names.csv', items: 'item_names.csv', natures: 'nature_names.csv' };
+const LOCAL = { species: 'names.csv', moves: 'moves.csv', abilities: 'abilities.csv', items: 'items.csv', natures: 'natures.csv' };
 const LANGS = new Set(['5', '6', '7', '8', '9']); // fr, de, es, it, en
 const dir = process.argv[2];
 
@@ -29,11 +29,11 @@ async function load(kind) {
     const [, lang, name] = line.split(',');
     if (LANGS.has(lang) && name) set.add(norm(name));
   }
-  if (set.size < 500) throw new Error(`Liste de référence incomplète : ${kind}`);
+  if (set.size < (kind === 'natures' ? 100 : 500)) throw new Error(`Liste de référence incomplète : ${kind}`);
   return set;
 }
 const ref = Object.fromEntries(await Promise.all(Object.keys(FILES).map(async (k) => [k, await load(k)])));
-const anyRef = new Set([...ref.species, ...ref.moves, ...ref.abilities, ...ref.items]);
+const anyRef = new Set([...ref.species, ...ref.moves, ...ref.abilities, ...ref.items, ...ref.natures]);
 const attacks = new Set([...ref.moves, ...ref.abilities]);
 
 const labels = (file, re = /\b(name|family|title): '((?:[^'\\]|\\.)*)'/g) => {
@@ -75,6 +75,25 @@ for (const file of ['species', 'eggs', 'items', 'mutations', 'ambiances', 'recip
 for (const p of JSON.parse(readFileSync('supabase/functions/_shared/catalog.json', 'utf8')).products) {
   count++;
   if (anyRef.has(norm(p.name))) problems.push(`Produit « ${p.name} » : identique à un nom existant`);
+}
+// 4. Traductions anglaises du contenu (mêmes règles, appliquées aux noms anglais)
+{
+  const unq = (x) => x.replace(/\\'/g, "'");
+  const skillNames = new Set([...labels('skills'), ...labels('statuses')].map((l) => l.label));
+  const en = readFileSync('src/i18n/en.content.ts', 'utf8');
+  for (const m of en.matchAll(/'((?:[^'\\]|\\.)*)':\s*'((?:[^'\\]|\\.)*)'/g)) {
+    const fr = unq(m[1]), label = unq(m[2]);
+    if (label.length > 40) continue; // descriptions : phrases, pas des noms
+    count++;
+    const n = norm(label);
+    if (!n) continue; // « +10 % » : pas un nom
+    if (skillNames.has(fr)) {
+      for (const r of attacks) {
+        if (r === n) problems.push(`Compétence anglaise « ${label} » : identique à une attaque / un talent existant`);
+        else if (n.length >= 8 && lev(n, r) <= 2) problems.push(`Compétence anglaise « ${label} » : trop proche d'une attaque / d'un talent existant`);
+      }
+    } else if (anyRef.has(n)) problems.push(`Nom anglais « ${label} » (pour « ${fr} ») : identique à un nom existant`);
+  }
 }
 const unique = [...new Set(problems)];
 console.log(`${count} noms vérifiés contre ${anyRef.size} noms de référence (espèces, attaques, talents, objets).`);
