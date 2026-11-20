@@ -90,11 +90,14 @@ export function ProfileScreen() {
       <div className="stack">
         <div className="card">
           <div className="card-title"><Icon name="gear" /><h2>Paramètres</h2></div>
-          <div className="setting"><Icon name="volume" /><div><b>Effets sonores</b><span>Sons d'interface et d'éclosion</span></div>
-            <button className={`toggle ${state.settings.sound ? 'on' : ''}`} aria-pressed={state.settings.sound} aria-label="Effets sonores" onClick={() => dispatch({ type: 'setSetting', key: 'sound', value: !state.settings.sound })} /></div>
+          <div className="setting"><Icon name="volume" /><div><b>Son</b><span>Musique et effets sonores</span></div>
+            <button className={`toggle ${state.settings.sound ? 'on' : ''}`} aria-pressed={state.settings.sound} aria-label="Son" onClick={() => dispatch({ type: 'setSetting', key: 'sound', value: !state.settings.sound })} /></div>
           <div className="setting"><Icon name="motion" /><div><b>Animations réduites</b><span>Limite les mouvements à l'écran</span></div>
             <button className={`toggle ${state.settings.reducedMotion ? 'on' : ''}`} aria-pressed={state.settings.reducedMotion} aria-label="Animations réduites" onClick={() => dispatch({ type: 'setSetting', key: 'reducedMotion', value: !state.settings.reducedMotion })} /></div>
-          <p className="muted" style={{ fontSize: 12, marginTop: 8 }}>Musiques d'ambiance par biome : Phase 8.</p>
+          <div className="setting"><Icon name="volume" /><div><b>Musique</b><span>Bande originale d'EGGVERSE</span></div>
+            <input id="music-volume" type="range" className="range" min={0} max={100} step={5} value={Math.round(state.settings.musicVolume * 100)} disabled={!state.settings.sound} aria-label="Volume de la musique" onChange={(e) => dispatch({ type: 'setVolume', key: 'musicVolume', value: Number(e.target.value) / 100 })} /></div>
+          <div className="setting"><Icon name="volume" /><div><b>Volume des effets</b><span>Clics, récompenses, jingles</span></div>
+            <input id="sfx-volume" type="range" className="range" min={0} max={100} step={5} value={Math.round(state.settings.sfxVolume * 100)} disabled={!state.settings.sound} aria-label="Volume des effets sonores" onChange={(e) => dispatch({ type: 'setVolume', key: 'sfxVolume', value: Number(e.target.value) / 100 })} /></div>
         </div>
 
         <div className="card">

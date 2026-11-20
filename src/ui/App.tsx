@@ -16,6 +16,12 @@ import { LabScreen } from './screens/LabScreen';
 import { ExplorationScreen } from './screens/ExplorationScreen';
 import { ArenaScreen } from './screens/ArenaScreen';
 import { SeasonScreen } from './premium/SeasonScreen';
+import { useMusic } from './hooks/useMusic';
+
+function Music() {
+  useMusic();
+  return null;
+}
 
 function Screen() {
   const route = useUi((s) => s.route);
@@ -46,6 +52,7 @@ export function App() {
   }
   return (
     <>
+      <Music />
       <AppShell><Screen /></AppShell>
       <ModalHost />
       <Toasts />

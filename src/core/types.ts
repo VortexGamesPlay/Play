@@ -177,6 +177,10 @@ export interface Settings {
   sound: boolean;
   reducedMotion: boolean;
   locale: 'en' | 'fr';
+  /** Volume de la musique, de 0 à 1. */
+  musicVolume: number;
+  /** Volume des effets sonores, de 0 à 1. */
+  sfxVolume: number;
 }
 
 export interface GameState {

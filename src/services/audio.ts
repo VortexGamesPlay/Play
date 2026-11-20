@@ -1,18 +1,23 @@
 /**
  * Effets sonores synthétisés en temps réel (Web Audio) : aucun fichier audio à charger.
- * La musique d'ambiance par biome arrivera en Phase 8.
+ * La musique originale est gérée par services/music.ts.
  */
 type Sfx = 'tap' | 'coin' | 'crack' | 'reveal' | 'levelUp' | 'error' | 'buy' | 'open' | 'whoosh';
 
 let ctx: AudioContext | null = null;
 let enabled = true;
+let sfxVol = 0.8;
 
 export function setSoundEnabled(v: boolean) {
   enabled = v;
 }
 
+export function setSfxVolume(v: number) {
+  sfxVol = v;
+}
+
 function ac(): AudioContext | null {
-  if (!enabled) return null;
+  if (!enabled || sfxVol <= 0) return null;
   if (typeof window === 'undefined' || !('AudioContext' in window)) return null;
   if (!ctx) ctx = new AudioContext();
   if (ctx.state === 'suspended') void ctx.resume();
@@ -29,7 +34,7 @@ function tone(freq: number, start: number, dur: number, type: OscillatorType = '
   osc.frequency.setValueAtTime(freq, t);
   if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
   g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(gain, t + 0.015);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, gain * sfxVol * 1.25), t + 0.015);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   osc.connect(g).connect(a.destination);
   osc.start(t);
@@ -49,7 +54,7 @@ function noise(start: number, dur: number, gain = 0.15, freq = 1800) {
   filter.type = 'bandpass';
   filter.frequency.value = freq;
   const g = a.createGain();
-  g.gain.value = gain;
+  g.gain.value = gain * sfxVol * 1.25;
   src.connect(filter).connect(g).connect(a.destination);
   src.start(t);
 }

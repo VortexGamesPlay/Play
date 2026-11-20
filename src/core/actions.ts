@@ -1,4 +1,4 @@
-import { GameError } from './errors';
+import { GameError, assertGame } from './errors';
 import { t } from '../i18n';
 import type { GameEvent } from './events';
 import { releaseCreature, renameCreature, toggleFavorite } from './systems/creatures';
@@ -43,6 +43,7 @@ export type GameAction =
   | { type: 'release'; uid: string }
   | { type: 'setPlayerName'; name: string }
   | { type: 'setSetting'; key: 'sound' | 'reducedMotion'; value: boolean }
+  | { type: 'setVolume'; key: 'musicVolume' | 'sfxVolume'; value: number }
   | { type: 'setLocale'; locale: 'en' | 'fr' }
   | { type: 'evolve'; uid: string; to: string }
   | { type: 'breed'; a: string; b: string; stabilize: boolean }
@@ -101,6 +102,10 @@ export function applyAction(state: GameState, action: GameAction, ctx: ActionCon
       break;
     }
     case 'setSetting': draft.settings[action.key] = action.value; break;
+    case 'setVolume':
+      assertGame(Number.isFinite(action.value) && action.value >= 0 && action.value <= 1, 'bad_volume', t('Volume invalide.'));
+      draft.settings[action.key] = Math.round(action.value * 100) / 100;
+      break;
     case 'setLocale':
       if (action.locale !== 'en' && action.locale !== 'fr') throw new GameError('bad_locale', t('Langue inconnue.'));
       draft.settings.locale = action.locale;

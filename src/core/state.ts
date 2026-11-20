@@ -33,7 +33,7 @@ export function createInitialState(now: number): GameState {
     season: { id: null, baseline: null, premium: false, claimedFree: [], claimedPremium: [] },
     premium: { purchases: [], spendLimitCents: null, ownedThemes: [] },
     recipesFound: [],
-    settings: { sound: true, reducedMotion: false, locale: 'en' },
+    settings: { sound: true, reducedMotion: false, locale: 'en', musicVolume: 0.6, sfxVolume: 0.8 },
     uidCounter: 0,
   };
   for (const egg of BALANCE.startingEggs) addEgg(state, egg, 'Cadeau de bienvenue', now);

@@ -13,7 +13,9 @@ import { ITEMS } from '@data/items';
 import { EGGS } from '@data/eggs';
 import { createSaveStorage, LocalSaveRepository } from '../services/localSaveRepository';
 import type { SaveRepository } from '../services/saveRepository';
-import { playSfx, setSoundEnabled } from '../services/audio';
+import { playSfx, setSfxVolume, setSoundEnabled } from '../services/audio';
+import { playStinger, setMusicEnabled, setMusicVolume, setStingerVolume } from '../services/music';
+import { RARITIES } from '@data/rarities';
 import { useUi } from './uiStore';
 
 type SaveStatus = 'idle' | 'pending' | 'saved' | 'error';
@@ -47,6 +49,15 @@ function rewardText(r: Extract<GameEvent, { type: 'reward' }>['reward']): string
 }
 
 /** Traduit les événements de jeu en retours visuels / sonores. */
+/** Applique les réglages audio (son général, volumes musique / effets). */
+function applyAudioSettings(st: GameState['settings']) {
+  setSoundEnabled(st.sound);
+  setSfxVolume(st.sfxVolume);
+  setStingerVolume(st.sfxVolume);
+  setMusicVolume(st.musicVolume);
+  setMusicEnabled(st.sound);
+}
+
 function presentEvents(events: GameEvent[], state: GameState) {
   const ui = useUi.getState();
   for (const ev of events) {
@@ -67,8 +78,12 @@ function presentEvents(events: GameEvent[], state: GameState) {
       }
       case 'fed': playSfx('tap'); break;
       case 'released': ui.toast({ kind: 'info', title: 'Créature libérée', body: `+${ev.essence} essence` }); break;
-      case 'hatched': ui.openModal({ kind: 'hatch', event: ev }); break;
-      case 'evolved': ui.openModal({ kind: 'evolve', event: ev }); break;
+      case 'hatched':
+        ui.openModal({ kind: 'hatch', event: ev });
+        if ((RARITIES[getSpecies(ev.creature.speciesId).rarity]?.tier ?? 0) >= 2 || ev.newVariants.length > 0) playStinger('sting-rare-hatch');
+        break;
+      case 'evolved': ui.openModal({ kind: 'evolve', event: ev }); playStinger('sting-evolution'); break;
+      case 'battleEnded': playStinger(ev.won ? 'sting-victory' : 'sting-defeat'); break;
       case 'bred': ui.openModal({ kind: 'breedFx', parents: ev.parents, eggUid: ev.eggUid }); break;
     }
   }
@@ -94,7 +109,7 @@ export const useGame = create<GameStore>((set, get) => {
         useUi.getState().toast({ kind: 'error', title: 'Sauvegarde limitée', body: 'Ton navigateur bloque le stockage : la partie sera perdue à la fermeture. Évite la navigation privée, ou exporte ta sauvegarde depuis le Profil.' });
       }
       const res = await repo.load(Date.now());
-      setSoundEnabled(res.state.settings.sound);
+      applyAudioSettings(res.state.settings);
       set({ state: res.state, ready: true, lastSavedAt: res.savedAt });
       if (res.warning) useUi.getState().toast({ kind: 'error', title: 'Sauvegarde', body: res.warning });
       if (res.source === 'new') await get().saveNow();
@@ -109,7 +124,7 @@ export const useGame = create<GameStore>((set, get) => {
         const ctx = makeContext(Date.now(), createRng(randomSeed()));
         const { state, events } = applyAction(get().state, action, ctx);
         set({ state });
-        if (action.type === 'setSetting' && action.key === 'sound') setSoundEnabled(action.value);
+        if (action.type === 'setSetting' || action.type === 'setVolume') applyAudioSettings(state.settings);
         scheduleSave();
         presentEvents(events, state);
         return events;
@@ -145,7 +160,7 @@ export const useGame = create<GameStore>((set, get) => {
 
     importSave(text) {
       const { state } = deserialize(text, Date.now());
-      setSoundEnabled(state.settings.sound);
+      applyAudioSettings(state.settings);
       set({ state });
       void get().saveNow();
     },

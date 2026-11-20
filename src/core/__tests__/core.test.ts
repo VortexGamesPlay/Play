@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { BALANCE, EGGS, MUTATIONS, SHOP_OFFERS } from '@data/index';
 import { GameError } from '../errors';
 import { createRng, weightedPick } from '../rng';
-import { deserialize, serialize } from '../save/serializer';
+import { deserialize, normalizeState, serialize } from '../save/serializer';
 import { anyMutationChance, mutationOdds, speciesOdds } from '../systems/odds';
 import { pendingHarvest } from '../systems/sanctuary';
 import { makeContext, HOUR, MINUTE } from '../time';
@@ -198,5 +198,23 @@ describe('Sauvegarde', () => {
   });
   it('rejette un fichier étranger', () => {
     expect(() => deserialize('{"hello":1}', T0)).toThrow(/pas une sauvegarde/);
+  });
+});
+
+describe('Réglages audio', () => {
+  it('enregistre les volumes et refuse une valeur hors limites', () => {
+    let s = newGame();
+    expect(s.settings.musicVolume).toBe(0.6);
+    s = run(s, { type: 'setVolume', key: 'musicVolume', value: 0.25 }).state;
+    expect(s.settings.musicVolume).toBe(0.25);
+    expect(() => run(s, { type: 'setVolume', key: 'sfxVolume', value: 3 })).toThrow(GameError);
+  });
+  it('donne des volumes par défaut aux anciennes sauvegardes', () => {
+    const old = structuredClone(newGame()) as unknown as { settings: Record<string, unknown> };
+    delete old.settings.musicVolume;
+    delete old.settings.sfxVolume;
+    const loaded = normalizeState(old as never, T0);
+    expect(loaded.settings.musicVolume).toBe(0.6);
+    expect(loaded.settings.sfxVolume).toBe(0.8);
   });
 });
