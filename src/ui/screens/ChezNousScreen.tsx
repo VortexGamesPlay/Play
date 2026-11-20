@@ -58,6 +58,7 @@ function addHouse(parent: THREE.Group, x: number, z: number, scale: number, pale
   addBox(house, 'stone-foundation', [0, .22, 0], [4.5, .44, 3.8], stone);
   addBox(house, 'plaster-walls', [0, 1.65, 0], [4.15, 2.55, 3.5], plaster);
   // Gabled roof: two broad sloped planes, ridge beam and decorative fascia.
+  roofMat.side = THREE.DoubleSide;
   const roofGeo = new THREE.BufferGeometry();
   const verts = new Float32Array([
     -2.42,2.85,-2.05, 0,5.05,-2.05, 0,5.05,2.05,
@@ -106,12 +107,15 @@ function createVillage(scene: THREE.Scene) {
   const cross = new THREE.Mesh(new THREE.PlaneGeometry(45, 6), path); cross.rotation.x = -Math.PI / 2; cross.position.set(0, -.04, -1); cross.receiveShadow = true; world.add(cross);
   const plaza = new THREE.Mesh(new THREE.CircleGeometry(11, 64), pathLight); plaza.rotation.x = -Math.PI / 2; plaza.position.set(0, -.025, -1); plaza.receiveShadow = true; world.add(plaza);
   const cobbleMat = mat('#9d907d');
+  const tileGeometry = new THREE.BoxGeometry(1.48, .07, 1.48);
+  const tileInstances = new THREE.InstancedMesh(tileGeometry, cobbleMat, 700);
+  const tileTransform = new THREE.Object3D(); let tileCount = 0;
   for (let x = -20; x <= 20; x += 1.65) for (let z = -21; z <= 21; z += 1.65) {
     if (Math.abs(x) < 4.3 || Math.abs(z + 1) < 3.5 || Math.hypot(x, z + 1) < 11) {
-      const tile = new THREE.Mesh(new THREE.BoxGeometry(1.48, .07, 1.48), (Math.round(x + z) % 2) ? path : cobbleMat);
-      tile.position.set(x, -.01, z); tile.receiveShadow = true; world.add(tile);
+      tileTransform.position.set(x, -.01, z); tileTransform.updateMatrix(); tileInstances.setMatrixAt(tileCount++, tileTransform.matrix);
     }
   }
+  tileInstances.count = tileCount; tileInstances.instanceMatrix.needsUpdate = true; tileInstances.receiveShadow = true; world.add(tileInstances);
   // Closed protective wall with one fortified entrance.
   const wallSegments: [number, number, number, number][] = [[0, 0, -28, 58], [-29, 0, 0, 1.4], [29, 0, 0, 1.4], [-12, 0, 28, 34], [12, 0, 28, 34]];
   for (const [x, , z, length] of wallSegments) {
@@ -261,6 +265,7 @@ export function ChezNousScreen() {
     const fill = new THREE.DirectionalLight('#a5dfff', .8); fill.position.set(25,18,24); scene.add(fill);
     const { fountain } = createVillage(scene);
     const avatar = createAvatar(scene);
+    avatar.root.position.set(0, 0, 12);
     const state = control.current;
     let frame = 0, previous = 0, elapsed = 0;
     const resize = () => {
