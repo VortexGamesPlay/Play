@@ -116,7 +116,7 @@ export function BattleView() {
           if (e.crit) float(e.target, 'Critique !', 'info');
           if (e.mul > 1) float(e.target, 'Efficace !', 'info');
           if (e.mul < 1) float(e.target, 'Peu efficace', 'info');
-          playSfx('crack');
+          playSfx('hit');
           break;
         case 'heal':
           setView((v) => ({ ...v, [e.target]: { ...v[e.target]!, hp: v[e.target]!.hp + e.amount } }));

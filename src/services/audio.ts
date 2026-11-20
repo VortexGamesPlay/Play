@@ -2,7 +2,38 @@
  * Effets sonores synthétisés en temps réel (Web Audio) : aucun fichier audio à charger.
  * La musique originale est gérée par services/music.ts.
  */
-type Sfx = 'tap' | 'coin' | 'crack' | 'reveal' | 'levelUp' | 'error' | 'buy' | 'open' | 'whoosh';
+type Sfx = 'tap' | 'coin' | 'crack' | 'reveal' | 'levelUp' | 'error' | 'buy' | 'open' | 'whoosh' | 'hit';
+
+/** Les 10 effets sonores originaux (ElevenLabs), dans public/audio/sfx. Le son synthétisé sert de secours. */
+const SAMPLE_NAMES: Sfx[] = ['tap', 'coin', 'crack', 'reveal', 'levelUp', 'error', 'buy', 'open', 'whoosh', 'hit'];
+const samples = new Map<Sfx, AudioBuffer>();
+let samplesRequested = false;
+
+function loadSamples(a: AudioContext) {
+  if (samplesRequested || typeof fetch === 'undefined') return;
+  samplesRequested = true;
+  for (const n of SAMPLE_NAMES) {
+    fetch(`${import.meta.env.BASE_URL}audio/sfx/${n}.mp3`)
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(String(r.status)))))
+      .then((buf) => a.decodeAudioData(buf))
+      .then((decoded) => { samples.set(n, decoded); })
+      .catch(() => { /* fichier indisponible : on garde le son synthétisé */ });
+  }
+}
+
+/** Joue l'échantillon s'il est chargé ; renvoie false sinon. */
+function playSample(name: Sfx, gain = 1): boolean {
+  const a = ac();
+  const buf = samples.get(name);
+  if (!a || !buf) return false;
+  const src = a.createBufferSource();
+  src.buffer = buf;
+  const g = a.createGain();
+  g.gain.value = Math.min(1, sfxVol * gain);
+  src.connect(g).connect(a.destination);
+  src.start();
+  return true;
+}
 
 let ctx: AudioContext | null = null;
 let enabled = true;
@@ -19,7 +50,7 @@ export function setSfxVolume(v: number) {
 function ac(): AudioContext | null {
   if (!enabled || sfxVol <= 0) return null;
   if (typeof window === 'undefined' || !('AudioContext' in window)) return null;
-  if (!ctx) ctx = new AudioContext();
+  if (!ctx) { ctx = new AudioContext(); loadSamples(ctx); }
   if (ctx.state === 'suspended') void ctx.resume();
   return ctx;
 }
@@ -63,7 +94,15 @@ const MAJOR = [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568];
 
 export function playSfx(name: Sfx, tier = 0) {
   try {
+    if (!ac()) return;
+    const quiet: Partial<Record<Sfx, number>> = { tap: 0.55, open: 0.6, whoosh: 0.7, hit: 0.8 };
+    if (playSample(name, quiet[name] ?? 0.9)) {
+      // Les éclosions très rares gardent une note grave en plus, pour marquer le moment.
+      if (name === 'reveal' && tier >= 5) tone(130.8, 0, 1.4, 'sine', 0.1);
+      return;
+    }
     switch (name) {
+      case 'hit': noise(0, 0.1, 0.2, 600); tone(160, 0, 0.12, 'triangle', 0.08, 80); break;
       case 'tap': tone(660, 0, 0.08, 'triangle', 0.06); break;
       case 'open': tone(520, 0, 0.1, 'sine', 0.06, 780); break;
       case 'whoosh': noise(0, 0.35, 0.08, 900); break;
@@ -83,4 +122,10 @@ export function playSfx(name: Sfx, tier = 0) {
   } catch {
     /* l'audio ne doit jamais casser le jeu */
   }
+}
+
+// Prépare les effets dès le premier toucher (le navigateur l'exige), pour que le tout premier clic ait déjà son vrai son.
+if (typeof window !== 'undefined') {
+  const prime = () => { window.removeEventListener('pointerdown', prime, true); ac(); };
+  window.addEventListener('pointerdown', prime, true);
 }
