@@ -777,4 +777,5 @@ export const EN_UI: Record<string, string> = {
   'Mis à jour automatiquement à chaque sauvegarde en ligne. Change ton nom de gardien dans le Profil.': 'Updated automatically with every online save. Change your keeper name in the Profile.',
   'Toutes tes créatures, œufs et ressources seront définitivement supprimés, sur cet appareil et sur ton compte en ligne.': 'All your creatures, eggs and resources will be permanently deleted, on this device and on your online account.',
   'Victoires': 'Wins',
+  'Chez nous': 'Our Home',
 };

@@ -5,6 +5,7 @@ import type { ElementId } from '@core/types';
 const S = { fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' } as const;
 
 const ICONS = {
+  home: <g {...S}><path d="m3 10 9-7 9 7" /><path d="M5 9v11h14V9M9 20v-6h6v6" /></g>,
   sanctuary: <g {...S}><path d="M3 20h18" /><path d="M6 20v-6a6 6 0 0 1 12 0v6" /><path d="M12 8V4" /><path d="M9.5 5.5 12 3l2.5 2.5" /><circle cx="12" cy="15" r="1.6" /></g>,
   egg: <g {...S}><path d="M12 3c3.6 0 6.5 5.4 6.5 10a6.5 6.5 0 0 1-13 0C5.5 8.4 8.4 3 12 3Z" /><path d="m8.5 12 2 1.5 1.8-2 1.8 2 1.6-1.4" /></g>,
   paw: <g {...S}><ellipse cx="12" cy="16" rx="4.5" ry="3.6" /><circle cx="6" cy="10.5" r="1.8" /><circle cx="9.5" cy="6.5" r="1.8" /><circle cx="14.5" cy="6.5" r="1.8" /><circle cx="18" cy="10.5" r="1.8" /></g>,

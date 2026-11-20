@@ -404,3 +404,70 @@
 .leaderboard li.me { background: rgba(123, 92, 255, 0.14); outline: 2px solid rgba(123, 92, 255, 0.35); }
 .leaderboard .lb-rank { width: 28px; text-align: center; }
 .leaderboard .lb-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* ── Sanctuaire immersif 2.5D ── */
+.scene { isolation: isolate; background: linear-gradient(180deg, #a8d7ee 0%, #cde7d5 58%, #83bd79 100%); }
+.scene-bg { filter: saturate(1.08); }
+.sanctuary-island { filter: drop-shadow(0 16px 13px rgba(27, 58, 49, .28)); }
+.scene::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(180deg, rgba(255,255,255,.08), transparent 42%, rgba(24,54,45,.10)); }
+.scene.night::after { background: linear-gradient(180deg, rgba(20,25,72,.22), rgba(33,39,83,.06) 42%, rgba(16,31,48,.28)); }
+.actor { filter: drop-shadow(0 5px 4px rgba(31, 54, 43, .24)); will-change: left, top; }
+.actor .creature { filter: drop-shadow(0 2px 2px rgba(24, 37, 40, .16)); }
+.actor:focus-visible { outline: 2px solid #fff; outline-offset: 4px; border-radius: 18px; }
+@media (prefers-reduced-motion: reduce) { .sanctuary-island *, .actor, .actor-flip { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+
+/* ── Monde 3D : Chez nous ── */
+.homeworld { width: 100%; max-width: 1500px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+.homeworld-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.homeworld-kicker { display: block; color: var(--violet); font-size: 10px; font-weight: 900; letter-spacing: 1.5px; margin-bottom: 3px; }
+.homeworld-head h2 { font-size: 28px; }
+.homeworld-head p { color: var(--ink-soft); font-size: 13px; margin-top: 3px; }
+.homeworld-reset { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); background: var(--paper); border-radius: 99px; padding: 9px 14px; font-weight: 800; cursor: pointer; box-shadow: var(--shadow-s); }
+.homeworld-reset svg { width: 18px; height: 18px; }
+.homeworld-stage { position: relative; height: min(70vh, 720px); min-height: 470px; overflow: hidden; border-radius: 24px; background: #a7d8ed; box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,.75); }
+.homeworld-stage canvas { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+.homeworld-stage canvas:active { cursor: grabbing; }
+.homeworld-compass { position: absolute; top: 16px; left: 16px; display: flex; align-items: center; gap: 8px; padding: 9px 13px; border-radius: 99px; background: rgba(255,255,255,.88); backdrop-filter: blur(8px); box-shadow: var(--shadow-s); font-size: 10px; font-weight: 900; letter-spacing: .8px; color: #49634d; pointer-events: none; }
+.homeworld-compass svg { width: 17px; height: 17px; }
+.homeworld-compass span { color: #6ba66c; }
+.homeworld-hint { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); white-space: nowrap; max-width: calc(100% - 24px); overflow: hidden; text-overflow: ellipsis; padding: 8px 13px; border-radius: 99px; background: rgba(255,255,255,.86); color: #475b4a; font-size: 11px; font-weight: 800; pointer-events: none; }
+.homeworld-pad { display: none; }
+.homeworld-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--ink-soft); font-size: 12px; font-weight: 800; padding: 0 4px; }
+.homeworld-footer span:first-child { display: inline-flex; align-items: center; gap: 7px; }
+.homeworld-dot { width: 9px; height: 9px; border-radius: 50%; background: #63b978; box-shadow: 0 0 0 3px rgba(99,185,120,.16); }
+@media (max-width: 700px) {
+  .homeworld-head h2 { font-size: 24px; }
+  .homeworld-head p { max-width: 245px; line-height: 1.35; }
+  .homeworld-stage { height: min(68vh, 640px); min-height: 430px; border-radius: 18px; }
+  .homeworld-hint { bottom: 12px; font-size: 9px; }
+  .homeworld-pad { position: absolute; left: 14px; bottom: 48px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .homeworld-pad div { display: flex; gap: 3px; }
+  .homeworld-pad button { width: 38px; height: 38px; border: 1px solid rgba(255,255,255,.7); border-radius: 12px; background: rgba(255,255,255,.82); color: #425a49; font-weight: 900; touch-action: none; box-shadow: 0 2px 8px rgba(30,60,40,.15); }
+  .homeworld-footer { font-size: 10px; }
+}
+
+
+/* Chez nous — véritable scène WebGL 3D */
+.homeworld-immersive { width:100%; max-width:none; height:100%; min-height:calc(100dvh - 20px); margin:0; gap:0; }
+.homeworld-stage-3d { position:relative; flex:1; width:100%; height:calc(100dvh - 20px); min-height:520px; overflow:hidden; border:0; border-radius:0; background:#b9d8df; box-shadow:none; }
+.homeworld-canvas { display:block; width:100%; height:100%; touch-action:none; cursor:grab; outline:none; }
+.homeworld-canvas:active { cursor:grabbing; }
+.homeworld-topline { position:absolute; z-index:3; top:18px; left:20px; right:20px; display:flex; align-items:flex-start; justify-content:space-between; pointer-events:none; }
+.homeworld-title { display:flex; flex-direction:column; gap:2px; color:#fff; text-shadow:0 2px 12px rgba(24,39,42,.65); }
+.homeworld-title span { font-size:10px; font-weight:900; letter-spacing:2px; }
+.homeworld-title strong { font-family:var(--font-title); font-size:28px; line-height:1.1; }
+.homeworld-recenter { pointer-events:auto; width:42px; height:42px; border:1px solid rgba(255,255,255,.55); border-radius:50%; background:rgba(255,255,255,.84); color:#40564a; font-size:25px; cursor:pointer; box-shadow:0 4px 18px rgba(28,49,42,.2); }
+.homeworld-controls-hint { position:absolute; z-index:3; bottom:16px; left:50%; transform:translateX(-50%); max-width:calc(100% - 28px); padding:9px 15px; border:1px solid rgba(255,255,255,.45); border-radius:99px; background:rgba(255,255,255,.84); color:#3f5547; font-size:11px; font-weight:800; white-space:nowrap; pointer-events:none; box-shadow:0 4px 16px rgba(28,49,42,.13); }
+.homeworld-loading { position:absolute; inset:0; z-index:4; display:grid; place-items:center; color:#fff; font-weight:900; text-shadow:0 2px 12px #314d49; pointer-events:none; }
+.homeworld-webgl-warning { display:none; position:absolute; inset:0; z-index:5; place-items:center; padding:24px; text-align:center; color:#fff; background:linear-gradient(135deg,#344e4b,#657e65); font-weight:900; }
+.homeworld-no-webgl .homeworld-webgl-warning { display:grid; }
+.homeworld-touchpad { position:absolute; z-index:4; left:16px; bottom:56px; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.homeworld-touchpad > div { display:flex; gap:4px; }
+.homeworld-touchpad button { width:43px; height:43px; border:1px solid rgba(255,255,255,.75); border-radius:13px; background:rgba(255,255,255,.82); color:#40564a; font-size:18px; font-weight:900; touch-action:none; box-shadow:0 3px 12px rgba(30,60,40,.2); }
+@media (max-width:760px) {
+  .homeworld-stage-3d { height:calc(100dvh - 12px); min-height:460px; }
+  .homeworld-title strong { font-size:24px; }
+  .homeworld-controls-hint { left:auto; right:12px; bottom:16px; transform:none; white-space:normal; max-width:calc(100% - 100px); font-size:9px; text-align:center; }
+  .homeworld-touchpad { left:10px; bottom:14px; }
+  .homeworld-touchpad button { width:38px; height:38px; }
+}

@@ -104,6 +104,11 @@ function SceneBackdrop({ night }: { night: boolean }) {
         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={sky[0]} /><stop offset="1" stopColor={sky[1]} /></linearGradient>
         <linearGradient id="hillA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={shade(t.hill[0])} /><stop offset="1" stopColor={shade(t.hill[1])} /></linearGradient>
         <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={shade(t.ground[0])} /><stop offset="1" stopColor={shade(t.ground[1])} /></linearGradient>
+        <linearGradient id="sanctuaryPlateau" x1="0" y1="0" x2="0.15" y2="1"><stop offset="0" stopColor={shade(t.ground[0])} /><stop offset="1" stopColor={shade(t.ground[1])} /></linearGradient>
+        <linearGradient id="sanctuaryEdge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={shade(darken(t.hill[1], 20))} /><stop offset="1" stopColor={shade(darken(t.hill[1], 34))} /></linearGradient>
+        <linearGradient id="sanctuaryPath" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ead9b2" /><stop offset="1" stopColor="#c9aa7b" /></linearGradient>
+        <linearGradient id="sanctuaryWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#b6efff" /><stop offset="1" stopColor="#4fa9d6" /></linearGradient>
+        <clipPath id="sanctuaryGroundClip"><path d="M28 267L399 176L772 267L400 405Z" /></clipPath>
       </defs>
       <rect width="800" height="400" fill="url(#sky)" />
       {night ? (
@@ -122,6 +127,33 @@ function SceneBackdrop({ night }: { night: boolean }) {
         <g transform="translate(520 178)"><rect x="-16" y="-10" width="32" height="40" rx="4" fill={shade('#e8e0ff')} /><path d="M-22-10a22 22 0 0 1 44 0Z" fill={shade('#7b5cff')} /><rect x="2" y="-30" width="22" height="7" rx="3" fill={shade('#5a3ee0')} transform="rotate(-30 2 -30)" />{night && <circle cx="0" cy="8" r="5" fill="#ffe680" />}</g>
       )}
       <path d="M0 250C160 220 300 240 420 236C560 232 680 216 800 236V400H0Z" fill="url(#ground)" />
+      {/* Plateau isométrique : un lieu construit en profondeur, sans modèles 3D. */}
+      <g className="sanctuary-island">
+        <path d="M28 267L399 176L772 267L400 405Z" fill="url(#sanctuaryEdge)" opacity=".95" />
+        <path d="M28 267L399 176L772 267L400 386Z" fill="url(#sanctuaryPlateau)" stroke="#d2efb0" strokeWidth="3" />
+        <g clipPath="url(#sanctuaryGroundClip)">
+          <path d="M-30 286C120 240 210 250 315 278S520 322 830 246" fill="none" stroke="#d9edaa" strokeWidth="2" opacity=".22" />
+          <path d="M60 312L400 226L735 310" fill="none" stroke="#e8f3c6" strokeWidth="1.5" strokeDasharray="5 12" opacity=".2" />
+          <path d="M110 267C190 276 225 316 320 321C415 326 474 271 570 269C632 268 674 284 710 302" fill="none" stroke="#416f57" strokeWidth="43" strokeLinecap="round" opacity=".28" />
+          <path d="M110 260C190 269 225 309 320 314C415 319 474 264 570 262C632 261 674 277 710 295" fill="none" stroke="url(#sanctuaryPath)" strokeWidth="34" strokeLinecap="round" />
+          <path d="M110 255C190 264 225 304 320 309C415 314 474 259 570 257C632 256 674 272 710 290" fill="none" stroke="#f6e8c9" strokeWidth="2" strokeDasharray="3 13" strokeLinecap="round" opacity=".7" />
+          <path d="M80 335L202 305L250 322L127 355Z" fill={shade(t.hill[1])} opacity=".6" />
+          <path d="M500 346L624 310L700 339L576 375Z" fill={shade(t.hill[1])} opacity=".65" />
+          <path d="M295 245L372 226L421 244L344 264Z" fill="#b9e48c" opacity=".55" />
+          <path d="M550 221L623 203L663 218L590 237Z" fill="#b9e48c" opacity=".5" />
+          <path d="M80 280C118 269 145 268 170 274" fill="none" stroke="#d8f1b1" strokeWidth="5" strokeLinecap="round" opacity=".5" />
+          <path d="M635 321C660 311 681 306 706 311" fill="none" stroke="#d8f1b1" strokeWidth="5" strokeLinecap="round" opacity=".5" />
+          {Array.from({ length: 18 }, (_, i) => <ellipse key={`grass-${i}`} cx={75 + (i * 83) % 650} cy={260 + (i * 47) % 100} rx="2.2" ry="5" fill={i % 2 ? shade(t.hill[0]) : shade(t.hill[1])} opacity=".55" transform={`rotate(${i * 23} ${75 + (i * 83) % 650} ${260 + (i * 47) % 100})`} />)}
+        </g>
+        <path d="M28 267L399 386L400 405L28 286Z" fill={shade(darken(t.hill[1], 20))} opacity=".45" />
+        <path d="M400 386L772 267L772 286L400 405Z" fill={shade(darken(t.hill[1], 32))} opacity=".55" />
+        <path d="M38 268L399 181L761 268" fill="none" stroke="#eff8cf" strokeWidth="2" opacity=".5" />
+        <g opacity=".9"><path d="M165 283l18-12 18 7-18 13Z" fill="#d8c8a1" /><path d="M183 291v-8l18-5v8Z" fill="#9b896c" /><path d="M650 283l15-10 17 6-16 11Z" fill="#d8c8a1" /><path d="M666 290v-8l16-3v8Z" fill="#9b896c" /><path d="M335 354l20-12 19 7-20 13Z" fill="#d8c8a1" /><path d="M354 362v-8l20-5v8Z" fill="#9b896c" /></g>
+        <path d="M575 322C600 304 632 306 657 317C677 326 679 341 657 350C631 361 596 355 577 343C564 335 564 328 575 322Z" fill="#367fa7" opacity=".55" />
+        <path d="M572 316C596 300 631 302 655 313C676 323 676 337 654 346C629 356 595 350 575 338C561 330 561 323 572 316Z" fill="url(#sanctuaryWater)" stroke="#d5f7ff" strokeWidth="2" />
+        <path d="M585 320C604 312 626 313 643 320" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" opacity=".55" className="star-twinkle" />
+        <path d="M578 329C596 337 618 340 640 333" fill="none" stroke="#d8fbff" strokeWidth="2" strokeLinecap="round" opacity=".65" />
+      </g>
       {[[70, 214, 1], [740, 206, 1.2], [600, 218, 0.8]].map(([x, y, k], i) => (
         <g key={i} transform={`translate(${x} ${y}) scale(${k})`}>
           <rect x="-5" y="-6" width="10" height="34" rx="4" fill={shade('#a0714a')} />
