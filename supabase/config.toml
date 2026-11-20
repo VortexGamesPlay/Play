@@ -2,3 +2,6 @@
 # Le webhook PayPal est appelé par PayPal, sans jeton utilisateur : sa signature est vérifiée dans la fonction.
 [functions.paypal-webhook]
 verify_jwt = false
+
+[functions.paypal-config]
+verify_jwt = false

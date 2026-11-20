@@ -6,6 +6,7 @@
  */
 import type { PurchaseRecord } from '@core/types';
 import { PRODUCT_BY_ID, CURRENCY } from '@data/products';
+import { getLocale } from '../../i18n';
 
 type Receipt = Omit<PurchaseRecord, 'at'>;
 
@@ -15,7 +16,8 @@ const SUPABASE_ANON_KEY = env.VITE_SUPABASE_ANON_KEY as string | undefined;
 const PAYPAL_CLIENT_ID = env.VITE_PAYPAL_CLIENT_ID as string | undefined;
 
 export const paymentsConfig = {
-  paypal: !!(SUPABASE_URL && SUPABASE_ANON_KEY && PAYPAL_CLIENT_ID),
+  /** Le Client ID peut venir du build OU du serveur (fonction paypal-config). */
+  paypal: !!(SUPABASE_URL && SUPABASE_ANON_KEY),
   test: env.DEV || env.VITE_PAYMENTS_TEST === '1',
   paypalSandbox: env.VITE_PAYPAL_ENV !== 'live',
 };
@@ -63,15 +65,29 @@ interface PayPalButtons { render(el: HTMLElement): Promise<void>; close?(): Prom
 interface PayPalNamespace { Buttons(opts: Record<string, unknown>): PayPalButtons }
 declare global { interface Window { paypal?: PayPalNamespace } }
 
+/** Client ID public : celui du build s'il existe, sinon demandé au serveur. */
+async function paypalClientId(): Promise<string> {
+  if (PAYPAL_CLIENT_ID) return PAYPAL_CLIENT_ID;
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/paypal-config`, {
+    method: 'POST',
+    headers: { apikey: SUPABASE_ANON_KEY!, 'Content-Type': 'application/json' },
+    body: '{}',
+  }).catch(() => null);
+  const data = res ? await res.json().catch(() => ({})) : {};
+  if (!res?.ok || !data.clientId) throw new Error(data.error ?? 'Paiement indisponible pour le moment.');
+  return data.clientId as string;
+}
+
 let sdkPromise: Promise<PayPalNamespace> | null = null;
 function loadPayPalSdk(): Promise<PayPalNamespace> {
-  sdkPromise ??= new Promise((resolve, reject) => {
+  sdkPromise ??= paypalClientId().then((clientId) => new Promise<PayPalNamespace>((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(PAYPAL_CLIENT_ID!)}&currency=${CURRENCY}&intent=capture&components=buttons&locale=fr_FR`;
+    const locale = getLocale() === 'fr' ? 'fr_FR' : 'en_US';
+    s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(clientId)}&currency=${CURRENCY}&intent=capture&components=buttons&locale=${locale}`;
     s.onload = () => (window.paypal ? resolve(window.paypal) : reject(new Error('PayPal indisponible.')));
     s.onerror = () => { sdkPromise = null; reject(new Error('Impossible de charger PayPal. Vérifie ta connexion.')); };
     document.head.appendChild(s);
-  });
+  })).catch((e) => { sdkPromise = null; throw e; });
   return sdkPromise;
 }
 
