@@ -1,6 +1,7 @@
 /** Traductions anglaises de l'INTERFACE (clé = texte français passé à t('…') / tr('…')). */
 export const EN_UI: Record<string, string> = {
   'Langue inconnue.': 'Unknown language.',
+  'Ouvrir le menu': 'Open menu',
   'Volume invalide.': 'Invalid volume.',
   'Termine {n} expéditions : {biome}.': 'Complete {n} expeditions: {biome}.',
   'Premiers pas': 'First Steps',
