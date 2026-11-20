@@ -38,7 +38,7 @@ function quad(faces:Face[], points:V3[], color:string) { faces.push(face(points,
 
 function villageFaces(): Face[] {
   const f:Face[]=[];
-  quad(f,[{x:-42,y:-.2,z:-38},{x:42,y:-.2,z:-38},{x:42,y:-.2,z:38},{x:-42,y:-.2,z:38}],COLORS.grass);
+  for(let x=-20;x<20;x+=5) for(let z=-17;z<15;z+=4) quad(f,[{x,y:-.2,z},{x:x+5,y:-.2,z},{x:x+5,y:-.2,z:z+4},{x,y:-.2,z:z+4}],((x/5+z/4)%2===0)?COLORS.grass:'#82c276');
   // Pelouses et chemins du village
   quad(f,[{x:-2.3,y:.015,z:-15},{x:2.3,y:.015,z:-15},{x:2.3,y:.015,z:16},{x:-2.3,y:.015,z:16}],COLORS.path);
   quad(f,[{x:-18,y:.02,z:-2},{x:18,y:.02,z:-2},{x:18,y:.02,z:2},{x:-18,y:.02,z:2}],COLORS.path);
@@ -108,8 +108,9 @@ export function ChezNousScreen() {
     const resize=()=>{const r=canvas.getBoundingClientRect();width=Math.max(1,r.width);height=Math.max(1,r.height);const dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);};
     const observer=new ResizeObserver(resize); observer.observe(canvas); resize();
     const state=controlRef.current;
-    const onKeyDown=(e:KeyboardEvent)=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d','W','A','S','D'].includes(e.key)){e.preventDefault();state.keys.add(e.key.toLowerCase());}};
-    const onKeyUp=(e:KeyboardEvent)=>state.keys.delete(e.key.toLowerCase());
+    const mapKey=(key:string)=>{const k=key.toLowerCase();return k==='z'?'w':k==='q'?'a':k;};
+    const onKeyDown=(e:KeyboardEvent)=>{const key=mapKey(e.key);if(['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d'].includes(key)){e.preventDefault();state.keys.add(key);}};
+    const onKeyUp=(e:KeyboardEvent)=>state.keys.delete(mapKey(e.key));
     const onBlur=()=>state.keys.clear();
     window.addEventListener('keydown',onKeyDown);window.addEventListener('keyup',onKeyUp);window.addEventListener('blur',onBlur);
     const onDown=(e:PointerEvent)=>{state.drag=true;state.lastX=e.clientX;state.lastY=e.clientY;canvas.setPointerCapture(e.pointerId);};
@@ -138,9 +139,12 @@ export function ChezNousScreen() {
       ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.ellipse(width*.78,height*.16,38,24,0,0,Math.PI*2);ctx.fill();
       const faces:Face[]=staticFaces.map(a=>({...a,depth:a.points.reduce((s,p)=>s+Math.hypot(p.x-cx,p.z-cz),0)/a.points.length}));
       // Joueur : silhouette en volume, toujours au centre de la promenade
+      const avatarStart=faces.length;
       box(faces,state.x,.03,state.z,.72,1.05,.62,'#7561c8');
       box(faces,state.x,1.08,state.z,.58,.58,.58,'#f2c9a5');
       box(faces,state.x,1.48,state.z,.66,.2,.66,'#6c4a3c');
+      const avatarDepth=Math.hypot(state.x-cx,state.z-cz);
+      for(let i=avatarStart;i<faces.length;i++) faces[i]!.depth=avatarDepth;
       faces.sort((a,b)=>b.depth-a.depth);
       for(const item of faces){
         const pts=item.points.map(p=>project(p,cx,cz,cy,focal));
