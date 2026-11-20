@@ -734,4 +734,5 @@ export const EN_UI: Record<string, string> = {
   'Mutation': 'Mutation',
   'Toutes les mutations': 'All mutations',
   'Aucune variante': 'No variants',
+  'Chez nous': 'Our Home',
 };

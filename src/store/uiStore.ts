@@ -4,9 +4,9 @@ import type { GameEvent } from '@core/events';
 
 export type Route =
   | 'sanctuaire' | 'incubateur' | 'collection' | 'bestiaire' | 'laboratoire'
-  | 'exploration' | 'arene' | 'boutique' | 'inventaire' | 'communaute' | 'profil' | 'saison';
+  | 'exploration' | 'arene' | 'chez-nous' | 'boutique' | 'inventaire' | 'communaute' | 'profil' | 'saison';
 
-export const ROUTES: Route[] = ['sanctuaire', 'incubateur', 'collection', 'bestiaire', 'laboratoire', 'exploration', 'arene', 'boutique', 'inventaire', 'communaute', 'profil', 'saison'];
+export const ROUTES: Route[] = ['sanctuaire', 'incubateur', 'collection', 'bestiaire', 'laboratoire', 'exploration', 'arene', 'chez-nous', 'boutique', 'inventaire', 'communaute', 'profil', 'saison'];
 
 export type ToastKind = 'info' | 'success' | 'error' | 'reward';
 export interface Toast {
