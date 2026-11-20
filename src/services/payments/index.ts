@@ -7,13 +7,12 @@
 import type { PurchaseRecord } from '@core/types';
 import { PRODUCT_BY_ID, CURRENCY } from '@data/products';
 import { getLocale } from '../../i18n';
+import { SUPABASE_ANON_KEY, SUPABASE_URL, withSession } from '../supabase';
 import { tr } from '../../i18n';
 
 type Receipt = Omit<PurchaseRecord, 'at'>;
 
 const env = import.meta.env;
-const SUPABASE_URL = env.VITE_SUPABASE_URL as string | undefined;
-const SUPABASE_ANON_KEY = env.VITE_SUPABASE_ANON_KEY as string | undefined;
 const PAYPAL_CLIENT_ID = env.VITE_PAYPAL_CLIENT_ID as string | undefined;
 
 export const paymentsConfig = {
@@ -34,22 +33,8 @@ export async function purchaseInTestMode(productId: string): Promise<Receipt> {
 }
 
 // ───────────── PayPal via le serveur ─────────────
-let clientPromise: Promise<import('@supabase/supabase-js').SupabaseClient> | null = null;
-
-/** Client Supabase avec une session (compte anonyme en attendant les comptes complets de la Phase 6). */
-async function supabase() {
-  clientPromise ??= (async () => {
-    const { createClient } = await import('@supabase/supabase-js');
-    const client = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
-    const { data } = await client.auth.getSession();
-    if (!data.session) {
-      const { error } = await client.auth.signInAnonymously();
-      if (error) throw new Error(tr('Connexion au serveur impossible.'));
-    }
-    return client;
-  })();
-  return clientPromise;
-}
+/** Client Supabase avec une session (compte invité ou compte e-mail). */
+const supabase = withSession;
 
 async function callFunction<T>(name: string, body: Record<string, unknown>): Promise<T> {
   const client = await supabase();

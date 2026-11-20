@@ -19,6 +19,9 @@ import { setAmbienceEnabled, setAmbienceVolume } from '../services/ambience';
 import { RARITIES } from '@data/rarities';
 import { useUi } from './uiStore';
 import { setLocale as applyLocale } from '../i18n';
+import { downloadSave, flushUpload, scheduleUpload, uploadNow, type CloudSave } from '../services/cloudSave';
+import { serverAvailable } from '../services/supabase';
+import { fmtDateTime } from '../ui/format';
 import { tr } from '../i18n';
 
 type SaveStatus = 'idle' | 'pending' | 'saved' | 'error';
@@ -35,6 +38,10 @@ interface GameStore {
   exportSave(): string;
   importSave(text: string): void;
   resetGame(): Promise<void>;
+  /** Compare la partie locale et celle du serveur, et propose / applique la plus récente. */
+  syncWithCloud(opts?: { afterLogin?: boolean }): Promise<void>;
+  /** Remplace la partie par celle du serveur. */
+  adoptCloud(cloud: CloudSave): Promise<void>;
 }
 
 const AUTOSAVE_DELAY = 800;
@@ -132,8 +139,9 @@ export const useGame = create<GameStore>((set, get) => {
         if (fr) get().dispatch({ type: 'setLocale', locale: 'fr' });
         await get().saveNow();
       }
+      if (serverAvailable()) void get().syncWithCloud({ afterLogin: res.source === 'new' });
       // Sauvegarde de sécurité quand l'application passe en arrière-plan (mobile) ou se ferme.
-      const flush = () => { if (get().saveStatus === 'pending') void get().saveNow(); };
+      const flush = () => { if (get().saveStatus === 'pending') void get().saveNow(); flushUpload(); };
       document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
       window.addEventListener('pagehide', flush);
     },
@@ -168,6 +176,7 @@ export const useGame = create<GameStore>((set, get) => {
         const now = Date.now();
         await repo.save(get().state, now);
         set({ saveStatus: 'saved', lastSavedAt: now });
+        scheduleUpload(get().state);
       } catch (err) {
         console.error(err);
         set({ saveStatus: 'error' });
@@ -184,6 +193,32 @@ export const useGame = create<GameStore>((set, get) => {
       applyAudioSettings(state.settings);
       set({ state });
       void get().saveNow();
+    },
+
+    async syncWithCloud(opts) {
+      let cloud: CloudSave | null;
+      try { cloud = await downloadSave(); } catch { return; /* hors-ligne : on réessaiera plus tard */ }
+      const local = get().state;
+      const localAt = get().lastSavedAt ?? 0;
+      if (!cloud) { await uploadNow(local).catch(() => {}); return; }
+      if (cloud.savedAt <= localAt + 2000) { await uploadNow(local).catch(() => {}); return; }
+      // La partie du serveur est plus récente.
+      const fresh = local.stats.eggsHatched === 0 && local.creatures.length === 0;
+      if (opts?.afterLogin && fresh) { await get().adoptCloud(cloud); return; }
+      useUi.getState().openModal({
+        kind: 'confirm',
+        title: tr('Partie plus récente trouvée en ligne'),
+        body: tr('Une sauvegarde du {date} existe sur ton compte ({n} créatures). La charger remplacera la partie de cet appareil ({m} créatures).', { date: fmtDateTime(cloud.savedAt), n: cloud.state.creatures.length, m: local.creatures.length }),
+        confirmLabel: tr('Charger la partie en ligne'),
+        onConfirm: () => { useUi.getState().closeModal(); void get().adoptCloud(cloud!); },
+      });
+    },
+
+    async adoptCloud(cloud) {
+      applyAudioSettings(cloud.state.settings);
+      set({ state: cloud.state });
+      await get().saveNow();
+      useUi.getState().toast({ kind: 'success', title: tr('Partie récupérée'), body: tr('Ta partie a été chargée depuis ton compte.') });
     },
 
     async resetGame() {

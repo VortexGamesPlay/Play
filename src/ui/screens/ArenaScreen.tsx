@@ -16,6 +16,7 @@ import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
 import { playSfx } from '../../services/audio';
 import { SKILLS } from '@data/skills';
+import { Leaderboard } from './Leaderboard';
 import { tr } from '../../i18n';
 
 type Tab = 'ligue' | 'gardiens' | 'tour';
@@ -238,9 +239,10 @@ export function ArenaScreen() {
           <EnemyRow enemies={towerEnemies(floor)} />
           <h3 className="detail-h">{tr('Récompense')}</h3>
           <RewardList r={TOWER.floorReward(floor)} />
-          <div className="status-panel" style={{ marginTop: 12 }}><Icon name="info" /><p style={{ fontSize: 13 }}><b>{tr('Classements en ligne : Phase 6.')}</b> {tr('Ton record est déjà enregistré et sera publié quand les comptes en ligne arriveront. Les combats entre joueurs sont prévus dans une version future.')}</p></div>
         </div>
       )}
+
+      <Leaderboard />
 
       <div className="row-wrap muted" style={{ fontSize: 13, fontWeight: 800 }}>
         <span>{tr('Victoires :')} {state.stats.battlesWon}</span><span>·</span><span>{tr('Défaites :')} {state.stats.battlesLost}</span><span>·</span><span>{tr('Gardiens vaincus :')} {state.stats.bossesDefeated}</span>

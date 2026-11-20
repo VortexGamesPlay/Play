@@ -13,6 +13,7 @@ import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
 import { fmtDate, fmtDateTime } from '../format';
 import { tr, intlLocale, LOCALES } from '../../i18n';
+import { AccountCard } from './AccountCard';
 
 export function ProfileScreen() {
   const state = useGame((s) => s.state);
@@ -125,6 +126,8 @@ export function ProfileScreen() {
           {paymentsConfig.paypal && <button className="btn btn-ghost btn-sm" style={{ marginTop: 10 }} onClick={() => void restore()}><Icon name="download" />{tr('Restaurer mes achats')}</button>}
         </div>
 
+        <AccountCard />
+
         <div className="card">
           <div className="card-title"><Icon name="save" /><h2>{tr('Sauvegarde')}</h2></div>
           <p className="soft" style={{ fontSize: 14 }}>{tr('Sauvegarde automatique sur cet appareil après chaque action, avec copie de secours.')}
@@ -135,14 +138,13 @@ export function ProfileScreen() {
             <button className="btn btn-ghost btn-sm" onClick={() => fileRef.current?.click()}><Icon name="upload" />{tr('Importer')}</button>
             <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(e) => void onImport(e.target.files?.[0])} />
           </div>
-          <div className="status-panel" style={{ marginTop: 12 }}><Icon name="info" /><p style={{ fontSize: 13 }}><b>{tr('Synchronisation entre appareils : Phase 6')}</b> {tr('(comptes en ligne). En attendant, l\'export / import permet de transférer ta partie.')}</p></div>
           <button className="btn btn-danger btn-sm" style={{ marginTop: 12 }} onClick={() => openModal({
             kind: 'confirm', danger: true, title: tr('Recommencer à zéro ?'), confirmLabel: tr('Tout effacer'),
-            body: tr('Toutes tes créatures, œufs et ressources seront définitivement supprimés de cet appareil.'),
+            body: tr('Toutes tes créatures, œufs et ressources seront définitivement supprimés, sur cet appareil et sur ton compte en ligne.'),
             onConfirm: () => void resetGame().then(() => toast({ kind: 'info', title: tr('Nouvelle partie'), body: tr('Bienvenue, gardien !') })),
           })}><Icon name="trash" />{tr('Réinitialiser la partie')}</button>
         </div>
-        <p className="muted" style={{ fontSize: 12, textAlign: 'center' }}>{tr('EGGVERSE v')}{__APP_VERSION__} {tr('· Phases 1 et 2')}</p>
+        <p className="muted" style={{ fontSize: 12, textAlign: 'center' }}>{tr('EGGVERSE v')}{__APP_VERSION__}</p>
       </div>
     </div>
   );

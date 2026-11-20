@@ -17,8 +17,9 @@ async function shot(page, path, fullPage = false) { await page.waitForTimeout(90
 
 async function run(name, viewport) {
   const ctx = await browser.newContext({ locale: 'fr-FR', viewport, deviceScaleFactor: 1 });
+  await ctx.route(/supabase\.co/, (r) => r.abort()); // jamais de faux joueurs sur le vrai serveur
   const page = await ctx.newPage();
-  page.on('console', (m) => m.type() === 'error' && errors.push(`[${name}] ${m.text()}`));
+  page.on('console', (m) => m.type() === 'error' && !m.text().includes('Failed to load resource') && errors.push(`[${name}] ${m.text()}`));
   page.on('pageerror', (e) => errors.push(`[${name}] ${e.message}`));
   await page.clock.install({ time: new Date('2026-11-19T15:00:00') });
   await page.goto(URL);

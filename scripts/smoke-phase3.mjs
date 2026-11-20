@@ -14,8 +14,8 @@ await new Promise((r) => server.stdout.on('data', (d) => d.toString().includes('
 const b = await chromium.launch();
 const errs = [];
 for (const [name, vp] of [['desktop', { width: 1366, height: 860 }], ['mobile', { width: 390, height: 844 }]]) {
-  const p = await b.newPage({ locale: 'fr-FR', viewport: vp });
-  p.on('pageerror', (e) => errs.push(e.message)); p.on('console', (m) => m.type() === 'error' && errs.push(m.text()));
+  const p = await b.newPage({ locale: 'fr-FR', viewport: vp }); await p.route(/supabase\.co/, (r) => r.abort()); // jamais de faux joueurs sur le vrai serveur
+  p.on('pageerror', (e) => errs.push(e.message)); p.on('console', (m) => m.type() === 'error' && !m.text().includes('Failed to load resource') && errs.push(m.text()));
   await p.clock.install({ time: new Date('2026-11-19T15:00:00') });
   await p.goto('http://localhost:4321/');
   await p.evaluate((t) => localStorage.setItem('eggverse.save.main', t), readFileSync(`${SP}/save-p3.json`, 'utf8'));
