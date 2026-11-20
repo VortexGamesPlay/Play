@@ -9,6 +9,7 @@ import { CrystalIcon, Icon } from '../art/Icons';
 import { ElementBadge, MutationBadge, RarityBadge } from '../components/Badges';
 import { useUi } from '../../store/uiStore';
 import { playSfx, preloadSfx } from '../../services/audio';
+import { tr } from '../../i18n';
 
 type Hatched = Extract<GameEvent, { type: 'hatched' }>;
 
@@ -54,9 +55,9 @@ export function HatchSequence({ event }: { event: Hatched }) {
   const style = { ['--rc' as string]: rarity.color, ['--rg' as string]: rarity.glow } as CSSProperties;
 
   return (
-    <div className={`hatch hs-${stage} fx-${rarity.fx} tier-${tier}`} style={style} onClick={skip} role="dialog" aria-modal="true" aria-label="Éclosion">
+    <div className={`hatch hs-${stage} fx-${rarity.fx} tier-${tier}`} style={style} onClick={skip} role="dialog" aria-modal="true" aria-label={tr('Éclosion')}>
       <div className="hatch-bg" />
-      {stage >= 3 && tier >= 3 && !revealed && <div className="hatch-tease">Une énergie {tier >= 5 ? 'extraordinaire' : 'puissante'} s'échappe de l'œuf…</div>}
+      {stage >= 3 && tier >= 3 && !revealed && <div className="hatch-tease">{tr('Une énergie')} {tier >= 5 ? 'extraordinaire' : 'puissante'} {tr('s\'échappe de l\'œuf…')}</div>}
       <div className="hatch-stage">
         <div className="hatch-rays" />
         <div className="hatch-light" />
@@ -86,8 +87,8 @@ export function HatchSequence({ event }: { event: Hatched }) {
 
       {revealed ? (
         <div className="hatch-panel" onClick={(e) => e.stopPropagation()}>
-          {event.newSpecies && <div className="ribbon"><Icon name="starFill" />Nouvelle espèce découverte !</div>}
-          <div className="hatch-dex muted num">N° {String(sp.dex).padStart(3, '0')} · {sp.family}</div>
+          {event.newSpecies && <div className="ribbon"><Icon name="starFill" />{tr('Nouvelle espèce découverte !')}</div>}
+          <div className="hatch-dex muted num">{tr('N°')} {String(sp.dex).padStart(3, '0')} · {sp.family}</div>
           <h2 className="hatch-name">{sp.name}</h2>
           <div className="row-wrap" style={{ justifyContent: 'center' }}>
             <RarityBadge rarity={sp.rarity} />
@@ -95,16 +96,16 @@ export function HatchSequence({ event }: { event: Hatched }) {
             {c.mutations.map((m) => <MutationBadge key={m} mutation={m} />)}
           </div>
           {event.newVariants.length > 0 && (
-            <p className="hatch-variant"><Icon name="sparkle" />Variante {event.newVariants.map((m) => MUTATIONS[m]?.name).join(' + ')} enregistrée dans le Bestiaire !</p>
+            <p className="hatch-variant"><Icon name="sparkle" />{tr('Variante')} {event.newVariants.map((m) => MUTATIONS[m]?.name).join(' + ')} {tr('enregistrée dans le Bestiaire !')}</p>
           )}
-          {event.crystalsAwarded > 0 && <p className="hatch-bonus"><CrystalIcon width={18} height={18} />+{event.crystalsAwarded} cristaux de découverte</p>}
+          {event.crystalsAwarded > 0 && <p className="hatch-bonus"><CrystalIcon width={18} height={18} />+{event.crystalsAwarded} {tr('cristaux de découverte')}</p>}
           <div className="row" style={{ justifyContent: 'center', marginTop: 14, gap: 10 }}>
-            <button className="btn btn-ghost" onClick={() => { closeModal(); openModal({ kind: 'creature', uid: c.uid }); }}>Voir la fiche</button>
-            <button className="btn btn-pink" onClick={closeModal}>Continuer</button>
+            <button className="btn btn-ghost" onClick={() => { closeModal(); openModal({ kind: 'creature', uid: c.uid }); }}>{tr('Voir la fiche')}</button>
+            <button className="btn btn-pink" onClick={closeModal}>{tr('Continuer')}</button>
           </div>
         </div>
       ) : (
-        <div className="hatch-skip">Toucher pour passer</div>
+        <div className="hatch-skip">{tr('Toucher pour passer')}</div>
       )}
     </div>
   );

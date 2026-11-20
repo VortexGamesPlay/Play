@@ -22,6 +22,7 @@ import { claimQuest } from './systems/quests';
 import { harvest } from './systems/sanctuary';
 import { buy } from './systems/shop';
 import type { ActionContext, ExpeditionDuration, GameState } from './types';
+import { tr } from '../i18n';
 
 /**
  * Toutes les intentions du joueur. Ce format sérialisable est aussi celui qui sera envoyé
@@ -93,11 +94,11 @@ export function applyAction(state: GameState, action: GameAction, ctx: ActionCon
     case 'rename': renameCreature(draft, action.uid, action.name); break;
     case 'toggleFavorite': toggleFavorite(draft, action.uid); break;
     case 'release':
-      releaseCreature(draft, action.uid, ctx, events, (n) => grant(draft, 'essence', n, 'Libération d\'une créature', ctx.now));
+      releaseCreature(draft, action.uid, ctx, events, (n) => grant(draft, 'essence', n, tr('Libération d\'une créature'), ctx.now));
       break;
     case 'setPlayerName': {
       const name = action.name.replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, 20);
-      if (!name) throw new GameError('invalid_name', 'Le nom ne peut pas être vide.');
+      if (!name) throw new GameError('invalid_name', tr('Le nom ne peut pas être vide.'));
       draft.player.name = name;
       break;
     }
@@ -131,7 +132,7 @@ export function applyAction(state: GameState, action: GameAction, ctx: ActionCon
     case 'setSpendLimit': setSpendLimit(draft, action.cents); break;
     default: {
       const never: never = action;
-      throw new GameError('unknown_action', `Action inconnue : ${JSON.stringify(never)}`);
+      throw new GameError('unknown_action', tr('Action inconnue : {p0}', { p0: JSON.stringify(never) }));
     }
   }
   return { state: draft, events };

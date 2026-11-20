@@ -10,20 +10,21 @@ import { useUi } from '../../store/uiStore';
 import { useNow } from '../hooks/useNow';
 import { mountPayPalButtons, paymentsAvailable, paymentsConfig, purchaseInTestMode } from '../../services/payments';
 import { playSfx } from '../../services/audio';
+import { tr } from '../../i18n';
 
 export function productContents(p: ProductDef): string[] {
   const g = p.grants;
   const out: string[] = [];
   if (g.crystals) out.push(`${g.crystals} cristaux`);
   for (const [id, q] of Object.entries(g.items ?? {})) out.push(`${ITEMS[id]?.name} ×${q}`);
-  for (const d of g.decorations ?? []) out.push(`Décoration « ${DECORATIONS.find((x) => x.id === d)?.name} »`);
+  for (const d of g.decorations ?? []) out.push(tr('Décoration « {name} »', { name: DECORATIONS.find((x) => x.id === d)?.name ?? d }));
   for (const t of g.themes ?? []) out.push(`Terrain « ${THEMES[t]?.name} »`);
-  if (g.season) out.push('Toutes les récompenses du passe de saison (30 paliers)');
+  if (g.season) out.push(tr('Toutes les récompenses du passe de saison (30 paliers)'));
   return out;
 }
 
 function TestBanner() {
-  return <div className="test-banner"><Icon name="warning" /><span><b>MODE TEST</b> : aucun argent réel n'est débité.</span></div>;
+  return <div className="test-banner"><Icon name="warning" /><span><b>{tr('MODE TEST')}</b> {tr(': aucun argent réel n\'est débité.')}</span></div>;
 }
 
 export function PremiumShop() {
@@ -34,15 +35,15 @@ export function PremiumShop() {
   const groups: [string, ProductDef[]][] = [
     ['Cristaux', PRODUCTS.filter((p) => p.kind === 'crystals')],
     ['Offres', PRODUCTS.filter((p) => p.kind === 'bundle' || p.kind === 'season')],
-    ['Cosmétiques', PRODUCTS.filter((p) => p.kind === 'cosmetic')],
+    [tr('Cosmétiques'), PRODUCTS.filter((p) => p.kind === 'cosmetic')],
   ];
   return (
     <div className="stack" style={{ gap: 16 }}>
       {paymentsConfig.test && !paymentsConfig.paypal && <TestBanner />}
       {!paymentsAvailable() && (
-        <div className="status-panel"><Icon name="info" /><p style={{ fontSize: 14 }}><b>Achats en argent réel : bientôt disponibles.</b> Le serveur de paiement n'est pas encore branché sur cette version. Tout reste obtenable en jouant gratuitement.</p></div>
+        <div className="status-panel"><Icon name="info" /><p style={{ fontSize: 14 }}><b>{tr('Achats en argent réel : bientôt disponibles.')}</b> {tr('Le serveur de paiement n\'est pas encore branché sur cette version. Tout reste obtenable en jouant gratuitement.')}</p></div>
       )}
-      <div className="status-panel fair"><Icon name="check" /><p style={{ fontSize: 13 }}>Les cristaux servent à aller plus vite (accélérer l'incubation, objets rares, confort). <b>Aucune créature et aucun œuf ne sont vendus</b> : tout s'obtient aussi en jouant.</p></div>
+      <div className="status-panel fair"><Icon name="check" /><p style={{ fontSize: 13 }}>{tr('Les cristaux servent à aller plus vite (accélérer l\'incubation, objets rares, confort).')} <b>{tr('Aucune créature et aucun œuf ne sont vendus')}</b> {tr(': tout s\'obtient aussi en jouant.')}</p></div>
       {groups.map(([title, list]) => (
         <div key={title} className="stack" style={{ gap: 10 }}>
           <h3 className="detail-h" style={{ margin: 0 }}>{title}</h3>
@@ -64,7 +65,7 @@ export function PremiumShop() {
           </div>
         </div>
       ))}
-      <p className="muted" style={{ fontSize: 12 }}>Prix TTC. Une limite de dépenses mensuelle peut être réglée dans le Profil. Si tu as moins de 18 ans, demande l'accord d'un parent avant tout achat.</p>
+      <p className="muted" style={{ fontSize: 12 }}>{tr('Prix TTC. Une limite de dépenses mensuelle peut être réglée dans le Profil. Si tu as moins de 18 ans, demande l\'accord d\'un parent avant tout achat.')}</p>
     </div>
   );
 }
@@ -83,7 +84,7 @@ export function CheckoutModal({ productId }: { productId: string }) {
 
   const credit = (receipt: Parameters<typeof purchaseInTestMode> extends never ? never : Awaited<ReturnType<typeof purchaseInTestMode>>) => {
     const ok = dispatch({ type: 'applyPurchase', purchase: receipt });
-    if (ok) { playSfx('reveal', 3); toast({ kind: 'success', title: 'Merci pour ton soutien !', body: `${p.name} : c'est crédité.` }); closeModal(); }
+    if (ok) { playSfx('reveal', 3); toast({ kind: 'success', title: tr('Merci pour ton soutien !'), body: tr('{name} : c\'est crédité.', { name: p.name }) }); closeModal(); }
   };
 
   useEffect(() => {
@@ -107,12 +108,12 @@ export function CheckoutModal({ productId }: { productId: string }) {
         <>
           <label className="consent">
             <input id="consent-digital" type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-            <span>Je demande l'accès immédiat à ce contenu numérique et je reconnais perdre mon droit de rétractation de 14 jours une fois le contenu fourni (article L221-28 du Code de la consommation).</span>
+            <span>{tr('Je demande l\'accès immédiat à ce contenu numérique et je reconnais perdre mon droit de rétractation de 14 jours une fois le contenu fourni (article L221-28 du Code de la consommation).')}</span>
           </label>
           {paymentsConfig.paypal ? (
             <>
               {paymentsConfig.paypalSandbox && <TestBanner />}
-              {!consent && <p className="muted" style={{ fontSize: 13 }}>Coche la case ci-dessus pour afficher le paiement PayPal.</p>}
+              {!consent && <p className="muted" style={{ fontSize: 13 }}>{tr('Coche la case ci-dessus pour afficher le paiement PayPal.')}</p>}
               <div ref={paypalRef} className="paypal-zone" />
             </>
           ) : paymentsConfig.test ? (
@@ -121,13 +122,13 @@ export function CheckoutModal({ productId }: { productId: string }) {
               <button className="btn btn-pink btn-lg" disabled={!consent || busy} onClick={async () => {
                 setBusy(true); setError(null);
                 try { credit(await purchaseInTestMode(productId)); } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
-              }}>{busy ? 'Paiement…' : `Payer ${formatPrice(p.priceCents)} (test)`}</button>
+              }}>{busy ? tr('Paiement…') : tr('Payer {p0} (test)', { p0: formatPrice(p.priceCents) })}</button>
             </>
-          ) : <div className="status-panel"><Icon name="info" /><p>Paiements bientôt disponibles.</p></div>}
+          ) : <div className="status-panel"><Icon name="info" /><p>{tr('Paiements bientôt disponibles.')}</p></div>}
           {error && <p style={{ color: 'var(--danger)', fontWeight: 800, fontSize: 13 }}>{error}</p>}
         </>
       )}
-      <p className="muted" style={{ fontSize: 11 }}>Paiement sécurisé par PayPal. EGGVERSE ne voit jamais tes coordonnées bancaires. Conditions générales de vente : à publier avant l'ouverture des ventes réelles.</p>
+      <p className="muted" style={{ fontSize: 11 }}>{tr('Paiement sécurisé par PayPal. EGGVERSE ne voit jamais tes coordonnées bancaires. Conditions générales de vente : à publier avant l\'ouverture des ventes réelles.')}</p>
     </div>
   );
 }

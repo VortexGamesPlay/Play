@@ -24,6 +24,7 @@ import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
 import { useNow } from '../hooks/useNow';
 import { playSfx } from '../../services/audio';
+import { tr, intlLocale, tp } from '../../i18n';
 
 type Behavior = 'walk' | 'idle' | 'sleep' | 'play' | 'eat';
 
@@ -188,7 +189,7 @@ function SanctuaryScene({ creatures }: { creatures: CreatureInstance[] }) {
           </button>
         );
       })}
-      {creatures.length > MAX_ACTORS && <div className="scene-note">+{creatures.length - MAX_ACTORS} autres créatures se reposent dans les habitats</div>}
+      {creatures.length > MAX_ACTORS && <div className="scene-note">+{creatures.length - MAX_ACTORS} {tr('autres créatures se reposent dans les habitats')}</div>}
     </div>
   );
 }
@@ -199,7 +200,7 @@ function RewardLine({ r }: { r: Reward }) {
       {r.coins ? <span><CurrencyIcon currency="coins" />{r.coins}</span> : null}
       {r.crystals ? <span><CurrencyIcon currency="crystals" />{r.crystals}</span> : null}
       {r.essence ? <span><CurrencyIcon currency="essence" />{r.essence}</span> : null}
-      {Object.entries(r.items ?? {}).map(([id, q]) => <span key={id}><i className="item-dot" style={{ background: ITEMS[id]?.color }} />{ITEMS[id]?.name} ×{q}</span>)}
+      {Object.entries(r.items ?? {}).map(([id, q]) => <span key={id}><i className="item-dot" style={{ background: ITEMS[id]?.color }} />{ITEMS[id]?.name} {tr('×')}{q}</span>)}
       {(r.eggs ?? []).map((e, i) => <span key={i}><Icon name="egg" />{EGGS[e]?.name}</span>)}
     </div>
   );
@@ -212,22 +213,22 @@ function QuestCard() {
   if (!q) {
     return (
       <div className="card">
-        <div className="card-title"><Icon name="trophy" /><h3>Quête principale</h3></div>
-        <p className="soft">Tu as terminé tous les chapitres disponibles ! De nouveaux chapitres arriveront avec l'Exploration (Phase 4).</p>
+        <div className="card-title"><Icon name="trophy" /><h3>{tr('Quête principale')}</h3></div>
+        <p className="soft">{tr('Tu as terminé tous les chapitres disponibles ! De nouveaux chapitres arriveront avec l\'Exploration (Phase 4).')}</p>
       </div>
     );
   }
   const pr = questProgress(state, q);
   return (
     <div className={`card quest-card ${pr.done ? 'done' : ''}`}>
-      <div className="card-title"><Icon name="scroll" /><h3>Quête principale</h3><span className="spacer" /><span className="badge soft-badge">{state.quests.claimed.length + 1}/14</span></div>
+      <div className="card-title"><Icon name="scroll" /><h3>{tr('Quête principale')}</h3><span className="spacer" /><span className="badge soft-badge">{state.quests.claimed.length + 1}/14</span></div>
       <div className="quest-chapter">{q.chapter}</div>
       <h4 className="quest-title">{q.title}</h4>
       <p className="soft" style={{ fontSize: 14 }}>{q.description}</p>
       <div className="row" style={{ marginTop: 10 }}><Bar value={pr.current / pr.target} /><span className="num" style={{ fontWeight: 800, fontSize: 13 }}>{pr.current}/{pr.target}</span></div>
-      <div className="quest-reward"><span className="muted" style={{ fontSize: 12, fontWeight: 800 }}>RÉCOMPENSE</span><RewardLine r={q.reward} /></div>
+      <div className="quest-reward"><span className="muted" style={{ fontSize: 12, fontWeight: 800 }}>{tr('RÉCOMPENSE')}</span><RewardLine r={q.reward} /></div>
       <button className="btn btn-mint btn-block" disabled={!pr.done} onClick={() => dispatch({ type: 'claimQuest', questId: q.id })}>
-        {pr.done ? <><Icon name="gift" />Récupérer</> : 'En cours…'}
+        {pr.done ? <><Icon name="gift" />{tr('Récupérer')}</> : tr('En cours…')}
       </button>
     </div>
   );
@@ -244,17 +245,17 @@ function DailyCard() {
   const tomorrow = new Date(now); tomorrow.setHours(24, 0, 0, 0);
   return (
     <div className={`card daily-card ${can ? 'available' : ''}`}>
-      <div className="card-title"><Icon name="gift" /><h3>Récompense du jour</h3></div>
+      <div className="card-title"><Icon name="gift" /><h3>{tr('Récompense du jour')}</h3></div>
       <div className="streak">
         {Array.from({ length: 7 }, (_, i) => {
           const day = ((streak - 1) % 7) + 1;
           return <span key={i} className={`streak-dot ${i < day - (can ? 1 : 0) ? 'got' : ''} ${can && i === day - 1 ? 'today' : ''} ${i === 6 ? 'big' : ''}`}>{i + 1}</span>;
         })}
       </div>
-      <p className="soft" style={{ fontSize: 13, margin: '8px 0' }}>Série : <b>{streak} jour{streak > 1 ? 's' : ''}</b>. Le 7ᵉ jour donne des cristaux.</p>
+      <p className="soft" style={{ fontSize: 13, margin: '8px 0' }}>{tr('Série :')} <b>{tp(streak, '{n} jour', '{n} jours')}</b>{tr('. Le 7ᵉ jour donne des cristaux.')}</p>
       <RewardLine r={reward} />
       <button className="btn btn-gold btn-block" style={{ marginTop: 12 }} disabled={!can} onClick={() => dispatch({ type: 'claimDaily' })}>
-        {can ? <><Icon name="gift" />Récupérer</> : <>Prochaine dans {formatDuration(tomorrow.getTime() - now)}</>}
+        {can ? <><Icon name="gift" />{tr('Récupérer')}</> : <>{tr('Prochaine dans')} {formatDuration(tomorrow.getTime() - now)}</>}
       </button>
     </div>
   );
@@ -266,13 +267,13 @@ function DiscoveriesCard() {
   const list = discoveries.slice(-5).reverse();
   return (
     <div className="card">
-      <div className="card-title"><Icon name="sparkle" /><h3>Dernières découvertes</h3></div>
-      {list.length === 0 ? <p className="soft" style={{ fontSize: 14 }}>Fais éclore un œuf pour enregistrer ta première découverte dans le Bestiaire.</p> : (
+      <div className="card-title"><Icon name="sparkle" /><h3>{tr('Dernières découvertes')}</h3></div>
+      {list.length === 0 ? <p className="soft" style={{ fontSize: 14 }}>{tr('Fais éclore un œuf pour enregistrer ta première découverte dans le Bestiaire.')}</p> : (
         <div className="disc-list">
           {list.map((d, i) => (
             <button key={i} className="disc-item" onClick={() => openModal({ kind: 'dex', speciesId: d.speciesId })}>
               <CreatureArt speciesId={d.speciesId} mutations={d.mutationId ? [d.mutationId] : []} size={40} anim="none" />
-              <div><b>{getSpecies(d.speciesId).name}</b><div className="muted" style={{ fontSize: 12 }}>{d.kind === 'species' ? 'Nouvelle espèce' : `Variante ${MUTATIONS[d.mutationId!]?.name}`} · {new Date(d.at).toLocaleDateString('fr-FR')}</div></div>
+              <div><b>{getSpecies(d.speciesId).name}</b><div className="muted" style={{ fontSize: 12 }}>{d.kind === 'species' ? tr('Nouvelle espèce') : tr('Variante {name}', { name: MUTATIONS[d.mutationId!]?.name })} · {new Date(d.at).toLocaleDateString(intlLocale())}</div></div>
             </button>
           ))}
         </div>
@@ -300,26 +301,26 @@ export function SanctuaryScreen() {
       <div className="card scene-card">
         <div className="scene-head">
           <div>
-            <h2>Sanctuaire de {state.player.name}</h2>
-            <p className="soft" style={{ fontSize: 14 }}>{present.length} présente{present.length > 1 ? 's' : ''}{state.expeditions.length ? ` · ${state.creatures.length - present.length} en expédition` : ''} · <Icon name={WEATHER_ICON[weather.fx]} width={14} height={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> {weather.name}</p>
+            <h2>{tr('Sanctuaire de')} {state.player.name === 'Gardien' ? tr('Gardien (nom par défaut)') : state.player.name}</h2>
+            <p className="soft" style={{ fontSize: 14 }}>{tp(present.length, '{n} présente', '{n} présentes')}{state.expeditions.length ? tr(' · {p0} en expédition', { p0: state.creatures.length - present.length }) : ''} · <Icon name={WEATHER_ICON[weather.fx]} width={14} height={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> {weather.name}</p>
           </div>
           <span className="spacer" />
           <div className="tabs" style={{ flex: 'none' }}>
-            <button className={tab === 'vue' ? 'active' : ''} onClick={() => setTab('vue')}><Icon name="sanctuary" width={16} height={16} />Vue</button>
-            <button className={tab === 'amenager' ? 'active' : ''} onClick={() => setTab('amenager')}><Icon name="hammer" width={16} height={16} />Aménager</button>
+            <button className={tab === 'vue' ? 'active' : ''} onClick={() => setTab('vue')}><Icon name="sanctuary" width={16} height={16} />{tr('Vue')}</button>
+            <button className={tab === 'amenager' ? 'active' : ''} onClick={() => setTab('amenager')}><Icon name="hammer" width={16} height={16} />{tr('Aménager')}</button>
           </div>
         </div>
         {present.length > 0 ? <SanctuaryScene creatures={present} /> : state.creatures.length > 0 ? (
           <div className="scene empty-scene"><SceneBackdrop night={isNight(new Date(now).getHours())} />
-            <div className="empty-scene-msg"><h3>Tout le monde est en expédition</h3><p>Le sanctuaire est bien calme… Tes créatures reviendront bientôt avec leur butin.</p><button className="btn" onClick={() => navigate('exploration')}><Icon name="compass" />Voir les expéditions</button></div>
+            <div className="empty-scene-msg"><h3>{tr('Tout le monde est en expédition')}</h3><p>{tr('Le sanctuaire est bien calme… Tes créatures reviendront bientôt avec leur butin.')}</p><button className="btn" onClick={() => navigate('exploration')}><Icon name="compass" />{tr('Voir les expéditions')}</button></div>
           </div>
         ) : (
           <div className="scene empty-scene">
             <SceneBackdrop night={isNight(new Date(now).getHours())} />
             <div className="empty-scene-msg">
-              <h3>Ton sanctuaire attend ses premiers habitants</h3>
-              <p>Tu as reçu {state.eggs.length} œuf{state.eggs.length > 1 ? 's' : ''} de bienvenue. Place-les dans l'incubateur !</p>
-              <button className="btn btn-pink btn-lg" onClick={() => navigate('incubateur')}><Icon name="egg" />Aller à l'incubateur</button>
+              <h3>{tr('Ton sanctuaire attend ses premiers habitants')}</h3>
+              <p>{tp(state.eggs.length, 'Tu as reçu {n} œuf de bienvenue. Place-le dans l\'incubateur !', 'Tu as reçu {n} œufs de bienvenue. Place-les dans l\'incubateur !')}</p>
+              <button className="btn btn-pink btn-lg" onClick={() => navigate('incubateur')}><Icon name="egg" />{tr('Aller à l\'incubateur')}</button>
             </div>
           </div>
         )}
@@ -327,13 +328,13 @@ export function SanctuaryScreen() {
           <div className="harvest-info">
             <CurrencyIcon currency="coins" width={36} height={36} />
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div className="row"><b className="num" style={{ fontSize: 20 }}>{pending.toLocaleString('fr-FR')}</b><span className="muted" style={{ fontSize: 13, fontWeight: 700 }}>pièces produites · {rate}/h</span></div>
-              <Bar value={capFill} size="thin" fill="linear-gradient(90deg,#ffc23d,#ff9a3d)" label="Remplissage du stockage" />
-              <div className="muted" style={{ fontSize: 12, marginTop: 3 }}>Stockage plein après {BALANCE.harvestCapMs / HOUR} h — pense à revenir !</div>
+              <div className="row"><b className="num" style={{ fontSize: 20 }}>{pending.toLocaleString(intlLocale())}</b><span className="muted" style={{ fontSize: 13, fontWeight: 700 }}>{tr('pièces produites ·')} {rate}/h</span></div>
+              <Bar value={capFill} size="thin" fill="linear-gradient(90deg,#ffc23d,#ff9a3d)" label={tr('Remplissage du stockage')} />
+              <div className="muted" style={{ fontSize: 12, marginTop: 3 }}>{tr('Stockage plein après')} {BALANCE.harvestCapMs / HOUR} {tr('h — pense à revenir !')}</div>
             </div>
           </div>
-          {hasProduce && <div className="harvest-extra"><span className="muted" style={{ fontSize: 12, fontWeight: 800 }}>+ BÂTIMENTS</span><RewardLine r={produce} /></div>}
-          <button className="btn btn-gold" disabled={pending <= 0 && !hasProduce} onClick={() => dispatch({ type: 'harvest' })}><Icon name="harvest" />Récolter</button>
+          {hasProduce && <div className="harvest-extra"><span className="muted" style={{ fontSize: 12, fontWeight: 800 }}>{tr('+ BÂTIMENTS')}</span><RewardLine r={produce} /></div>}
+          <button className="btn btn-gold" disabled={pending <= 0 && !hasProduce} onClick={() => dispatch({ type: 'harvest' })}><Icon name="harvest" />{tr('Récolter')}</button>
         </div>
       </div>
 

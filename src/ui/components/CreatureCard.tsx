@@ -6,6 +6,7 @@ import { ELEMENTS } from '@data/elements';
 import { CreatureArt } from '../art/CreatureArt';
 import { ElementIcon, Icon } from '../art/Icons';
 import { MUTATIONS } from '@data/mutations';
+import { tr } from '../../i18n';
 
 export function CreatureCard({ c, onClick, selected, evolvable, away }: { c: CreatureInstance; onClick?: () => void; selected?: boolean; evolvable?: boolean; away?: boolean }) {
   const sp = getSpecies(c.speciesId);
@@ -13,12 +14,12 @@ export function CreatureCard({ c, onClick, selected, evolvable, away }: { c: Cre
   return (
     <button className={`cr-card t${r.tier} ${selected ? 'selected' : ''} ${c.mutations.length ? 'mutated' : ''}`} onClick={onClick} style={{ ['--rc' as string]: r.color, ['--rg' as string]: r.glow } as CSSProperties}>
       <div className="cr-card-top">
-        <span className="cr-lvl num">Nv {c.level}</span>
+        <span className="cr-lvl num">{tr('Nv')} {c.level}</span>
         {c.favorite && <Icon name="heartFill" className="cr-fav" />}
         <span className="cr-el tip" data-tip={ELEMENTS[sp.element].name}><ElementIcon element={sp.element} style={{ color: ELEMENTS[sp.element].color }} /></span>
       </div>
-      {evolvable && <span className="cr-evo tip" data-tip="Évolution possible"><Icon name="sparkle" /></span>}
-      {away && <span className="cr-away"><Icon name="compass" />En expédition</span>}
+      {evolvable && <span className="cr-evo tip" data-tip={tr('Évolution possible')}><Icon name="sparkle" /></span>}
+      {away && <span className="cr-away"><Icon name="compass" />{tr('En expédition')}</span>}
       <div className="cr-card-art"><CreatureArt speciesId={c.speciesId} mutations={c.mutations} hue={c.genes.hue} size={112} seed={c.uid} /></div>
       <div className="cr-card-name">{displayName(c)}</div>
       <div className="cr-card-sub">

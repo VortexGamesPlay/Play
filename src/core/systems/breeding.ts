@@ -10,6 +10,7 @@ import { spend } from './economy';
 import { addEgg, eggStorageFull } from './inventory';
 import { breedingOdds } from './odds';
 import { assertPresent } from './exploration';
+import { tr } from '../../i18n';
 
 const B = BALANCE.breeding;
 
@@ -72,20 +73,20 @@ function inheritMutations(a: CreatureInstance, b: CreatureInstance, stabilize: b
 }
 
 export function breed(draft: GameState, uidA: string, uidB: string, stabilize: boolean, ctx: ActionContext, events: GameEvent[]): void {
-  assertGame(uidA !== uidB, 'same_parent', 'Il faut deux créatures différentes.');
+  assertGame(uidA !== uidB, 'same_parent', tr('Il faut deux créatures différentes.'));
   const a = findCreature(draft, uidA);
   const b = findCreature(draft, uidB);
   assertPresent(draft, uidA);
   assertPresent(draft, uidB);
   for (const c of [a, b]) {
     const why = breedBlocker(c, ctx.now);
-    assertGame(!why, 'breed_blocked', `${displayName(c)} ne peut pas participer : ${why}.`);
+    assertGame(!why, 'breed_blocked', tr('{p0} ne peut pas participer : {why}.', { p0: displayName(c), why: why ?? '' }));
   }
-  assertGame(!eggStorageFull(draft), 'egg_storage_full', 'Ton panier d\'œufs est plein.');
+  assertGame(!eggStorageFull(draft), 'egg_storage_full', tr('Ton panier d\'œufs est plein.'));
 
   const cost = breedingCost(a, b, stabilize);
-  spend(draft, 'essence', cost.essence, 'Laboratoire : fusion génétique', ctx.now);
-  spend(draft, 'coins', cost.coins, 'Laboratoire : fusion génétique', ctx.now);
+  spend(draft, 'essence', cost.essence, tr('Laboratoire : fusion génétique'), ctx.now);
+  spend(draft, 'coins', cost.coins, tr('Laboratoire : fusion génétique'), ctx.now);
 
   const outcome = weightedPick(ctx.rng, breedingOdds(a.speciesId, b.speciesId).map((o) => ({ value: o, weight: o.probability })));
   const genetics: EggGenetics = {
@@ -97,7 +98,7 @@ export function breed(draft: GameState, uidA: string, uidB: string, stabilize: b
     parentNames: [displayName(a), displayName(b)],
     recipeId: outcome.recipeId,
   };
-  const egg = addEgg(draft, 'hybride', `Fusion de ${displayName(a)} et ${displayName(b)}`, ctx.now);
+  const egg = addEgg(draft, 'hybride', tr('Fusion de {p0} et {p1}', { p0: displayName(a), p1: displayName(b) }), ctx.now);
   egg.genetics = genetics;
 
   for (const c of [a, b]) {

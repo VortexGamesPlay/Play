@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { Icon } from '../art/Icons';
 import { useUi } from '../../store/uiStore';
+import { tr } from '../../i18n';
 
 export function Modal({ title, children, width, onClose, icon }: { title?: ReactNode; children: ReactNode; width?: number; onClose?: () => void; icon?: ReactNode }) {
   const close = onClose ?? useUi.getState().closeModal;
@@ -16,7 +17,7 @@ export function Modal({ title, children, width, onClose, icon }: { title?: React
           <div className="modal-head">
             {icon}
             <h2>{title}</h2>
-            <button className="icon-btn modal-close" onClick={close} aria-label="Fermer"><Icon name="close" /></button>
+            <button className="icon-btn modal-close" onClick={close} aria-label={tr('Fermer')}><Icon name="close" /></button>
           </div>
         )}
         {children}

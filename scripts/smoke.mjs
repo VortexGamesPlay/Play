@@ -16,7 +16,7 @@ const browser = await chromium.launch();
 async function shot(page, path, fullPage = false) { await page.waitForTimeout(900); await page.screenshot({ path, fullPage }); }
 
 async function run(name, viewport) {
-  const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1 });
+  const ctx = await browser.newContext({ locale: 'fr-FR', viewport, deviceScaleFactor: 1 });
   const page = await ctx.newPage();
   page.on('console', (m) => m.type() === 'error' && errors.push(`[${name}] ${m.text()}`));
   page.on('pageerror', (e) => errors.push(`[${name}] ${e.message}`));

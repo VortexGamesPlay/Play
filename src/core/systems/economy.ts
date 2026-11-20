@@ -6,8 +6,14 @@ import { GameError, assertGame } from '../errors';
 import type { GameEvent } from '../events';
 import type { ActionContext, CurrencyId, GameState } from '../types';
 import { addEgg } from './inventory';
+import { tr } from '../../i18n';
 
-export const CURRENCY_NAMES: Record<CurrencyId, string> = { coins: 'pièces', crystals: 'cristaux', essence: 'essence' };
+/** Noms des monnaies, traduits à chaque lecture (la langue peut changer en cours de partie). */
+export const CURRENCY_NAMES: Record<CurrencyId, string> = {
+  get coins() { return tr('pièces'); },
+  get crystals() { return tr('cristaux'); },
+  get essence() { return tr('essence'); },
+};
 
 function log(draft: GameState, currency: CurrencyId, delta: number, reason: string, now: number) {
   draft.ledger.push({ at: now, currency, delta, balance: draft.wallet[currency], reason });
@@ -15,7 +21,7 @@ function log(draft: GameState, currency: CurrencyId, delta: number, reason: stri
 }
 
 export function grant(draft: GameState, currency: CurrencyId, amount: number, reason: string, now: number): void {
-  assertGame(Number.isInteger(amount) && amount >= 0, 'invalid_amount', 'Montant invalide.');
+  assertGame(Number.isInteger(amount) && amount >= 0, 'invalid_amount', tr('Montant invalide.'));
   if (amount === 0) return;
   draft.wallet[currency] += amount;
   log(draft, currency, amount, reason, now);
@@ -26,9 +32,9 @@ export function canAfford(state: GameState, currency: CurrencyId, amount: number
 }
 
 export function spend(draft: GameState, currency: CurrencyId, amount: number, reason: string, now: number): void {
-  assertGame(Number.isInteger(amount) && amount > 0, 'invalid_amount', 'Montant invalide.');
+  assertGame(Number.isInteger(amount) && amount > 0, 'invalid_amount', tr('Montant invalide.'));
   if (!canAfford(draft, currency, amount)) {
-    throw new GameError('insufficient_funds', `Il te manque ${amount - draft.wallet[currency]} ${CURRENCY_NAMES[currency]}.`);
+    throw new GameError('insufficient_funds', tr('Il te manque {p0} {p1}.', { p0: amount - draft.wallet[currency], p1: CURRENCY_NAMES[currency] }));
   }
   draft.wallet[currency] -= amount;
   log(draft, currency, -amount, reason, now);

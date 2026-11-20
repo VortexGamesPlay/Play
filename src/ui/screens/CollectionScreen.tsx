@@ -13,6 +13,7 @@ import { CreatureCard } from '../components/CreatureCard';
 import { EmptyState } from '../components/EmptyState';
 import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
+import { tr } from '../../i18n';
 
 type Sort = 'recent' | 'level' | 'rarity' | 'power' | 'name' | 'dex';
 
@@ -51,30 +52,30 @@ export function CollectionScreen() {
   }, [creatures, sort, el, rar, fav, mut, q]);
 
   if (creatures.length === 0) {
-    return <EmptyState icon="paw" title="Aucune créature pour l'instant" action={<button className="btn btn-pink" onClick={() => navigate('incubateur')}><Icon name="egg" />Faire éclore un œuf</button>}>Tes créatures apparaîtront ici dès leur éclosion.</EmptyState>;
+    return <EmptyState icon="paw" title={tr('Aucune créature pour l\'instant')} action={<button className="btn btn-pink" onClick={() => navigate('incubateur')}><Icon name="egg" />{tr('Faire éclore un œuf')}</button>}>{tr('Tes créatures apparaîtront ici dès leur éclosion.')}</EmptyState>;
   }
 
   return (
     <div className="stack" style={{ gap: 14 }}>
       <div className="row-wrap" style={{ justifyContent: 'space-between' }}>
-        <h2 style={{ fontSize: 22 }}>Mes créatures <span className="muted num" style={{ fontSize: 15 }}>{creatures.length}/{creatureCap(state)}</span></h2>
+        <h2 style={{ fontSize: 22 }}>{tr('Mes créatures')} <span className="muted num" style={{ fontSize: 15 }}>{creatures.length}/{creatureCap(state)}</span></h2>
         {(() => {
           const food = Object.keys(useGame.getState().state.inventory).find((id) => ITEMS[id]?.kind === 'food');
-          return <button className="btn btn-ghost btn-sm" onClick={() => food && openModal({ kind: 'feed', item: food })} disabled={!food}><Icon name="leaf" />Nourrir…</button>;
+          return <button className="btn btn-ghost btn-sm" onClick={() => food && openModal({ kind: 'feed', item: food })} disabled={!food}><Icon name="leaf" />{tr('Nourrir…')}</button>;
         })()}
       </div>
       <div className="filters">
-        <div className="field" style={{ flex: '1 1 200px' }}><Icon name="search" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher…" aria-label="Rechercher" /></div>
-        <select className="select" value={sort} onChange={(e) => setSort(e.target.value as Sort)} aria-label="Trier">
-          <option value="recent">Plus récentes</option><option value="level">Niveau</option><option value="rarity">Rareté</option>
-          <option value="power">Puissance</option><option value="dex">N° Bestiaire</option><option value="name">Nom</option>
+        <div className="field" style={{ flex: '1 1 200px' }}><Icon name="search" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={tr('Rechercher…')} aria-label={tr('Rechercher')} /></div>
+        <select className="select" value={sort} onChange={(e) => setSort(e.target.value as Sort)} aria-label={tr('Trier')}>
+          <option value="recent">{tr('Plus récentes')}</option><option value="level">{tr('Niveau')}</option><option value="rarity">{tr('Rareté')}</option>
+          <option value="power">{tr('Puissance')}</option><option value="dex">{tr('N° Bestiaire')}</option><option value="name">{tr('Nom')}</option>
         </select>
-        <select className="select" value={rar ?? ''} onChange={(e) => setRar((e.target.value || null) as RarityId | null)} aria-label="Rareté">
-          <option value="">Toutes raretés</option>
+        <select className="select" value={rar ?? ''} onChange={(e) => setRar((e.target.value || null) as RarityId | null)} aria-label={tr('Rareté')}>
+          <option value="">{tr('Toutes raretés')}</option>
           {RARITY_ORDER.map((r) => <option key={r} value={r}>{RARITIES[r].name}</option>)}
         </select>
-        <button className={`chip ${fav ? 'active' : ''}`} style={{ ['--cc' as string]: '#ff7ab6' } as CSSProperties} onClick={() => setFav(!fav)}><Icon name="heartFill" />Favoris</button>
-        <button className={`chip ${mut ? 'active' : ''}`} onClick={() => setMut(!mut)}><Icon name="sparkle" />Mutées</button>
+        <button className={`chip ${fav ? 'active' : ''}`} style={{ ['--cc' as string]: '#ff7ab6' } as CSSProperties} onClick={() => setFav(!fav)}><Icon name="heartFill" />{tr('Favoris')}</button>
+        <button className={`chip ${mut ? 'active' : ''}`} onClick={() => setMut(!mut)}><Icon name="sparkle" />{tr('Mutées')}</button>
       </div>
       <div className="el-filter">
         {Object.values(ELEMENTS).filter((e) => creatures.some((c) => getSpecies(c.speciesId).element === e.id)).map((e) => (
@@ -83,7 +84,7 @@ export function CollectionScreen() {
           </button>
         ))}
       </div>
-      {list.length === 0 ? <EmptyState icon="search" title="Aucun résultat">Aucune créature ne correspond à ces filtres.</EmptyState> : (
+      {list.length === 0 ? <EmptyState icon="search" title={tr('Aucun résultat')}>{tr('Aucune créature ne correspond à ces filtres.')}</EmptyState> : (
         <div className="cr-grid">{list.map((c) => <CreatureCard key={c.uid} c={c} evolvable={canEvolve(state, c, now)} away={isAway(state, c.uid)} onClick={() => openModal({ kind: 'creature', uid: c.uid })} />)}</div>
       )}
     </div>

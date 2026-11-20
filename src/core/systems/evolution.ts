@@ -8,6 +8,7 @@ import { registerInDex } from './dex';
 import { removeItem } from './inventory';
 import { assertPresent, isAway } from './exploration';
 import { sanctuaryWeather } from './weather';
+import { tr } from '../../i18n';
 
 export interface ConditionCheck {
   condition: EvolutionCondition;
@@ -58,8 +59,8 @@ export function evolve(draft: GameState, uid: string, to: string, ctx: ActionCon
   const c = findCreature(draft, uid);
   assertPresent(draft, uid);
   const option = evolutionOptions(draft, c, ctx.now).find((o) => o.def.to === to);
-  assertGame(option, 'no_evolution', 'Cette créature ne peut pas évoluer vers cette espèce.');
-  assertGame(option.ready, 'evolution_locked', 'Toutes les conditions d\'évolution ne sont pas remplies.');
+  assertGame(option, 'no_evolution', tr('Cette créature ne peut pas évoluer vers cette espèce.'));
+  assertGame(option.ready, 'evolution_locked', tr('Toutes les conditions d\'évolution ne sont pas remplies.'));
   for (const cond of option.def.conditions) {
     if (cond.type === 'item') removeItem(draft, cond.item, 1);
   }

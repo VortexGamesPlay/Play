@@ -27,6 +27,7 @@ import { useUi } from '../../store/uiStore';
 import { useNow } from '../hooks/useNow';
 import { formatPct } from '../modals/OddsModal';
 import { playSfx } from '../../services/audio';
+import { tr, tp } from '../../i18n';
 
 const X = BALANCE.expedition;
 /** Position des biomes sur la carte (en % de la carte). */
@@ -38,7 +39,7 @@ const MAP_POS: Record<string, [number, number]> = {
 function ItemChip({ id, qty }: { id: string; qty?: number }) {
   const d = ITEMS[id];
   if (!d) return null;
-  return <span className="loot-chip"><i style={{ background: d.color }} />{d.name}{qty ? ` ×${qty}` : ''}</span>;
+  return <span className="loot-chip"><i style={{ background: d.color }} />{d.name}{qty ? tr(' ×{qty}', { qty }) : ''}</span>;
 }
 
 export function RewardList({ r }: { r: Reward }) {
@@ -61,7 +62,7 @@ function ActiveExpeditions() {
   if (state.expeditions.length === 0) return null;
   return (
     <div className="stack" style={{ gap: 10 }}>
-      <div className="section-title" style={{ marginTop: 0 }}><Icon name="compass" width={22} height={22} style={{ color: 'var(--violet)' }} /><h2>Expéditions en cours</h2><span className="muted">{state.expeditions.length}/{maxExpeditions(state)}</span></div>
+      <div className="section-title" style={{ marginTop: 0 }}><Icon name="compass" width={22} height={22} style={{ color: 'var(--violet)' }} /><h2>{tr('Expéditions en cours')}</h2><span className="muted">{state.expeditions.length}/{maxExpeditions(state)}</span></div>
       {state.expeditions.map((e) => {
         const b = BIOME_BY_ID[e.biomeId]!;
         const done = now >= e.endsAt;
@@ -75,15 +76,15 @@ function ActiveExpeditions() {
               <Bar value={Math.min(1, (now - e.startedAt) / (e.endsAt - e.startedAt))} size="thin" fill={done ? '#3fcf9f' : undefined} />
             </div>
             {done ? (
-              <button className="btn btn-mint" onClick={() => { playSfx('open'); dispatch({ type: 'claimExpedition', uid: e.uid }); }}><Icon name="gift" />Accueillir</button>
+              <button className="btn btn-mint" onClick={() => { playSfx('open'); dispatch({ type: 'claimExpedition', uid: e.uid }); }}><Icon name="gift" />{tr('Accueillir')}</button>
             ) : (
               <div className="stack" style={{ gap: 4, alignItems: 'flex-end' }}>
                 <span className="num" style={{ fontWeight: 800 }}>{formatDuration(e.endsAt - now)}</span>
                 <button className="btn btn-ghost btn-sm" onClick={() => openModal({
-                  kind: 'confirm', title: 'Rappeler l\'équipe ?', confirmLabel: 'Rappeler', danger: true,
-                  body: 'L\'équipe rentre immédiatement, mais sans aucun butin.',
+                  kind: 'confirm', title: tr('Rappeler l\'équipe ?'), confirmLabel: tr('Rappeler'), danger: true,
+                  body: tr('L\'équipe rentre immédiatement, mais sans aucun butin.'),
                   onConfirm: () => dispatch({ type: 'recallExpedition', uid: e.uid }),
-                })}>Rappeler</button>
+                })}>{tr('Rappeler')}</button>
               </div>
             )}
           </div>
@@ -101,8 +102,8 @@ export function ExplorationScreen() {
   return (
     <div className="stack" style={{ gap: 18 }}>
       <div className="intro-banner">
-        <h2>Le monde d'EGGVERSE</h2>
-        <p className="soft">Envoie des équipes de créatures en expédition pour rapporter des matériaux, de la nourriture et des œufs exclusifs. La météo change toutes les 3 heures et transforme chaque biome ; des événements rares y surviennent.</p>
+        <h2>{tr('Le monde d\'EGGVERSE')}</h2>
+        <p className="soft">{tr('Envoie des équipes de créatures en expédition pour rapporter des matériaux, de la nourriture et des œufs exclusifs. La météo change toutes les 3 heures et transforme chaque biome ; des événements rares y surviennent.')}</p>
       </div>
       <ActiveExpeditions />
       <div className="world-map card">
@@ -127,7 +128,7 @@ export function ExplorationScreen() {
               onClick={() => { playSfx('open'); openModal({ kind: 'biome', biomeId: b.id }); }}>
               <span className="map-orb"><BiomeScenery biome={b} />{!open && <Icon name="lock" className="map-lock" />}</span>
               <span className="map-label">{b.name}</span>
-              <span className="map-sub">{open ? <><Icon name={WEATHER_ICON[w.fx]} width={12} height={12} />{w.name}{away ? ` · ${away} équipe${away > 1 ? 's' : ''}` : ''}</> : `${dex}/${b.unlockDex} espèces`}</span>
+              <span className="map-sub">{open ? <><Icon name={WEATHER_ICON[w.fx]} width={12} height={12} />{w.name}{away ? ' · ' + tp(away, '{n} équipe', '{n} équipes') : ''}</> : tr('{dex}/{max} espèces', { dex, max: b.unlockDex })}</span>
             </button>
           );
         })}
@@ -153,42 +154,42 @@ export function BiomeModal({ biomeId }: { biomeId: string }) {
       <div className="biome-hero">
         <BiomeScenery biome={b} />
         <WeatherFx fx={w.fx} />
-        <div className="biome-weather"><Icon name={WEATHER_ICON[w.fx]} />{w.name}<span className="muted"> · change dans {formatDuration(nextWeatherChange(now) - now)}</span></div>
+        <div className="biome-weather"><Icon name={WEATHER_ICON[w.fx]} />{w.name}<span className="muted"> {tr('· change dans')} {formatDuration(nextWeatherChange(now) - now)}</span></div>
       </div>
-      {w.event && <div className="event-banner"><Icon name="sparkle" /><div><b>Événement : {w.name} !</b><div style={{ fontSize: 13 }}>{w.description}</div></div></div>}
+      {w.event && <div className="event-banner"><Icon name="sparkle" /><div><b>{tr('Événement :')} {w.name} !</b><div style={{ fontSize: 13 }}>{w.description}</div></div></div>}
       <p className="soft">{b.description}</p>
       {!open ? (
-        <div className="status-panel"><Icon name="lock" /><p>Découvre <b>{b.unlockDex} espèces</b> dans le Bestiaire pour atteindre ce biome ({dexCount(state)}/{b.unlockDex}).</p></div>
+        <div className="status-panel"><Icon name="lock" /><p>{tr('Découvre')} <b>{b.unlockDex} {tr('espèces')}</b> {tr('dans le Bestiaire pour atteindre ce biome (')}{dexCount(state)}/{b.unlockDex}).</p></div>
       ) : (
         <div className="row-wrap">
-          <button className="btn btn-pink" disabled={state.expeditions.length >= maxExpeditions(state)} onClick={() => openModal({ kind: 'expedition', biomeId: b.id })}><Icon name="compass" />Préparer une expédition</button>
+          <button className="btn btn-pink" disabled={state.expeditions.length >= maxExpeditions(state)} onClick={() => openModal({ kind: 'expedition', biomeId: b.id })}><Icon name="compass" />{tr('Préparer une expédition')}</button>
           <button className="btn btn-ghost" disabled={now < forageAt} onClick={() => dispatch({ type: 'forage', biomeId: b.id })}>
-            <Icon name="search" />{now < forageAt ? `Fouille dans ${formatDuration(forageAt - now)}` : 'Fouiller les environs'}
+            <Icon name="search" />{now < forageAt ? tr('Fouille dans {p0}', { p0: formatDuration(forageAt - now) }) : tr('Fouiller les environs')}
           </button>
         </div>
       )}
       <div className="biome-cols">
         <div>
-          <h3 className="detail-h">Œufs trouvables</h3>
+          <h3 className="detail-h">{tr('Œufs trouvables')}</h3>
           <div className="odds-table compact">
             {b.eggs.map((e) => (
-              <div key={e.egg} className="odds-row"><EggArt type={e.egg} size={22} /><span style={{ flex: 1, fontWeight: 700 }}>{EGGS[e.egg]!.name}{EGGS[e.egg]!.exploreOnly && <span className="badge soft-badge" style={{ marginLeft: 6 }}>Exclusif</span>}</span><b className="num">{formatPct(e.weight / eTotal)}</b></div>
+              <div key={e.egg} className="odds-row"><EggArt type={e.egg} size={22} /><span style={{ flex: 1, fontWeight: 700 }}>{EGGS[e.egg]!.name}{EGGS[e.egg]!.exploreOnly && <span className="badge soft-badge" style={{ marginLeft: 6 }}>{tr('Exclusif')}</span>}</span><b className="num">{formatPct(e.weight / eTotal)}</b></div>
             ))}
           </div>
-          <p className="muted" style={{ fontSize: 12, marginTop: 4 }}>Part de chaque œuf quand une expédition en trouve un.</p>
-          <h3 className="detail-h">Ressources</h3>
+          <p className="muted" style={{ fontSize: 12, marginTop: 4 }}>{tr('Part de chaque œuf quand une expédition en trouve un.')}</p>
+          <h3 className="detail-h">{tr('Ressources')}</h3>
           <div className="loot-list">{b.materials.map((m) => <ItemChip key={m.item} id={m.item} />)}{b.foods.map((f) => <ItemChip key={f} id={f} />)}</div>
-          <h3 className="detail-h">Éléments à l'aise ici</h3>
+          <h3 className="detail-h">{tr('Éléments à l\'aise ici')}</h3>
           <div className="row-wrap">{b.favoredElements.map((el) => <span key={el} className="badge element-badge" style={{ ['--ec' as string]: ELEMENTS[el].color } as CSSProperties}><ElementIcon element={el} style={{ color: ELEMENTS[el].color }} />{ELEMENTS[el].name}</span>)}</div>
         </div>
         <div>
-          <h3 className="detail-h">Zone secrète</h3>
+          <h3 className="detail-h">{tr('Zone secrète')}</h3>
           {secretFound(state, b.id) ? (
-            <div className="status-panel secret"><Icon name="starFill" /><div><b>{b.secret.name}</b><p style={{ fontSize: 13 }}>{b.secret.description} Chance d'œuf +{Math.round(b.secret.eggChanceBonus * 100)} pts dans ce biome.</p></div></div>
+            <div className="status-panel secret"><Icon name="starFill" /><div><b>{b.secret.name}</b><p style={{ fontSize: 13 }}>{b.secret.description} {tr('Chance d\'œuf +')}{Math.round(b.secret.eggChanceBonus * 100)} {tr('pts dans ce biome.')}</p></div></div>
           ) : (
-            <div className="status-panel"><Icon name="map" /><div><b>???</b><p style={{ fontSize: 13 }}>Des rumeurs parlent d'un lieu caché. Expéditions : {count}/{b.secret.afterExpeditions}</p><Bar value={count / b.secret.afterExpeditions} size="thin" /></div></div>
+            <div className="status-panel"><Icon name="map" /><div><b>???</b><p style={{ fontSize: 13 }}>{tr('Des rumeurs parlent d\'un lieu caché. Expéditions :')} {count}/{b.secret.afterExpeditions}</p><Bar value={count / b.secret.afterExpeditions} size="thin" /></div></div>
           )}
-          <h3 className="detail-h">Quêtes du biome</h3>
+          <h3 className="detail-h">{tr('Quêtes du biome')}</h3>
           <div className="stack" style={{ gap: 6 }}>
             {SIDE_QUESTS.filter((q) => q.goal.kind === 'biomeExpeditions' && q.goal.biome === b.id).map((q) => {
               const p = questProgress(state, q);
@@ -201,9 +202,9 @@ export function BiomeModal({ biomeId }: { biomeId: string }) {
               );
             })}
           </div>
-          <h3 className="detail-h">Météo possible</h3>
+          <h3 className="detail-h">{tr('Météo possible')}</h3>
           <div className="row-wrap">{weatherOdds(b.weather).map(({ weather, probability }) => <span key={weather.id} className={`badge ${weather.event ? 'mutation-badge' : 'soft-badge'}`} style={{ ['--mc' as string]: '#ffb03d' } as CSSProperties}><Icon name={WEATHER_ICON[weather.fx]} />{weather.name} {formatPct(probability)}</span>)}</div>
-          {exclusives.length > 0 && <p className="muted" style={{ fontSize: 12, marginTop: 8 }}>Terrain de sanctuaire débloqué après une expédition : {THEMES[b.theme]?.name}.</p>}
+          {exclusives.length > 0 && <p className="muted" style={{ fontSize: 12, marginTop: 8 }}>{tr('Terrain de sanctuaire débloqué après une expédition :')} {THEMES[b.theme]?.name}.</p>}
         </div>
       </div>
     </div>
@@ -226,8 +227,8 @@ export function ExpeditionModal({ biomeId }: { biomeId: string }) {
 
   return (
     <div className="stack">
-      <p className="soft" style={{ fontSize: 14 }}>Choisis jusqu'à {X.maxTeam} créatures. Puissance conseillée : <b>{b.difficulty}</b>. Les créatures <b>{b.favoredElements.map((e) => ELEMENTS[e].name).join(', ')}</b>{w.elementBonus.length ? <> et, avec la météo actuelle, <b>{w.elementBonus.map((e) => ELEMENTS[e].name).join(', ')}</b></> : null} rapportent davantage.</p>
-      {available.length === 0 ? <EmptyState icon="paw" title="Aucune créature disponible">Toutes tes créatures sont déjà en route.</EmptyState> : (
+      <p className="soft" style={{ fontSize: 14 }}>{tr('Choisis jusqu\'à')} {X.maxTeam} {tr('créatures. Puissance conseillée :')} <b>{b.difficulty}</b>{tr('. Les créatures')} <b>{b.favoredElements.map((e) => ELEMENTS[e].name).join(', ')}</b>{w.elementBonus.length ? <> {tr('et, avec la météo actuelle,')} <b>{w.elementBonus.map((e) => ELEMENTS[e].name).join(', ')}</b></> : null} {tr('rapportent davantage.')}</p>
+      {available.length === 0 ? <EmptyState icon="paw" title={tr('Aucune créature disponible')}>{tr('Toutes tes créatures sont déjà en route.')}</EmptyState> : (
         <div className="team-grid">
           {available.map((c) => {
             const el = getSpecies(c.speciesId).element;
@@ -235,10 +236,10 @@ export function ExpeditionModal({ biomeId }: { biomeId: string }) {
             const on = team.includes(c.uid);
             return (
               <button key={c.uid} className={`team-pick ${on ? 'on' : ''}`} onClick={() => toggle(c.uid)} aria-pressed={on}>
-                {fav && <span className="team-fav tip" data-tip="Élément avantagé"><ElementIcon element={el} style={{ color: ELEMENTS[el].color }} /></span>}
+                {fav && <span className="team-fav tip" data-tip={tr('Élément avantagé')}><ElementIcon element={el} style={{ color: ELEMENTS[el].color }} /></span>}
                 <CreatureArt speciesId={c.speciesId} mutations={c.mutations} hue={c.genes.hue} size={58} anim={on ? 'walk' : 'none'} />
                 <b>{displayName(c)}</b>
-                <span className="muted num">Nv {c.level} · {computeStats(c).power}</span>
+                <span className="muted num">{tr('Nv')} {c.level} · {computeStats(c).power}</span>
               </button>
             );
           })}
@@ -249,21 +250,21 @@ export function ExpeditionModal({ biomeId }: { biomeId: string }) {
       </div>
       {f && (
         <div className="card forecast">
-          <div className="row"><b>Qualité de l'expédition</b><span className="spacer" /><span className="num" style={{ fontWeight: 800 }}>{Math.round(f.quality * 100)} %</span></div>
+          <div className="row"><b>{tr('Qualité de l\'expédition')}</b><span className="spacer" /><span className="num" style={{ fontWeight: 800 }}>{Math.round(f.quality * 100)} %</span></div>
           <Bar value={f.quality / 1.6} fill={f.quality >= 1 ? 'linear-gradient(90deg,#3fcf9f,#5cb8ff)' : 'linear-gradient(90deg,#ffc23d,#ff7a5c)'} />
           <dl className="kv" style={{ marginTop: 10 }}>
-            <dt>Puissance de l'équipe</dt><dd>{f.power} / {b.difficulty}{f.favored ? ` · ${f.favored} avantagée(s)` : ''}</dd>
-            <dt>Fouilles</dt><dd>{f.rolls}</dd>
-            <dt>Chance d'œuf</dt><dd>{formatPct(f.eggChancePerRoll)} par fouille · <b>{formatPct(f.eggChanceTotal)}</b> d'en rapporter au moins un</dd>
-            <dt>Pièces</dt><dd>{f.coins[0]} – {f.coins[1]}</dd>
-            <dt>Expérience</dt><dd>+{f.xpEach} XP par créature</dd>
-            <dt>Durée</dt><dd>{formatDuration(X.durations[duration].ms)}</dd>
+            <dt>{tr('Puissance de l\'équipe')}</dt><dd>{f.power} / {b.difficulty}{f.favored ? tr(' · {favored} avantagée(s)', { favored: f.favored }) : ''}</dd>
+            <dt>{tr('Fouilles')}</dt><dd>{f.rolls}</dd>
+            <dt>{tr('Chance d\'œuf')}</dt><dd>{formatPct(f.eggChancePerRoll)} {tr('par fouille ·')} <b>{formatPct(f.eggChanceTotal)}</b> {tr('d\'en rapporter au moins un')}</dd>
+            <dt>{tr('Pièces')}</dt><dd>{f.coins[0]} – {f.coins[1]}</dd>
+            <dt>{tr('Expérience')}</dt><dd>+{f.xpEach} {tr('XP par créature')}</dd>
+            <dt>{tr('Durée')}</dt><dd>{formatDuration(X.durations[duration].ms)}</dd>
           </dl>
         </div>
       )}
       <button className="btn btn-pink btn-lg" disabled={!f} onClick={() => {
         if (dispatch({ type: 'startExpedition', biomeId, uids: team, duration })) { playSfx('whoosh'); closeModal(); closeModal(); }
-      }}><Icon name="compass" />Partir en expédition</button>
+      }}><Icon name="compass" />{tr('Partir en expédition')}</button>
     </div>
   );
 }
@@ -277,12 +278,12 @@ export function ExpeditionResult({ event }: { event: Extract<GameEvent, { type: 
       <div className="biome-hero small"><BiomeScenery biome={b} />
         <div className="expe-team">{event.team.map((u) => { const c = state.creatures.find((x) => x.uid === u); return c ? <CreatureArt key={u} speciesId={c.speciesId} mutations={c.mutations} hue={c.genes.hue} size={80} anim="walk" /> : null; })}</div>
       </div>
-      {event.secretFound && <div className="event-banner"><Icon name="starFill" /><div><b>Zone secrète découverte : {b.secret.name} !</b><div style={{ fontSize: 13 }}>{b.secret.description}</div></div></div>}
-      <p className="soft">Ton équipe est rentrée de <b>{b.name}</b> et a gagné <b>{event.xp} XP</b> chacun.</p>
+      {event.secretFound && <div className="event-banner"><Icon name="starFill" /><div><b>{tr('Zone secrète découverte :')} {b.secret.name} !</b><div style={{ fontSize: 13 }}>{b.secret.description}</div></div></div>}
+      <p className="soft">{tr('Ton équipe est rentrée de')} <b>{b.name}</b> {tr('et a gagné')} <b>{event.xp} {tr('XP')}</b> chacun.</p>
       <RewardList r={event.reward} />
-      {(event.reward.eggs?.length ?? 0) > 0 && <p style={{ fontWeight: 800, color: 'var(--pink)' }}><Icon name="egg" width={16} height={16} style={{ display: 'inline', verticalAlign: '-3px' }} /> {event.reward.eggs!.length} œuf{event.reward.eggs!.length > 1 ? 's' : ''} ajouté{event.reward.eggs!.length > 1 ? 's' : ''} au panier !</p>}
+      {(event.reward.eggs?.length ?? 0) > 0 && <p style={{ fontWeight: 800, color: 'var(--pink)' }}><Icon name="egg" width={16} height={16} style={{ display: 'inline', verticalAlign: '-3px' }} /> {tp(event.reward.eggs!.length, '{n} œuf ajouté au panier !', '{n} œufs ajoutés au panier !')}</p>}
       <div className="row-wrap">{event.reward.eggs?.map((e, i) => <RarityBadge key={i} rarity={EGGS[e]!.rarity} small />)}</div>
-      <button className="btn btn-pink" onClick={close}>Super !</button>
+      <button className="btn btn-pink" onClick={close}>{tr('Super !')}</button>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import type { GameEvent } from '../events';
 import type { ActionContext, GameState, PurchaseRecord } from '../types';
 import { grantReward } from './economy';
 import { currentSeason } from './season';
+import { tr } from '../../i18n';
 
 /** Total dépensé pendant le mois civil de `now` (centimes). */
 export function spentThisMonth(state: GameState, now: number): number {
@@ -38,11 +39,11 @@ export function purchaseBlocker(state: GameState, productId: string, now: number
  */
 export function applyPurchase(draft: GameState, rec: Omit<PurchaseRecord, 'at'>, ctx: ActionContext, events: GameEvent[]): void {
   const p = PRODUCT_BY_ID[rec.productId];
-  assertGame(p, 'unknown_product', 'Produit inconnu.');
-  assertGame(rec.orderId && typeof rec.orderId === 'string', 'bad_order', 'Commande invalide.');
-  if (draft.premium.purchases.some((x) => x.orderId === rec.orderId)) throw new GameError('already_applied', 'Cet achat a déjà été pris en compte.');
-  assertGame(rec.amountCents === p.priceCents, 'bad_amount', 'Le montant payé ne correspond pas au prix du produit.');
-  if (p.once) assertGame(!ownsProduct(draft, p.id), 'owned', 'Tu possèdes déjà cet article.');
+  assertGame(p, 'unknown_product', tr('Produit inconnu.'));
+  assertGame(rec.orderId && typeof rec.orderId === 'string', 'bad_order', tr('Commande invalide.'));
+  if (draft.premium.purchases.some((x) => x.orderId === rec.orderId)) throw new GameError('already_applied', tr('Cet achat a déjà été pris en compte.'));
+  assertGame(rec.amountCents === p.priceCents, 'bad_amount', tr('Le montant payé ne correspond pas au prix du produit.'));
+  if (p.once) assertGame(!ownsProduct(draft, p.id), 'owned', tr('Tu possèdes déjà cet article.'));
   draft.premium.purchases.push({ ...rec, at: ctx.now });
   const g = p.grants;
   for (const d of g.decorations ?? []) if (!(d in draft.sanctuary.decorations)) draft.sanctuary.decorations[d] = true;
@@ -52,6 +53,6 @@ export function applyPurchase(draft: GameState, rec: Omit<PurchaseRecord, 'at'>,
 }
 
 export function setSpendLimit(draft: GameState, cents: number | null): void {
-  assertGame(cents === null || (Number.isInteger(cents) && cents >= 0 && cents <= 100000), 'bad_limit', 'Limite invalide.');
+  assertGame(cents === null || (Number.isInteger(cents) && cents >= 0 && cents <= 100000), 'bad_limit', tr('Limite invalide.'));
   draft.premium.spendLimitCents = cents;
 }

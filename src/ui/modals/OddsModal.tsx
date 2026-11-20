@@ -13,6 +13,7 @@ import { EggArt } from '../art/EggArt';
 import { Icon } from '../art/Icons';
 import { RarityBadge } from '../components/Badges';
 import { useGame } from '../../store/gameStore';
+import { tr } from '../../i18n';
 
 export function formatPct(p: number): string {
   if (p === 0) return '0 %';
@@ -36,7 +37,7 @@ function GeneticEggInfo({ eggType }: { eggType: string }) {
         <EggArt type={eggType} size={64} />
         <div><b style={{ fontSize: 18 }}>{egg.name}</b><p className="soft" style={{ fontSize: 13 }}>{egg.description}</p></div>
       </div>
-      <div className="status-panel"><Icon name="flask" /><p style={{ fontSize: 13 }}>Le contenu de cet œuf a été déterminé lors de la fusion, selon les probabilités affichées au Laboratoire avant validation : espèce, gènes et mutations héritées. L'ambiance de l'incubateur peut encore ajouter une mutation dans un groupe resté libre.</p></div>
+      <div className="status-panel"><Icon name="flask" /><p style={{ fontSize: 13 }}>{tr('Le contenu de cet œuf a été déterminé lors de la fusion, selon les probabilités affichées au Laboratoire avant validation : espèce, gènes et mutations héritées. L\'ambiance de l\'incubateur peut encore ajouter une mutation dans un groupe resté libre.')}</p></div>
     </div>
   );
 }
@@ -57,11 +58,11 @@ function TableOdds({ eggType }: { eggType: string }) {
         <div>
           <div className="row-wrap"><b style={{ fontSize: 18 }}>{egg.name}</b><RarityBadge rarity={egg.rarity} small /></div>
           <p className="soft" style={{ fontSize: 13 }}>{egg.description}</p>
-          <p className="muted" style={{ fontSize: 12, marginTop: 4 }}>Incubation : {formatDuration(egg.incubationMs)}{egg.affinity.length > 0 && ` (−25 % en ${egg.affinity.map((a) => AMBIANCES[a]!.name).join(' / ')})`}</p>
+          <p className="muted" style={{ fontSize: 12, marginTop: 4 }}>{tr('Incubation :')} {formatDuration(egg.incubationMs)}{egg.affinity.length > 0 && tr(' (−25 % en {p0})', { p0: egg.affinity.map((a) => AMBIANCES[a]!.name).join(' / ') })}</p>
         </div>
       </div>
 
-      <div className="status-panel"><Icon name="info" /><p style={{ fontSize: 13 }}>Ces probabilités sont <b>exactes</b> : elles sont calculées par le même code que l'éclosion réelle. Les espèces non découvertes restent masquées, mais leur chance est affichée.</p></div>
+      <div className="status-panel"><Icon name="info" /><p style={{ fontSize: 13 }}>{tr('Ces probabilités sont')} <b>exactes</b> {tr(': elles sont calculées par le même code que l\'éclosion réelle. Les espèces non découvertes restent masquées, mais leur chance est affichée.')}</p></div>
 
       <div className="rarity-strip">
         {byRarity.map(({ r, p }) => <div key={r} style={{ flex: p, ['--rc' as string]: RARITIES[r].color } as CSSProperties} className="tip" data-tip={`${RARITIES[r].name} : ${formatPct(p)}`} />)}
@@ -82,15 +83,15 @@ function TableOdds({ eggType }: { eggType: string }) {
         })}
       </div>
 
-      <h3 style={{ fontSize: 16, marginTop: 8 }}>Chances de mutation</h3>
+      <h3 style={{ fontSize: 16, marginTop: 8 }}>{tr('Chances de mutation')}</h3>
       <div className="row-wrap">
-        <select className="select" value={amb} onChange={(e) => setAmb(e.target.value)} aria-label="Ambiance simulée">
-          {Object.values(AMBIANCES).map((a) => <option key={a.id} value={a.id}>{a.name}{state.unlocks.ambiances.includes(a.id) ? '' : ' (non débloquée)'}</option>)}
+        <select className="select" value={amb} onChange={(e) => setAmb(e.target.value)} aria-label={tr('Ambiance simulée')}>
+          {Object.values(AMBIANCES).map((a) => <option key={a.id} value={a.id}>{a.name}{state.unlocks.ambiances.includes(a.id) ? '' : tr(' (non débloquée)')}</option>)}
         </select>
-        <button className={`chip ${night ? 'active' : ''}`} onClick={() => setNight(!night)}><Icon name={night ? 'moon' : 'sun'} />{night ? 'Nuit' : 'Jour'}</button>
-        <span className="muted" style={{ fontSize: 13, fontWeight: 700 }}>Durée : {formatDuration(incubationDuration(eggType, amb))}</span>
+        <button className={`chip ${night ? 'active' : ''}`} onClick={() => setNight(!night)}><Icon name={night ? 'moon' : 'sun'} />{night ? tr('Nuit') : tr('Jour')}</button>
+        <span className="muted" style={{ fontSize: 13, fontWeight: 700 }}>{tr('Durée :')} {formatDuration(incubationDuration(eggType, amb))}</span>
       </div>
-      <p className="soft" style={{ fontSize: 13 }}>Au moins une mutation : <b>{formatPct(anyMutationChance(eggType, amb, night))}</b>. Les mutations d'un même groupe sont incompatibles ; plusieurs groupes peuvent se cumuler.</p>
+      <p className="soft" style={{ fontSize: 13 }}>{tr('Au moins une mutation :')} <b>{formatPct(anyMutationChance(eggType, amb, night))}</b>{tr('. Les mutations d\'un même groupe sont incompatibles ; plusieurs groupes peuvent se cumuler.')}</p>
       <div className="odds-table compact">
         {muts.map((m) => (
           <div key={m.mutationId} className="odds-row">

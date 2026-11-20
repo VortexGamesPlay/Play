@@ -3,6 +3,7 @@ import { Icon, type IconName } from '../art/Icons';
 import type { Route } from '../../store/uiStore';
 import { useGame } from '../../store/gameStore';
 import { isDiscovered } from '@core/systems/dex';
+import { tr } from '../../i18n';
 
 interface Plan { title: string; icon: IconName; phase: number; pitch: string; features: string[]; ready: string[]; art: string[] }
 
@@ -23,15 +24,15 @@ export function ComingSoonScreen({ route }: { route: Route }) {
     <div className="stack" style={{ gap: 18 }}>
       <div className="card soon-hero">
         <div className="soon-art">{p.art.map((s, i) => <CreatureArt key={s} speciesId={s} size={i === 1 ? 130 : 96} silhouette={!isDiscovered(state, s)} anim={isDiscovered(state, s) ? 'idle' : 'none'} />)}</div>
-        <span className="badge soft-badge"><Icon name="clock" />En développement — Phase {p.phase}</span>
-        <h2>{p.title}</h2>
-        <p className="soft" style={{ maxWidth: 560 }}>{p.pitch}</p>
+        <span className="badge soft-badge"><Icon name="clock" />{tr('En développement — Phase')} {p.phase}</span>
+        <h2>{tr(p.title)}</h2>
+        <p className="soft" style={{ maxWidth: 560 }}>{tr(p.pitch)}</p>
       </div>
       <div className="soon-grid">
-        <div className="card"><div className="card-title"><Icon name={p.icon} /><h3>Prévu</h3></div><ul className="soon-list">{p.features.map((f) => <li key={f}>{f}</li>)}</ul></div>
-        <div className="card"><div className="card-title"><Icon name="check" /><h3>Déjà en place</h3></div><ul className="soon-list ok">{p.ready.map((f) => <li key={f}>{f}</li>)}</ul></div>
+        <div className="card"><div className="card-title"><Icon name={p.icon} /><h3>{tr('Prévu')}</h3></div><ul className="soon-list">{p.features.map((f) => <li key={f}>{tr(f)}</li>)}</ul></div>
+        <div className="card"><div className="card-title"><Icon name="check" /><h3>{tr('Déjà en place')}</h3></div><ul className="soon-list ok">{p.ready.map((f) => <li key={f}>{tr(f)}</li>)}</ul></div>
       </div>
-      <p className="muted" style={{ fontSize: 13, textAlign: 'center' }}>Cette section n'est pas encore jouable : rien n'y est simulé.</p>
+      <p className="muted" style={{ fontSize: 13, textAlign: 'center' }}>{tr('Cette section n\'est pas encore jouable : rien n\'y est simulé.')}</p>
     </div>
   );
 }

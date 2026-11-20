@@ -9,6 +9,7 @@ import { useBadges } from '../hooks/useBadges';
 import { useNow } from '../hooks/useNow';
 import { playSfx } from '../../services/audio';
 import { NAV_MAIN, NAV_OTHER, NAV_WORLD, TITLES, type NavEntry } from './nav';
+import { tr, intlLocale } from '../../i18n';
 
 function Logo() {
   return (
@@ -20,8 +21,8 @@ function Logo() {
         <ellipse cx="34" cy="34" rx="8" ry="14" fill="white" opacity=".5" transform="rotate(20 34 34)" />
       </svg>
       <div>
-        <div className="logo-word">EGGVERSE</div>
-        <div className="logo-sub">Le monde des créatures oubliées</div>
+        <div className="logo-word">{tr('EGGVERSE')}</div>
+        <div className="logo-sub">{tr('Le monde des créatures oubliées')}</div>
       </div>
     </div>
   );
@@ -31,8 +32,8 @@ function NavButton({ n, active, badge, onClick }: { n: NavEntry; active: boolean
   return (
     <button className={`nav-item ${active ? 'active' : ''}`} onClick={onClick} aria-current={active ? 'page' : undefined}>
       <Icon name={n.icon} width={22} height={22} />
-      {n.label}
-      {badge ? <span className="nav-badge">{badge}</span> : n.phase ? <span className="soon">Phase {n.phase}</span> : null}
+      {tr(n.label)}
+      {badge ? <span className="nav-badge">{badge}</span> : n.phase ? <span className="soon">{tr('Phase')} {n.phase}</span> : null}
     </button>
   );
 }
@@ -44,12 +45,12 @@ function Sidebar() {
   const go = (r: Route) => { playSfx('tap'); navigate(r); };
   const render = (list: NavEntry[]) => list.map((n) => <NavButton key={n.route} n={n} active={route === n.route} badge={badges[n.route]} onClick={() => go(n.route)} />);
   return (
-    <nav className="sidebar" aria-label="Navigation principale">
+    <nav className="sidebar" aria-label={tr('Navigation principale')}>
       <Logo />
       {render(NAV_MAIN)}
-      <div className="nav-section">Monde</div>
+      <div className="nav-section">{tr('Monde')}</div>
       {render(NAV_WORLD)}
-      <div className="nav-section">Gardien</div>
+      <div className="nav-section">{tr('Gardien')}</div>
       {render(NAV_OTHER)}
     </nav>
   );
@@ -71,7 +72,7 @@ function AnimatedNumber({ value }: { value: number }) {
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
   }, [value]);
-  return <>{shown.toLocaleString('fr-FR')}</>;
+  return <>{shown.toLocaleString(intlLocale())}</>;
 }
 
 function CurrencyPill({ currency, value, label }: { currency: 'coins' | 'crystals' | 'essence'; value: number; label: string }) {
@@ -96,17 +97,17 @@ function TopBar() {
   const weather = sanctuaryWeather(now);
   return (
     <header className="topbar">
-      <h1>{TITLES[route]}</h1>
-      <span className="logo-word">EGGVERSE</span>
+      <h1>{tr(TITLES[route])}</h1>
+      <span className="logo-word">{tr('EGGVERSE')}</span>
       <div className="currencies">
-        <CurrencyPill currency="coins" value={wallet.coins} label="Pièces : achats, constructions" />
-        <CurrencyPill currency="crystals" value={wallet.crystals} label="Cristaux : objets rares, accélérations" />
-        <CurrencyPill currency="essence" value={wallet.essence} label="Essence : génétique et mutations" />
+        <CurrencyPill currency="coins" value={wallet.coins} label={tr('Pièces : achats, constructions')} />
+        <CurrencyPill currency="crystals" value={wallet.crystals} label={tr('Cristaux : objets rares, accélérations')} />
+        <CurrencyPill currency="essence" value={wallet.essence} label={tr('Essence : génétique et mutations')} />
       </div>
-      <div className="daynight tip" data-tip={`Météo du sanctuaire : ${weather.name}`}><Icon name={WEATHER_ICON[weather.fx]} style={{ color: '#5cb8ff' }} /><span>{weather.name}</span></div>
-      <div className="daynight tip" data-tip={night ? 'Nuit (20h–6h) : mutations cosmiques renforcées' : 'Jour (6h–20h)'}>
+      <div className="daynight tip" data-tip={tr('Météo du sanctuaire : {name}', { name: weather.name })}><Icon name={WEATHER_ICON[weather.fx]} style={{ color: '#5cb8ff' }} /><span>{weather.name}</span></div>
+      <div className="daynight tip" data-tip={night ? tr('Nuit (20h–6h) : mutations cosmiques renforcées') : tr('Jour (6h–20h)')}>
         <Icon name={night ? 'moon' : 'sun'} style={{ color: night ? '#7b5cff' : '#ffb000' }} />
-        <span>{night ? 'Nuit' : 'Jour'}</span>
+        <span>{night ? tr('Nuit') : tr('Jour')}</span>
       </div>
     </header>
   );
@@ -121,15 +122,15 @@ function BottomBar() {
   const badges = useBadges();
   const inMore = !MOBILE_TABS.some((t) => t.route === route);
   return (
-    <nav className="bottombar" aria-label="Navigation">
+    <nav className="bottombar" aria-label={tr('Navigation')}>
       {MOBILE_TABS.map((t) => (
         <button key={t.route} className={`tab ${route === t.route ? 'active' : ''}`} onClick={() => { playSfx('tap'); navigate(t.route); }}>
-          <Icon name={t.icon} />{t.label}
+          <Icon name={t.icon} />{tr(t.label)}
           {badges[t.route] ? <span className="nav-badge">{badges[t.route]}</span> : null}
         </button>
       ))}
       <button className={`tab ${inMore ? 'active' : ''}`} onClick={() => { playSfx('open'); setMore(true); }}>
-        <Icon name="more" />Plus
+        <Icon name="more" />{tr('Plus')}
       </button>
     </nav>
   );
@@ -143,13 +144,13 @@ function MoreSheet() {
   return (
     <>
       <div className="sheet-backdrop" onClick={() => setMore(false)} />
-      <div className="sheet" role="dialog" aria-label="Plus de sections">
+      <div className="sheet" role="dialog" aria-label={tr('Plus de sections')}>
         <div className="sheet-grip" />
         <div className="sheet-grid">
           {[...NAV_WORLD, ...NAV_OTHER].map((n) => (
             <button key={n.route} className="sheet-item" onClick={() => { playSfx('tap'); navigate(n.route); }}>
-              <Icon name={n.icon} />{n.label}
-              {n.phase && <span className="soon">Phase {n.phase}</span>}
+              <Icon name={n.icon} />{tr(n.label)}
+              {n.phase && <span className="soon">{tr('Phase')} {n.phase}</span>}
             </button>
           ))}
         </div>

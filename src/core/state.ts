@@ -1,6 +1,7 @@
 import { BALANCE } from '@data/balance';
 import { addEgg } from './systems/inventory';
 import type { GameState } from './types';
+import { tr } from '../i18n';
 
 export const SCHEMA_VERSION = 6;
 
@@ -36,6 +37,6 @@ export function createInitialState(now: number): GameState {
     settings: { sound: true, reducedMotion: false, locale: 'en', musicVolume: 0.6, sfxVolume: 0.8 },
     uidCounter: 0,
   };
-  for (const egg of BALANCE.startingEggs) addEgg(state, egg, 'Cadeau de bienvenue', now);
+  for (const egg of BALANCE.startingEggs) addEgg(state, egg, tr('Cadeau de bienvenue'), now);
   return state;
 }

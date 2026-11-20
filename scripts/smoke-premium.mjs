@@ -25,7 +25,7 @@ let s1, s2;
 try {
   s1 = await serve('dist-test', 4324);
   for (const [name, vp] of [['desktop', { width: 1366, height: 860 }], ['mobile', { width: 390, height: 844 }]]) {
-    const p = await b.newPage({ viewport: vp });
+    const p = await b.newPage({ locale: 'fr-FR', viewport: vp });
     p.on('pageerror', (e) => errs.push(`[${name}] ${e.message}`)); p.on('console', (m) => m.type() === 'error' && errs.push(`[${name}] ${m.text()}`));
     await p.goto('http://localhost:4324/#boutique'); await p.waitForSelector('.tabs');
     await p.locator('.tabs button:has-text("Cristaux")').click();
@@ -55,7 +55,7 @@ try {
     await p.close();
   }
   s2 = await serve('dist-noserver', 4325);
-  const p = await b.newPage({ viewport: { width: 1366, height: 860 } });
+  const p = await b.newPage({ locale: 'fr-FR', viewport: { width: 1366, height: 860 } });
   await p.goto('http://localhost:4325/#boutique'); await p.waitForSelector('.tabs');
   await p.locator('.tabs button:has-text("Cristaux")').click();
   await p.waitForSelector('text=bientôt disponibles');

@@ -12,6 +12,7 @@ import { dexCount } from './dex';
 import { grant } from './economy';
 import { addEgg } from './inventory';
 import { biomeWeather } from './weather';
+import { tr } from '../../i18n';
 
 const X = BALANCE.expedition;
 
@@ -34,7 +35,7 @@ export function isAway(state: GameState, uid: string): boolean {
 }
 
 export function assertPresent(state: GameState, uid: string): void {
-  assertGame(!isAway(state, uid), 'away', 'Cette créature est partie en expédition.');
+  assertGame(!isAway(state, uid), 'away', tr('Cette créature est partie en expédition.'));
 }
 
 export function secretFound(state: GameState, biomeId: string): boolean {
@@ -92,15 +93,15 @@ export function expeditionForecast(state: GameState, biomeId: string, team: Crea
 
 export function startExpedition(draft: GameState, biomeId: string, uids: string[], duration: ExpeditionDuration, ctx: ActionContext): void {
   const b = BIOME_BY_ID[biomeId];
-  assertGame(b, 'unknown_biome', 'Biome inconnu.');
-  assertGame(isBiomeUnlocked(draft, b), 'biome_locked', `Découvre ${b.unlockDex} espèces pour atteindre ce biome.`);
-  assertGame(X.durations[duration], 'bad_duration', 'Durée invalide.');
+  assertGame(b, 'unknown_biome', tr('Biome inconnu.'));
+  assertGame(isBiomeUnlocked(draft, b), 'biome_locked', tr('Découvre {unlockDex} espèces pour atteindre ce biome.', { unlockDex: b.unlockDex }));
+  assertGame(X.durations[duration], 'bad_duration', tr('Durée invalide.'));
   const unique = [...new Set(uids)];
-  assertGame(unique.length >= 1 && unique.length <= X.maxTeam, 'bad_team', `Choisis entre 1 et ${X.maxTeam} créatures.`);
-  assertGame(draft.expeditions.length < maxExpeditions(draft), 'too_many', `${maxExpeditions(draft)} expéditions au maximum en même temps.`);
+  assertGame(unique.length >= 1 && unique.length <= X.maxTeam, 'bad_team', tr('Choisis entre 1 et {maxTeam} créatures.', { maxTeam: X.maxTeam }));
+  assertGame(draft.expeditions.length < maxExpeditions(draft), 'too_many', tr('{p0} expéditions au maximum en même temps.', { p0: maxExpeditions(draft) }));
   for (const uid of unique) {
     const c = findCreature(draft, uid);
-    if (isAway(draft, uid)) throw new GameError('away', `${displayName(c)} est déjà en expédition.`);
+    if (isAway(draft, uid)) throw new GameError('away', tr('{p0} est déjà en expédition.', { p0: displayName(c) }));
   }
   draft.expeditions.push({
     uid: nextUid(draft, 'exp'), biomeId, creatureUids: unique, duration,
@@ -111,15 +112,15 @@ export function startExpedition(draft: GameState, biomeId: string, uids: string[
 /** Rappel anticipé : l'équipe rentre sans butin. */
 export function recallExpedition(draft: GameState, expUid: string): void {
   const i = draft.expeditions.findIndex((e) => e.uid === expUid);
-  assertGame(i >= 0, 'unknown_expedition', 'Expédition introuvable.');
+  assertGame(i >= 0, 'unknown_expedition', tr('Expédition introuvable.'));
   draft.expeditions.splice(i, 1);
 }
 
 export function claimExpedition(draft: GameState, expUid: string, ctx: ActionContext, events: GameEvent[]): void {
   const i = draft.expeditions.findIndex((e) => e.uid === expUid);
-  assertGame(i >= 0, 'unknown_expedition', 'Expédition introuvable.');
+  assertGame(i >= 0, 'unknown_expedition', tr('Expédition introuvable.'));
   const exp = draft.expeditions[i]!;
-  assertGame(ctx.now >= exp.endsAt, 'not_back', 'L\'équipe n\'est pas encore rentrée.');
+  assertGame(ctx.now >= exp.endsAt, 'not_back', tr('L\'équipe n\'est pas encore rentrée.'));
   const b = BIOME_BY_ID[exp.biomeId]!;
   const team = exp.creatureUids.map((u) => draft.creatures.find((c) => c.uid === u)).filter((c): c is CreatureInstance => !!c);
   // La météo prise en compte est celle du départ.
@@ -140,9 +141,9 @@ export function claimExpedition(draft: GameState, expUid: string, ctx: ActionCon
   }
 
   draft.expeditions.splice(i, 1);
-  grant(draft, 'coins', reward.coins!, `Expédition : ${b.name}`, ctx.now);
+  grant(draft, 'coins', reward.coins!, tr('Expédition : {name}', { name: b.name }), ctx.now);
   for (const [item, qty] of Object.entries(reward.items!)) draft.inventory[item] = (draft.inventory[item] ?? 0) + (qty ?? 0);
-  for (const egg of reward.eggs!) if (EGGS[egg]) addEgg(draft, egg, `Expédition : ${b.name}`, ctx.now, { ignoreCap: true });
+  for (const egg of reward.eggs!) if (EGGS[egg]) addEgg(draft, egg, tr('Expédition : {name}', { name: b.name }), ctx.now, { ignoreCap: true });
   for (const c of team) {
     addXp(draft, c, f.xpEach, events);
     c.affection = Math.min(100, c.affection + 3);
@@ -154,7 +155,7 @@ export function claimExpedition(draft: GameState, expUid: string, ctx: ActionCon
   let secret = false;
   if (count >= b.secret.afterExpeditions && !secretFound(draft, b.id)) {
     draft.exploration.secretsFound.push(b.id);
-    grant(draft, 'crystals', X.secretCrystals, `Zone secrète : ${b.secret.name}`, ctx.now);
+    grant(draft, 'crystals', X.secretCrystals, tr('Zone secrète : {name}', { name: b.secret.name }), ctx.now);
     secret = true;
   }
   events.push({ type: 'expeditionDone', biomeId: b.id, reward, secretFound: secret, xp: f.xpEach, team: team.map((c) => c.uid) });
@@ -167,9 +168,9 @@ export function forageReadyAt(state: GameState, biomeId: string): number {
 /** Fouille rapide : un petit butin immédiat, avec un temps de recharge par biome. */
 export function forage(draft: GameState, biomeId: string, ctx: ActionContext, events: GameEvent[]): void {
   const b = BIOME_BY_ID[biomeId];
-  assertGame(b, 'unknown_biome', 'Biome inconnu.');
-  assertGame(isBiomeUnlocked(draft, b), 'biome_locked', 'Biome non accessible.');
-  assertGame(ctx.now >= forageReadyAt(draft, biomeId), 'cooldown', 'Cette zone a déjà été fouillée récemment.');
+  assertGame(b, 'unknown_biome', tr('Biome inconnu.'));
+  assertGame(isBiomeUnlocked(draft, b), 'biome_locked', tr('Biome non accessible.'));
+  assertGame(ctx.now >= forageReadyAt(draft, biomeId), 'cooldown', tr('Cette zone a déjà été fouillée récemment.'));
   draft.exploration.lastForageAt[biomeId] = ctx.now;
   const reward: Reward = { coins: randInt(ctx.rng, 15, 40), items: {}, eggs: [] };
   const mat = weightedPick(ctx.rng, b.materials.map((m) => ({ value: m.item, weight: m.weight })));
@@ -178,9 +179,9 @@ export function forage(draft: GameState, biomeId: string, ctx: ActionContext, ev
   if (ctx.rng.next() < X.forageEggChance * weather.eggChanceMul) {
     reward.eggs!.push(weightedPick(ctx.rng, b.eggs.map((e) => ({ value: e.egg, weight: e.weight }))));
   }
-  grant(draft, 'coins', reward.coins!, `Fouille : ${b.name}`, ctx.now);
+  grant(draft, 'coins', reward.coins!, tr('Fouille : {name}', { name: b.name }), ctx.now);
   draft.inventory[mat] = (draft.inventory[mat] ?? 0) + 1;
-  for (const egg of reward.eggs!) addEgg(draft, egg, `Fouille : ${b.name}`, ctx.now, { ignoreCap: true });
+  for (const egg of reward.eggs!) addEgg(draft, egg, tr('Fouille : {name}', { name: b.name }), ctx.now, { ignoreCap: true });
   draft.stats.forages += 1;
   events.push({ type: 'foraged', biomeId, reward });
 }

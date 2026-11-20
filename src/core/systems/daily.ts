@@ -5,6 +5,7 @@ import type { GameEvent } from '../events';
 import { previousDayKey } from '../time';
 import type { ActionContext, GameState } from '../types';
 import { grantReward } from './economy';
+import { tr } from '../../i18n';
 
 export function canClaimDaily(state: GameState, dayKey: string): boolean {
   return state.daily.lastClaimDay !== dayKey;
@@ -24,7 +25,7 @@ export function dailyReward(streak: number): Reward {
 }
 
 export function claimDaily(draft: GameState, ctx: ActionContext, events: GameEvent[]): void {
-  assertGame(canClaimDaily(draft, ctx.dayKey), 'daily_claimed', 'Récompense du jour déjà récupérée. Reviens demain !');
+  assertGame(canClaimDaily(draft, ctx.dayKey), 'daily_claimed', tr('Récompense du jour déjà récupérée. Reviens demain !'));
   const streak = nextStreak(draft, ctx.dayKey);
   draft.daily = { lastClaimDay: ctx.dayKey, streak };
   draft.stats.dailyClaims += 1;

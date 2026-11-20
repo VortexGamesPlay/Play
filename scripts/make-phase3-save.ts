@@ -20,4 +20,5 @@ add('tisonnet', 16, ['doree']);
 add('perlouille', 12);
 add('caillounet', 13);
 add('lichenou', 9);
+s.settings.locale = 'fr'; // les tests de bout en bout lisent l'interface en français
 writeFileSync(process.argv[2]!, serialize(s, now));

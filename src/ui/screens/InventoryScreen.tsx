@@ -11,6 +11,7 @@ import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
 import { geneticsLabel, groupEggs } from './IncubatorScreen';
 import { fmtDateTime, foodTagName } from '../format';
+import { tr, intlLocale } from '../../i18n';
 
 type Tab = 'items' | 'eggs' | 'ledger';
 
@@ -25,30 +26,30 @@ export function InventoryScreen() {
     <div className="stack" style={{ gap: 16 }}>
       <div className="wallet-cards">
         {(['coins', 'crystals', 'essence'] as const).map((c) => (
-          <div key={c} className="card wallet-card"><CurrencyIcon currency={c} width={34} height={34} /><div><b className="num">{state.wallet[c].toLocaleString('fr-FR')}</b><span>{CURRENCY_NAMES[c]}</span></div></div>
+          <div key={c} className="card wallet-card"><CurrencyIcon currency={c} width={34} height={34} /><div><b className="num">{state.wallet[c].toLocaleString(intlLocale())}</b><span>{CURRENCY_NAMES[c]}</span></div></div>
         ))}
       </div>
       <div className="tabs">
-        <button className={tab === 'items' ? 'active' : ''} onClick={() => setTab('items')}>Objets<span className="count">{items.reduce((s, [, q]) => s + q, 0)}</span></button>
-        <button className={tab === 'eggs' ? 'active' : ''} onClick={() => setTab('eggs')}>Œufs<span className="count">{state.eggs.length}/{eggCap(state)}</span></button>
-        <button className={tab === 'ledger' ? 'active' : ''} onClick={() => setTab('ledger')}>Transactions</button>
+        <button className={tab === 'items' ? 'active' : ''} onClick={() => setTab('items')}>{tr('Objets')}<span className="count">{items.reduce((s, [, q]) => s + q, 0)}</span></button>
+        <button className={tab === 'eggs' ? 'active' : ''} onClick={() => setTab('eggs')}>{tr('Œufs')}<span className="count">{state.eggs.length}/{eggCap(state)}</span></button>
+        <button className={tab === 'ledger' ? 'active' : ''} onClick={() => setTab('ledger')}>{tr('Transactions')}</button>
       </div>
 
-      {tab === 'items' && (items.length === 0 ? <EmptyState icon="backpack" title="Inventaire vide" action={<button className="btn" onClick={() => navigate('boutique')}>Boutique</button>}>La nourriture achetée ou gagnée apparaîtra ici.</EmptyState> : (
+      {tab === 'items' && (items.length === 0 ? <EmptyState icon="backpack" title={tr('Inventaire vide')} action={<button className="btn" onClick={() => navigate('boutique')}>{tr('Boutique')}</button>}>{tr('La nourriture achetée ou gagnée apparaîtra ici.')}</EmptyState> : (
         <div className="grid-auto" style={{ ['--min' as string]: '220px' } as CSSProperties}>
           {items.map(([id, q]) => {
             const d = ITEMS[id]!;
             return (
               <div key={id} className="card item-card">
-                <div className="row"><span className="food-ic" style={{ ['--fc' as string]: d.color } as CSSProperties} /><div style={{ flex: 1 }}><b>{d.name}</b><div className="muted" style={{ fontSize: 12 }}>×{q} · {d.tags.map(foodTagName).join(', ')}</div></div></div>
+                <div className="row"><span className="food-ic" style={{ ['--fc' as string]: d.color } as CSSProperties} /><div style={{ flex: 1 }}><b>{d.name}</b><div className="muted" style={{ fontSize: 12 }}>{tr('×')}{q} · {d.tags.map(foodTagName).join(', ')}</div></div></div>
                 <p className="soft" style={{ fontSize: 13, margin: '8px 0' }}>{d.description}</p>
                 {d.kind === 'food' ? (
-                  <div className="row"><span className="badge soft-badge">+{d.xp} XP</span><span className="badge soft-badge">+{d.affection} affection</span><span className="spacer" />
-                    <button className="btn btn-mint btn-sm" disabled={state.creatures.length === 0} onClick={() => openModal({ kind: 'feed', item: id })}>Utiliser</button></div>
+                  <div className="row"><span className="badge soft-badge">+{d.xp} {tr('XP')}</span><span className="badge soft-badge">+{d.affection} affection</span><span className="spacer" />
+                    <button className="btn btn-mint btn-sm" disabled={state.creatures.length === 0} onClick={() => openModal({ kind: 'feed', item: id })}>{tr('Utiliser')}</button></div>
                 ) : d.kind === 'material' ? (
-                  <div className="row-wrap"><span className="badge soft-badge"><Icon name="hammer" />Matériau</span><span className="muted" style={{ fontSize: 12, fontWeight: 700 }}>Sert à construire et améliorer les bâtiments du sanctuaire.</span></div>
+                  <div className="row-wrap"><span className="badge soft-badge"><Icon name="hammer" />{tr('Matériau')}</span><span className="muted" style={{ fontSize: 12, fontWeight: 700 }}>{tr('Sert à construire et améliorer les bâtiments du sanctuaire.')}</span></div>
                 ) : (
-                  <div className="row-wrap"><span className="badge soft-badge"><Icon name="sparkle" />Objet d'évolution</span><span className="muted" style={{ fontSize: 12, fontWeight: 700 }}>Consommé automatiquement lors de l'évolution qui l'exige.</span></div>
+                  <div className="row-wrap"><span className="badge soft-badge"><Icon name="sparkle" />{tr('Objet d\'évolution')}</span><span className="muted" style={{ fontSize: 12, fontWeight: 700 }}>{tr('Consommé automatiquement lors de l\'évolution qui l\'exige.')}</span></div>
                 )}
               </div>
             );
@@ -56,26 +57,26 @@ export function InventoryScreen() {
         </div>
       ))}
 
-      {tab === 'eggs' && (eggs.length === 0 ? <EmptyState icon="egg" title="Aucun œuf">Récompense quotidienne, quêtes et boutique te fourniront des œufs.</EmptyState> : (
+      {tab === 'eggs' && (eggs.length === 0 ? <EmptyState icon="egg" title={tr('Aucun œuf')}>{tr('Récompense quotidienne, quêtes et boutique te fourniront des œufs.')}</EmptyState> : (
         <div className="grid-auto" style={{ ['--min' as string]: '240px' } as CSSProperties}>
           {eggs.map(([type, list]) => (
             <div key={list[0]!.uid} className="card item-card">
-              <div className="row"><EggArt type={type} size={44} /><div style={{ flex: 1 }}><b>{EGGS[type]!.name}</b> <span className="muted">×{list.length}</span><div><RarityBadge rarity={EGGS[type]!.rarity} small /></div>{geneticsLabel(list[0]!) && <div className="muted" style={{ fontSize: 12, fontWeight: 700 }}>Parents : {geneticsLabel(list[0]!)}</div>}</div></div>
+              <div className="row"><EggArt type={type} size={44} /><div style={{ flex: 1 }}><b>{EGGS[type]!.name}</b> <span className="muted">{tr('×')}{list.length}</span><div><RarityBadge rarity={EGGS[type]!.rarity} small /></div>{geneticsLabel(list[0]!) && <div className="muted" style={{ fontSize: 12, fontWeight: 700 }}>{tr('Parents :')} {geneticsLabel(list[0]!)}</div>}</div></div>
               <p className="soft" style={{ fontSize: 13, margin: '8px 0' }}>{EGGS[type]!.description}</p>
-              <div className="row"><button className="btn btn-ghost btn-sm" onClick={() => openModal({ kind: 'odds', eggType: type })}><Icon name="dice" />Probabilités</button><span className="spacer" /><button className="btn btn-sm" onClick={() => navigate('incubateur')}>Incuber</button></div>
+              <div className="row"><button className="btn btn-ghost btn-sm" onClick={() => openModal({ kind: 'odds', eggType: type })}><Icon name="dice" />{tr('Probabilités')}</button><span className="spacer" /><button className="btn btn-sm" onClick={() => navigate('incubateur')}>{tr('Incuber')}</button></div>
             </div>
           ))}
         </div>
       ))}
 
-      {tab === 'ledger' && (state.ledger.length === 0 ? <EmptyState icon="scroll" title="Aucune transaction">Les gains et dépenses importants sont journalisés ici.</EmptyState> : (
+      {tab === 'ledger' && (state.ledger.length === 0 ? <EmptyState icon="scroll" title={tr('Aucune transaction')}>{tr('Les gains et dépenses importants sont journalisés ici.')}</EmptyState> : (
         <div className="card ledger">
           {[...state.ledger].reverse().map((l, i) => (
             <div key={i} className="ledger-row">
               <CurrencyIcon currency={l.currency} width={22} height={22} />
               <div style={{ flex: 1, minWidth: 0 }}><b style={{ fontSize: 14 }}>{l.reason}</b><div className="muted" style={{ fontSize: 12 }}>{fmtDateTime(l.at)}</div></div>
-              <b className={`num ${l.delta > 0 ? 'pos' : 'neg'}`}>{l.delta > 0 ? '+' : ''}{l.delta.toLocaleString('fr-FR')}</b>
-              <span className="muted num" style={{ fontSize: 12, width: 70, textAlign: 'right' }}>{l.balance.toLocaleString('fr-FR')}</span>
+              <b className={`num ${l.delta > 0 ? 'pos' : 'neg'}`}>{l.delta > 0 ? '+' : ''}{l.delta.toLocaleString(intlLocale())}</b>
+              <span className="muted num" style={{ fontSize: 12, width: 70, textAlign: 'right' }}>{l.balance.toLocaleString(intlLocale())}</span>
             </div>
           ))}
         </div>

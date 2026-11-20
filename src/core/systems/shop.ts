@@ -11,6 +11,7 @@ import { dexCount } from './dex';
 import { canAfford, spend } from './economy';
 import { addIncubator } from './incubation';
 import { addEgg, addItem, eggStorageFull } from './inventory';
+import { tr } from '../../i18n';
 
 export function offerLabel(o: ShopOffer): string {
   switch (o.kind) {
@@ -35,7 +36,7 @@ export function offerStatus(state: GameState, o: ShopOffer): OfferStatus {
   if (o.kind === 'decoration' && o.ref in state.sanctuary.decorations) return { state: 'owned' };
   if (o.kind === 'perk' && state.unlocks.perks.includes(o.ref)) return { state: 'owned' };
   if (o.requires?.dexCount && dexCount(state) < o.requires.dexCount) {
-    return { state: 'locked', reason: `Découvre ${o.requires.dexCount} espèces` };
+    return { state: 'locked', reason: tr('Découvre {n} espèces', { n: o.requires.dexCount }) };
   }
   if (o.kind === 'incubator_slot' && state.incubators.length !== o.slotNumber - 1) {
     return { state: 'locked', reason: `Achète d'abord l'incubateur n°${o.slotNumber - 1}` };
@@ -47,14 +48,14 @@ export function offerStatus(state: GameState, o: ShopOffer): OfferStatus {
 
 export function buy(draft: GameState, offerId: string, ctx: ActionContext, events: GameEvent[]): void {
   const o = SHOP_OFFERS.find((x) => x.id === offerId);
-  assertGame(o, 'unknown_offer', 'Offre introuvable.');
+  assertGame(o, 'unknown_offer', tr('Offre introuvable.'));
   const status = offerStatus(draft, o);
-  if (status.state === 'owned') throw new GameError('owned', 'Tu possèdes déjà cet article.');
-  if (status.state === 'locked') throw new GameError('locked', `Article verrouillé : ${status.reason}.`);
+  if (status.state === 'owned') throw new GameError('owned', tr('Tu possèdes déjà cet article.'));
+  if (status.state === 'locked') throw new GameError('locked', tr('Article verrouillé : {reason}.', { reason: status.reason }));
   const label = offerLabel(o);
-  spend(draft, o.price.currency, o.price.amount, `Boutique : ${label}`, ctx.now);
+  spend(draft, o.price.currency, o.price.amount, tr('Boutique : {label}', { label }), ctx.now);
   switch (o.kind) {
-    case 'egg': addEgg(draft, o.ref, 'Boutique', ctx.now); break;
+    case 'egg': addEgg(draft, o.ref, tr('Boutique'), ctx.now); break;
     case 'item': addItem(draft, o.ref, o.quantity); break;
     case 'incubator_slot': addIncubator(draft); break;
     case 'ambiance': draft.unlocks.ambiances.push(o.ref); break;

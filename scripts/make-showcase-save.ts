@@ -20,4 +20,5 @@ if (mode === 'species') {
   muts.forEach((m, i) => { const c = createCreature(s, ['tisonnet','perlouille','lichenou','songelin','etincelou','frimelot'][i % 6]!, [m], { kind: 'starter' }, ctx); c.genes.hue = 0; c.nickname = MUTATIONS[m]!.name; c.hatchedAt = now - i; s.creatures.push(c); });
   const c = createCreature(s, 'cometuse', ['doree', 'cristalline', 'florale', 'mutante'], { kind: 'starter' }, ctx); c.nickname = 'Cumul x4'; c.hatchedAt = now - 50; s.creatures.push(c);
 }
+s.settings.locale = 'fr'; // les tests de bout en bout lisent l'interface en français
 writeFileSync(process.argv[3]!, serialize(s, now));

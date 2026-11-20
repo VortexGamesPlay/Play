@@ -16,6 +16,7 @@ import { conditionText, fmtDateTime, foodTagName } from '../format';
 import { formatPct } from './OddsModal';
 import { ELEMENTS } from '@data/elements';
 import { RECIPES } from '@data/recipes';
+import { tr } from '../../i18n';
 
 /** Remonte jusqu'à la forme de base puis liste toute la lignée. */
 function evolutionLine(sp: SpeciesDef): SpeciesDef[] {
@@ -47,20 +48,20 @@ export function DexDetail({ speciesId }: { speciesId: string }) {
       <div className="stack dex-detail" style={style}>
         <div className="dex-detail-art unknown"><CreatureArt speciesId={speciesId} size={190} anim="none" silhouette /></div>
         <div style={{ textAlign: 'center' }}>
-          <div className="muted num" style={{ fontWeight: 800 }}>N° {String(sp.dex).padStart(3, '0')}</div>
-          <h2>{sp.rarity === 'secret' ? 'Entrée scellée' : 'Espèce inconnue'}</h2>
-          <p className="soft" style={{ marginTop: 6 }}>{sp.rarity === 'secret' ? 'Les archives refusent de s\'ouvrir. Certains disent qu\'il faut unir deux forces opposées…' : 'Une silhouette aperçue dans les vieilles archives. Personne ne l\'a encore élevée dans ce sanctuaire.'}</p>
+          <div className="muted num" style={{ fontWeight: 800 }}>{tr('N°')} {String(sp.dex).padStart(3, '0')}</div>
+          <h2>{sp.rarity === 'secret' ? tr('Entrée scellée') : tr('Espèce inconnue')}</h2>
+          <p className="soft" style={{ marginTop: 6 }}>{sp.rarity === 'secret' ? tr('Les archives refusent de s\'ouvrir. Certains disent qu\'il faut unir deux forces opposées…') : tr('Une silhouette aperçue dans les vieilles archives. Personne ne l\'a encore élevée dans ce sanctuaire.')}</p>
         </div>
-        <h3 className="detail-h">Indices</h3>
+        <h3 className="detail-h">{tr('Indices')}</h3>
         <div className="stack" style={{ gap: 8 }}>
           {eggs.length > 0 && (
-            <div className="status-panel"><Icon name="egg" /><div><b>Peut éclore de :</b><div className="row-wrap" style={{ marginTop: 6 }}>{eggs.map((e) => <button key={e.id} className="chip" onClick={() => openModal({ kind: 'odds', eggType: e.id })}>{e.name} · {formatPct(speciesOdds(e.id).find((o) => o.speciesId === speciesId)!.probability)}</button>)}</div></div></div>
+            <div className="status-panel"><Icon name="egg" /><div><b>{tr('Peut éclore de :')}</b><div className="row-wrap" style={{ marginTop: 6 }}>{eggs.map((e) => <button key={e.id} className="chip" onClick={() => openModal({ kind: 'odds', eggType: e.id })}>{e.name} · {formatPct(speciesOdds(e.id).find((o) => o.speciesId === speciesId)!.probability)}</button>)}</div></div></div>
           )}
-          {sp.obtainableBy.includes('evolution') && <div className="status-panel"><Icon name="sparkle" /><p>Cette créature naît de l'évolution d'une autre espèce. Observe les fiches de tes créatures : leurs chemins d'évolution y sont décrits.</p></div>}
+          {sp.obtainableBy.includes('evolution') && <div className="status-panel"><Icon name="sparkle" /><p>{tr('Cette créature naît de l\'évolution d\'une autre espèce. Observe les fiches de tes créatures : leurs chemins d\'évolution y sont décrits.')}</p></div>}
           {RECIPES.filter((r) => r.result === speciesId).map((r) => (
-            <div key={r.id} className="status-panel"><Icon name="flask" /><p>Une recette du Laboratoire génétique murmure : <b>« {r.hint} »</b></p></div>
+            <div key={r.id} className="status-panel"><Icon name="flask" /><p>{tr('Une recette du Laboratoire génétique murmure :')} <b>« {r.hint} »</b></p></div>
           ))}
-          <div className="status-panel"><ElementIcon element={sp.element} style={{ color: ELEMENTS[sp.element].color }} /><p>Une trace d'énergie <b>{ELEMENTS[sp.element].name}</b> a été relevée.</p></div>
+          <div className="status-panel"><ElementIcon element={sp.element} style={{ color: ELEMENTS[sp.element].color }} /><p>{tr('Une trace d\'énergie')} <b>{ELEMENTS[sp.element].name}</b> {tr('a été relevée.')}</p></div>
         </div>
       </div>
     );
@@ -71,20 +72,20 @@ export function DexDetail({ speciesId }: { speciesId: string }) {
     <div className="stack dex-detail" style={style}>
       <div className="dex-detail-art"><CreatureArt speciesId={speciesId} size={190} seed={speciesId} /></div>
       <div style={{ textAlign: 'center' }}>
-        <div className="muted num" style={{ fontWeight: 800 }}>N° {String(sp.dex).padStart(3, '0')} · {sp.family}</div>
+        <div className="muted num" style={{ fontWeight: 800 }}>{tr('N°')} {String(sp.dex).padStart(3, '0')} · {sp.family}</div>
         <h2 style={{ fontSize: 26 }}>{sp.name}</h2>
         <div className="row-wrap" style={{ justifyContent: 'center', marginTop: 6 }}><RarityBadge rarity={sp.rarity} /><ElementBadge element={sp.element} /><span className="badge soft-badge">{{ bebe: 'Bébé', juvenile: 'Juvénile', adulte: 'Adulte', ancestral: 'Ancestral' }[sp.stage]}</span></div>
         <p className="soft" style={{ marginTop: 10 }}>{sp.description}</p>
       </div>
 
       <dl className="kv">
-        <dt>Taille moyenne</dt><dd>{sp.sizeCm ? `${sp.sizeCm} cm` : '???'}</dd>
-        <dt>Poids moyen</dt><dd>{sp.weightKg ? `${sp.weightKg} kg` : '???'}</dd>
-        <dt>Aliments préférés</dt><dd>{sp.favoriteFood.map(foodTagName).join(', ')}</dd>
-        <dt>Obtenue</dt><dd>{entry!.obtainedCount} fois · première le {fmtDateTime(entry!.firstObtainedAt!)}</dd>
+        <dt>{tr('Taille moyenne')}</dt><dd>{sp.sizeCm ? `${sp.sizeCm} cm` : '???'}</dd>
+        <dt>{tr('Poids moyen')}</dt><dd>{sp.weightKg ? `${sp.weightKg} kg` : '???'}</dd>
+        <dt>{tr('Aliments préférés')}</dt><dd>{sp.favoriteFood.map(foodTagName).join(', ')}</dd>
+        <dt>{tr('Obtenue')}</dt><dd>{entry!.obtainedCount} {tr('fois · première le')} {fmtDateTime(entry!.firstObtainedAt!)}</dd>
       </dl>
 
-      <h3 className="detail-h">Statistiques de base</h3>
+      <h3 className="detail-h">{tr('Statistiques de base')}</h3>
       <div className="stats">
         {([['PV', sp.baseStats.hp, '#3fcf9f'], ['Attaque', sp.baseStats.atk, '#ff7a5c'], ['Défense', sp.baseStats.def, '#5cb8ff'], ['Vitesse', sp.baseStats.spd, '#ffc23d']] as const).map(([l, v, c]) => (
           <div key={l} className="stat-row"><span className="stat-l">{l}</span><Bar value={v / max} fill={c} size="thin" /><b className="num">{v}</b></div>
@@ -93,7 +94,7 @@ export function DexDetail({ speciesId }: { speciesId: string }) {
 
       {line.length > 1 && (
         <>
-          <h3 className="detail-h">Lignée d'évolution</h3>
+          <h3 className="detail-h">{tr('Lignée d\'évolution')}</h3>
           <div className="evo-line">
             {line.map((s, i) => {
               const k = isDiscovered(state, s.id);
@@ -112,12 +113,12 @@ export function DexDetail({ speciesId }: { speciesId: string }) {
         </>
       )}
 
-      <h3 className="detail-h">Variantes observées <span className="badge soft-badge">{entry!.variants.length}/{Object.keys(MUTATIONS).length}</span></h3>
+      <h3 className="detail-h">{tr('Variantes observées')} <span className="badge soft-badge">{entry!.variants.length}/{Object.keys(MUTATIONS).length}</span></h3>
       <div className="variant-grid">
         {Object.values(MUTATIONS).map((m) => {
           const seen = entry!.variants.includes(m.id);
           return (
-            <div key={m.id} className={`variant ${seen ? 'seen' : ''}`} title={seen ? m.description : 'Variante non observée'}>
+            <div key={m.id} className={`variant ${seen ? 'seen' : ''}`} title={seen ? m.description : tr('Variante non observée')}>
               {seen ? <CreatureArt speciesId={speciesId} mutations={[m.id]} size={56} anim="none" /> : <CreatureArt speciesId={speciesId} size={56} anim="none" silhouette />}
               <span>{seen ? m.name : '?'}</span>
             </div>
@@ -127,7 +128,7 @@ export function DexDetail({ speciesId }: { speciesId: string }) {
 
       {eggs.length > 0 && (
         <>
-          <h3 className="detail-h">Où la trouver</h3>
+          <h3 className="detail-h">{tr('Où la trouver')}</h3>
           <div className="row-wrap">{eggs.map((e) => <button key={e.id} className="chip" onClick={() => openModal({ kind: 'odds', eggType: e.id })}>{e.name} · {formatPct(speciesOdds(e.id).find((o) => o.speciesId === speciesId)!.probability)}</button>)}</div>
         </>
       )}

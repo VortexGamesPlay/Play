@@ -8,6 +8,7 @@ import { essencePerHour, gardenLevel, zoneBonus } from './buildings';
 import { getSpecies, harvestRatePerHour } from './creatures';
 import { grant } from './economy';
 import { isAway } from './exploration';
+import { tr } from '../../i18n';
 
 /** Rendement horaire d'une créature dans le sanctuaire (bonus de zone compris). */
 export function creatureRate(state: GameState, c: CreatureInstance): number {
@@ -50,9 +51,9 @@ export function harvest(draft: GameState, ctx: ActionContext, events: GameEvent[
   const coins = pendingHarvest(draft, ctx.now);
   const produce = pendingProduce(draft, ctx.now);
   const hasProduce = (produce.essence ?? 0) > 0 || Object.keys(produce.items ?? {}).length > 0;
-  assertGame(coins > 0 || hasProduce, 'nothing_to_harvest', 'Rien à récolter pour l\'instant.');
-  if (coins > 0) grant(draft, 'coins', coins, 'Récolte du sanctuaire', ctx.now);
-  if (produce.essence) grant(draft, 'essence', produce.essence, 'Observatoire de recherche', ctx.now);
+  assertGame(coins > 0 || hasProduce, 'nothing_to_harvest', tr('Rien à récolter pour l\'instant.'));
+  if (coins > 0) grant(draft, 'coins', coins, tr('Récolte du sanctuaire'), ctx.now);
+  if (produce.essence) grant(draft, 'essence', produce.essence, tr('Observatoire de recherche'), ctx.now);
   for (const [item, q] of Object.entries(produce.items ?? {})) draft.inventory[item] = (draft.inventory[item] ?? 0) + (q ?? 0);
   draft.sanctuary.lastHarvestAt = ctx.now;
   draft.stats.harvests += 1;

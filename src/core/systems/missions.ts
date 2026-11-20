@@ -7,6 +7,7 @@ import { dayKeyOf } from '../time';
 import type { ActionContext, GameState } from '../types';
 import { grantReward } from './economy';
 import { questProgress } from './quests';
+import { tr } from '../../i18n';
 
 /** Lundi de la semaine (clé hebdomadaire). */
 export function weekKeyOf(now: number): string {
@@ -63,28 +64,28 @@ export function missionProgress(state: GameState, m: MissionDef, period: 'day' |
 export function claimMission(draft: GameState, id: string, period: 'day' | 'week', ctx: ActionContext, events: GameEvent[]): void {
   const list = period === 'day' ? dailyMissions(ctx.dayKey) : weeklyMissions(weekKeyOf(ctx.now));
   const m = list.find((x) => x.id === id);
-  assertGame(m, 'unknown_mission', 'Cette mission n\'est pas active.');
+  assertGame(m, 'unknown_mission', tr('Cette mission n\'est pas active.'));
   const p = missionProgress(draft, m, period, ctx.now);
-  assertGame(!p.claimed, 'claimed', 'Récompense déjà récupérée.');
-  assertGame(p.done, 'incomplete', 'Mission pas encore terminée.');
+  assertGame(!p.claimed, 'claimed', tr('Récompense déjà récupérée.'));
+  assertGame(p.done, 'incomplete', tr('Mission pas encore terminée.'));
   (period === 'day' ? draft.missions.dayClaimed : draft.missions.weekClaimed).push(id);
   grantReward(draft, m.reward, `Mission : ${m.title}`, ctx, events);
 }
 
 export function claimAchievement(draft: GameState, id: string, ctx: ActionContext, events: GameEvent[]): void {
   const a = ACHIEVEMENTS.find((x) => x.id === id);
-  assertGame(a, 'unknown', 'Succès inconnu.');
-  assertGame(!draft.achievements.includes(id), 'claimed', 'Succès déjà obtenu.');
-  assertGame(questProgress(draft, { ...a, chapter: '', goal: a.goal }).done, 'incomplete', 'Succès pas encore accompli.');
+  assertGame(a, 'unknown', tr('Succès inconnu.'));
+  assertGame(!draft.achievements.includes(id), 'claimed', tr('Succès déjà obtenu.'));
+  assertGame(questProgress(draft, { ...a, chapter: '', goal: a.goal }).done, 'incomplete', tr('Succès pas encore accompli.'));
   draft.achievements.push(id);
   grantReward(draft, a.reward, `Succès : ${a.title}`, ctx, events);
 }
 
 export function claimSideQuest(draft: GameState, id: string, ctx: ActionContext, events: GameEvent[]): void {
   const q = SIDE_QUESTS.find((x) => x.id === id);
-  assertGame(q, 'unknown', 'Quête inconnue.');
-  assertGame(!draft.sideQuests.includes(id), 'claimed', 'Quête déjà terminée.');
-  assertGame(questProgress(draft, q).done, 'incomplete', 'Objectif pas encore atteint.');
+  assertGame(q, 'unknown', tr('Quête inconnue.'));
+  assertGame(!draft.sideQuests.includes(id), 'claimed', tr('Quête déjà terminée.'));
+  assertGame(questProgress(draft, q).done, 'incomplete', tr('Objectif pas encore atteint.'));
   draft.sideQuests.push(id);
   grantReward(draft, q.reward, `Quête : ${q.title}`, ctx, events);
 }

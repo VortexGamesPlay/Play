@@ -16,4 +16,5 @@ for (const [id, lvl] of [['fournaillon', 16], ['clapotine', 16], ['bosquelin', 1
   c.level = lvl; s.creatures.push(c); registerInDex(s, c, ctx);
 }
 s.exploration.expeditionsByBiome.foret = 3;
+s.settings.locale = 'fr'; // les tests de bout en bout lisent l'interface en français
 writeFileSync(process.argv[2]!, serialize(s, now));

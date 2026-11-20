@@ -9,6 +9,7 @@ import { createCreature } from './creatures';
 import { registerInDex } from './dex';
 import { isReady } from './incubation';
 import { mutationOdds, speciesOdds } from './odds';
+import { tr } from '../../i18n';
 
 /** Tire les mutations : un tirage par groupe, d'après les probabilités effectives de odds.ts. */
 export function rollMutations(eggType: string, ambiance: string, night: boolean, ctx: ActionContext, takenGroups: Set<string> = new Set()): MutationId[] {
@@ -32,10 +33,10 @@ export function rollMutations(eggType: string, ambiance: string, night: boolean,
 
 export function hatch(draft: GameState, slotIndex: number, ctx: ActionContext, events: GameEvent[]): void {
   const slot = draft.incubators[slotIndex];
-  assertGame(slot && slot.egg, 'slot_empty', 'Cet incubateur est vide.');
-  assertGame(isReady(slot, ctx.now), 'not_ready', 'Cet œuf n\'est pas encore prêt.');
+  assertGame(slot && slot.egg, 'slot_empty', tr('Cet incubateur est vide.'));
+  assertGame(isReady(slot, ctx.now), 'not_ready', tr('Cet œuf n\'est pas encore prêt.'));
   assertGame(draft.creatures.length < creatureCap(draft), 'sanctuary_full',
-    `Ton sanctuaire est plein (${creatureCap(draft)} créatures). Agrandis les Nichoirs ou libère une créature.`);
+    tr('Ton sanctuaire est plein ({p0} créatures). Agrandis les Nichoirs ou libère une créature.', { p0: creatureCap(draft) }));
 
   const egg = slot.egg;
   const night = isNight(ctx.hour);

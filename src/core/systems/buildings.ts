@@ -6,6 +6,7 @@ import { GameError, assertGame } from '../errors';
 import type { ActionContext, ElementId, GameState } from '../types';
 import { spend } from './economy';
 import { removeItem } from './inventory';
+import { tr } from '../../i18n';
 
 export function buildingLevel(state: GameState, id: string): number {
   return state.sanctuary.buildings[id] ?? BUILDING_BY_ID[id]?.startLevel ?? 0;
@@ -40,15 +41,15 @@ export function upgradeCost(state: GameState, id: string) {
 
 export function upgradeBuilding(draft: GameState, id: string, ctx: ActionContext): void {
   const b = BUILDING_BY_ID[id];
-  assertGame(b, 'unknown_building', 'Bâtiment inconnu.');
+  assertGame(b, 'unknown_building', tr('Bâtiment inconnu.'));
   const cost = upgradeCost(draft, id);
-  assertGame(cost, 'max_level', `${b.name} est déjà au niveau maximum.`);
+  assertGame(cost, 'max_level', tr('{name} est déjà au niveau maximum.', { name: b.name }));
   for (const [item, qty] of Object.entries(cost.materials)) {
     if ((draft.inventory[item] ?? 0) < (qty ?? 0)) {
-      throw new GameError('missing_material', `Il manque ${(qty ?? 0) - (draft.inventory[item] ?? 0)} × ${ITEMS[item]?.name}. Explore les biomes pour en trouver.`);
+      throw new GameError('missing_material', tr('Il manque {p0} × {name}. Explore les biomes pour en trouver.', { p0: (qty ?? 0) - (draft.inventory[item] ?? 0), name: ITEMS[item]?.name }));
     }
   }
-  if (cost.coins > 0) spend(draft, 'coins', cost.coins, `Construction : ${b.name}`, ctx.now);
+  if (cost.coins > 0) spend(draft, 'coins', cost.coins, tr('Construction : {name}', { name: b.name }), ctx.now);
   for (const [item, qty] of Object.entries(cost.materials)) if (qty) removeItem(draft, item, qty);
   draft.sanctuary.buildings[id] = buildingLevel(draft, id) + 1;
   draft.stats.buildingUpgrades += 1;
@@ -59,7 +60,7 @@ export function totalBuildingLevels(state: GameState): number {
 }
 
 export function toggleDecoration(draft: GameState, id: string): void {
-  assertGame(id in draft.sanctuary.decorations, 'not_owned', 'Tu ne possèdes pas cette décoration.');
+  assertGame(id in draft.sanctuary.decorations, 'not_owned', tr('Tu ne possèdes pas cette décoration.'));
   draft.sanctuary.decorations[id] = !draft.sanctuary.decorations[id];
 }
 
@@ -70,7 +71,7 @@ export function unlockedThemes(state: GameState): string[] {
 }
 
 export function setTheme(draft: GameState, theme: string): void {
-  assertGame(unlockedThemes(draft).includes(theme), 'theme_locked', 'Ce terrain se débloque en explorant le biome correspondant.');
+  assertGame(unlockedThemes(draft).includes(theme), 'theme_locked', tr('Ce terrain se débloque en explorant le biome correspondant.'));
   draft.sanctuary.theme = theme;
 }
 

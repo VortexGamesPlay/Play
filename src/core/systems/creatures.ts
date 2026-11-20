@@ -9,6 +9,7 @@ import type { GameEvent } from '../events';
 import { nextUid } from '../ids';
 import { pick, randFloat, randInt } from '../rng';
 import type { ActionContext, CreatureInstance, CreatureOrigin, GameState, Genes, MutationId, SpeciesId } from '../types';
+import { tr } from '../../i18n';
 
 /** Taille et poids individuels : moyenne de l'espèce modulée par le gène de taille (et la mutation Mutante). */
 export function bodyMetrics(sp: SpeciesDef, genes: Genes, mutations: MutationId[]): { sizeCm: number; weightKg: number } {
@@ -104,7 +105,7 @@ export function displayName(c: CreatureInstance): string {
 
 export function findCreature(state: GameState, uid: string): CreatureInstance {
   const c = state.creatures.find((x) => x.uid === uid);
-  assertGame(c, 'unknown_creature', 'Créature introuvable.');
+  assertGame(c, 'unknown_creature', tr('Créature introuvable.'));
   return c;
 }
 
@@ -143,8 +144,8 @@ export function toggleFavorite(draft: GameState, uid: string): void {
 
 export function releaseCreature(draft: GameState, uid: string, ctx: ActionContext, events: GameEvent[], grantEssence: (n: number) => void): void {
   const c = findCreature(draft, uid);
-  assertGame(!draft.expeditions.some((e) => e.creatureUids.includes(uid)), 'away', 'Cette créature est partie en expédition.');
-  assertGame(!c.favorite, 'favorite_locked', 'Retire d\'abord cette créature de tes favoris.');
+  assertGame(!draft.expeditions.some((e) => e.creatureUids.includes(uid)), 'away', tr('Cette créature est partie en expédition.'));
+  assertGame(!c.favorite, 'favorite_locked', tr('Retire d\'abord cette créature de tes favoris.'));
   const essence = releaseValue(c);
   draft.creatures = draft.creatures.filter((x) => x.uid !== uid);
   draft.stats.released += 1;

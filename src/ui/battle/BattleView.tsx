@@ -13,6 +13,7 @@ import { RewardList } from '../screens/ExplorationScreen';
 import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
 import { COMBAT_SFX, playSfx, preloadSfx, SKILL_ELEMENTS, type Sfx } from '../../services/audio';
+import { tr, tp } from '../../i18n';
 
 interface UnitView { hp: number; alive: boolean; statuses: StatusId[] }
 interface Floater { id: number; key: string; text: string; kind: 'dmg' | 'crit' | 'heal' | 'info' }
@@ -54,16 +55,16 @@ function BattleUnitCard({ u, view, acting, hit, targetable, onTarget, floaters }
   const size = u.boss ? 150 : 104;
   return (
     <button className={`bunit ${u.side} ${view.alive ? '' : 'ko'} ${acting ? 'acting' : ''} ${hit ? 'hit' : ''} ${targetable ? 'targetable' : ''} ${u.boss ? 'boss' : ''}`}
-      onClick={targetable ? onTarget : undefined} disabled={!targetable} aria-label={`${u.name}, ${Math.round(view.hp)} PV`}>
+      onClick={targetable ? onTarget : undefined} disabled={!targetable} aria-label={tr('{name}, {p1} PV', { name: u.name, p1: Math.round(view.hp) })}>
       <div className="bunit-floaters">{floaters.map((f) => <span key={f.id} className={`floater ${f.kind}`}>{f.text}</span>)}</div>
       <div className="bunit-art" style={{ transform: u.side === 'B' ? 'scaleX(-1)' : undefined }}>
         <CreatureArt speciesId={u.speciesId} mutations={u.mutations} hue={u.hue} size={size} anim={!view.alive ? 'none' : acting ? 'attack' : 'idle'} seed={u.key} />
       </div>
       <div className="bunit-info">
-        <div className="bunit-name"><ElementIcon element={u.element} style={{ color: ELEMENTS[u.element].color }} /><em className="bname">{u.name}</em><span>Nv {u.level}</span>{u.boss && <b className="boss-tag">Gardien</b>}</div>
+        <div className="bunit-name"><ElementIcon element={u.element} style={{ color: ELEMENTS[u.element].color }} /><em className="bname">{u.name}</em><span>{tr('Nv')} {u.level}</span>{u.boss && <b className="boss-tag">{tr('Gardien')}</b>}</div>
         <div className={`hpbar ${pct < 0.25 ? 'low' : pct < 0.5 ? 'mid' : ''}`}><i style={{ width: `${pct * 100}%` }} /><span className="num">{Math.ceil(view.hp)}/{u.maxHp}</span></div>
         <div className="bunit-row">
-          <span className="energy" aria-label={`Énergie ${u.energy}`}>{Array.from({ length: 5 }, (_, i) => <i key={i} className={i < u.energy ? 'on' : ''} />)}</span>
+          <span className="energy" aria-label={tr('Énergie {energy}', { energy: u.energy })}>{Array.from({ length: 5 }, (_, i) => <i key={i} className={i < u.energy ? 'on' : ''} />)}</span>
           {view.statuses.map((s) => <span key={s} className="bstatus tip" data-tip={`${STATUSES[s].name} : ${STATUSES[s].description}`} style={{ background: STATUSES[s].color }} />)}
         </div>
       </div>
@@ -197,16 +198,16 @@ export function BattleView() {
   const side = (s: 'A' | 'B') => battle.units.filter((u) => u.side === s);
 
   return (
-    <div className="battle" role="dialog" aria-modal="true" aria-label="Combat">
+    <div className="battle" role="dialog" aria-modal="true" aria-label={tr('Combat')}>
       <BattleBackdrop kind={pending.kind} refId={pending.ref} />
       <div className="battle-top">
-        <button className="btn btn-ghost btn-sm" style={{ visibility: result || battle.ended ? 'hidden' : 'visible' }} onClick={() => openModal({ kind: 'confirm', danger: true, title: 'Abandonner le combat ?', confirmLabel: 'Abandonner', body: 'Le combat sera compté comme une défaite, sans récompense.', onConfirm: () => { dispatch({ type: 'abandonBattle' }); closeModal(); } })}>
-          <Icon name="close" />Fuir
+        <button className="btn btn-ghost btn-sm" style={{ visibility: result || battle.ended ? 'hidden' : 'visible' }} onClick={() => openModal({ kind: 'confirm', danger: true, title: tr('Abandonner le combat ?'), confirmLabel: tr('Abandonner'), body: tr('Le combat sera compté comme une défaite, sans récompense.'), onConfirm: () => { dispatch({ type: 'abandonBattle' }); closeModal(); } })}>
+          <Icon name="close" />{tr('Fuir')}
         </button>
-        <span className="battle-round">Manche {battle.round}</span>
+        <span className="battle-round">{tr('Manche')} {battle.round}</span>
         <div className="row" style={{ gap: 6 }}>
-          <button className={`chip ${fast ? 'active' : ''}`} onClick={() => setFast(!fast)}>×2</button>
-          <button className={`chip ${auto ? 'active' : ''}`} onClick={() => setAuto(!auto)}><Icon name="motion" />Auto</button>
+          <button className={`chip ${fast ? 'active' : ''}`} onClick={() => setFast(!fast)}>{tr('×2')}</button>
+          <button className={`chip ${auto ? 'active' : ''}`} onClick={() => setAuto(!auto)}><Icon name="motion" />{tr('Auto')}</button>
         </div>
       </div>
       <div className="battle-field">
@@ -217,10 +218,10 @@ export function BattleView() {
 
       {result ? (
         <div className="battle-panel result">
-          <h2 className={result.won ? 'win' : 'lose'}>{result.won ? 'Victoire !' : 'Défaite'}</h2>
-          <p className="soft">{result.won ? `Victoire en ${result.rounds} manche${result.rounds > 1 ? 's' : ''}.` : 'Entraîne tes créatures, varie les éléments et réessaie !'} Expérience : +{result.xp} par créature.</p>
-          {Object.keys(result.reward).length > 0 ? <RewardList r={result.reward} /> : result.won && <p className="muted" style={{ fontSize: 13 }}>Récompense déjà obtenue aujourd'hui.</p>}
-          <button className="btn btn-pink" onClick={closeModal}>Continuer</button>
+          <h2 className={result.won ? 'win' : 'lose'}>{result.won ? tr('Victoire !') : tr('Défaite')}</h2>
+          <p className="soft">{result.won ? tp(result.rounds, 'Victoire en {n} manche.', 'Victoire en {n} manches.') : tr('Entraîne tes créatures, varie les éléments et réessaie !')} {tr('Expérience : +')}{result.xp} {tr('par créature.')}</p>
+          {Object.keys(result.reward).length > 0 ? <RewardList r={result.reward} /> : result.won && <p className="muted" style={{ fontSize: 13 }}>{tr('Récompense déjà obtenue aujourd\'hui.')}</p>}
+          <button className="btn btn-pink" onClick={closeModal}>{tr('Continuer')}</button>
         </div>
       ) : (
         <div className="battle-panel">
@@ -228,7 +229,7 @@ export function BattleView() {
             <>
               <div className="row" style={{ marginBottom: 8 }}>
                 <b>{awaitingUnit.name}</b><span className="energy big">{Array.from({ length: 5 }, (_, i) => <i key={i} className={i < awaitingUnit.energy ? 'on' : ''} />)}</span>
-                {selectedSkill && <span className="muted" style={{ fontSize: 13, fontWeight: 800 }}>Choisis une cible pour {selectedSkill.name}<button className="btn btn-ghost btn-sm" style={{ marginLeft: 8 }} onClick={() => setSelected(null)}>Annuler</button></span>}
+                {selectedSkill && <span className="muted" style={{ fontSize: 13, fontWeight: 800 }}>{tr('Choisis une cible pour')} {selectedSkill.name}<button className="btn btn-ghost btn-sm" style={{ marginLeft: 8 }} onClick={() => setSelected(null)}>{tr('Annuler')}</button></span>}
               </div>
               <div className="skills">
                 {awaitingUnit.skills.map((id) => {
@@ -238,14 +239,14 @@ export function BattleView() {
                     <button key={id} className={`skill ${selected === id ? 'on' : ''}`} disabled={!ok} onClick={() => choose(id)} title={sk.description}
                       style={{ ['--sc' as string]: sk.element ? ELEMENTS[sk.element].color : '#8f88b0' } as CSSProperties}>
                       <span className="skill-name">{sk.element && <ElementIcon element={sk.element} style={{ color: ELEMENTS[sk.element].color }} />}{sk.name}</span>
-                      <span className="skill-meta">{sk.power > 0 ? `Puissance ${sk.power}` : sk.heal ? `Soin ${Math.round(sk.heal * 100)} %` : 'Soutien'}{sk.target === 'allEnemies' ? ' · tous' : sk.target === 'allAllies' ? ' · équipe' : ''}</span>
+                      <span className="skill-meta">{sk.power > 0 ? tr('Puissance {power}', { power: sk.power }) : sk.heal ? tr('Soin {p0} %', { p0: Math.round(sk.heal * 100) }) : tr('Soutien')}{sk.target === 'allEnemies' ? tr(' · tous') : sk.target === 'allAllies' ? tr(' · équipe') : ''}</span>
                       <span className="skill-cost">{Array.from({ length: sk.energy }, (_, i) => <i key={i} />)}{sk.energy === 0 && 'gratuit'}</span>
                     </button>
                   );
                 })}
               </div>
             </>
-          ) : <p className="soft" style={{ textAlign: 'center', fontWeight: 800 }}>{auto && !battle.ended ? 'Mode automatique…' : '…'}</p>}
+          ) : <p className="soft" style={{ textAlign: 'center', fontWeight: 800 }}>{auto && !battle.ended ? tr('Mode automatique…') : '…'}</p>}
         </div>
       )}
     </div>

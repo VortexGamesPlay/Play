@@ -44,6 +44,9 @@ export function t(fr: string, params?: Record<string, string | number>): string 
   return fill(en ?? fr, params);
 }
 
+/** Alias de t() utilisé dans l'interface (évite les conflits avec les variables nommées « t »). */
+export const tr = t;
+
 /** Choisit la forme singulier / pluriel. */
 export function tp(n: number, one: string, many: string, params?: Record<string, string | number>): string {
   return t(Math.abs(n) >= 2 ? many : one, { n, ...params });

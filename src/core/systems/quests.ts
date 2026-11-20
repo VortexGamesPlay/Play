@@ -7,6 +7,7 @@ import { dexCount, variantCount } from './dex';
 import { grantReward } from './economy';
 import { unlockedBiomeCount } from './exploration';
 import { totalBuildingLevels } from './buildings';
+import { tr } from '../../i18n';
 
 export function questProgress(state: GameState, q: QuestDef): { current: number; target: number; done: boolean } {
   const g = q.goal;
@@ -34,8 +35,8 @@ export function activeQuest(state: GameState): QuestDef | null {
 
 export function claimQuest(draft: GameState, questId: string, ctx: ActionContext, events: GameEvent[]): void {
   const q = activeQuest(draft);
-  assertGame(q && q.id === questId, 'quest_unavailable', 'Cette quête n\'est pas disponible.');
-  assertGame(questProgress(draft, q).done, 'quest_incomplete', 'Objectif pas encore atteint.');
+  assertGame(q && q.id === questId, 'quest_unavailable', tr('Cette quête n\'est pas disponible.'));
+  assertGame(questProgress(draft, q).done, 'quest_incomplete', tr('Objectif pas encore atteint.'));
   draft.quests.claimed.push(q.id);
   grantReward(draft, q.reward, `Quête : ${q.title}`, ctx, events);
 }

@@ -12,6 +12,7 @@ import { grantReward } from './economy';
 import { isAway } from './exploration';
 import { isBiomeUnlocked } from './exploration';
 import { BIOME_BY_ID } from '@data/biomes';
+import { tr } from '../../i18n';
 
 export const MAX_TEAM = 3;
 
@@ -77,35 +78,35 @@ function enemiesFor(state: GameState, kind: PendingBattle['kind'], ref: string):
     for (const l of LEAGUES) {
       const idx = l.fights.findIndex((f) => f.id === ref);
       if (idx < 0) continue;
-      assertGame(leagueUnlocked(state, l.id), 'locked', `Termine d'abord l'arène précédente.`);
-      assertGame(idx <= leagueProgress(state, l.id), 'locked', 'Bats d\'abord les adversaires précédents de cette arène.');
+      assertGame(leagueUnlocked(state, l.id), 'locked', tr('Termine d\'abord l\'arène précédente.'));
+      assertGame(idx <= leagueProgress(state, l.id), 'locked', tr('Bats d\'abord les adversaires précédents de cette arène.'));
       return l.fights[idx]!.enemies;
     }
-    throw new GameError('unknown', 'Combat inconnu.');
+    throw new GameError('unknown', tr('Combat inconnu.'));
   }
   if (kind === 'boss') {
     const b = BOSSES.find((x) => x.id === ref);
-    assertGame(b, 'unknown', 'Gardien inconnu.');
-    assertGame(bossUnlocked(state, b.id), 'locked', `Explore davantage ce biome pour débusquer ce gardien.`);
+    assertGame(b, 'unknown', tr('Gardien inconnu.'));
+    assertGame(bossUnlocked(state, b.id), 'locked', tr('Explore davantage ce biome pour débusquer ce gardien.'));
     return b.enemies;
   }
   const floor = state.combat.towerFloor + 1;
-  assertGame(ref === String(floor), 'bad_floor', 'Étage invalide.');
+  assertGame(ref === String(floor), 'bad_floor', tr('Étage invalide.'));
   return towerEnemies(floor);
 }
 
 export function setTeam(draft: GameState, uids: string[]): void {
   const unique = [...new Set(uids)];
-  assertGame(unique.length <= MAX_TEAM, 'team_size', `${MAX_TEAM} créatures au maximum.`);
-  for (const u of unique) assertGame(draft.creatures.some((c) => c.uid === u), 'unknown_creature', 'Créature introuvable.');
+  assertGame(unique.length <= MAX_TEAM, 'team_size', tr('{MAX_TEAM} créatures au maximum.', { MAX_TEAM }));
+  for (const u of unique) assertGame(draft.creatures.some((c) => c.uid === u), 'unknown_creature', tr('Créature introuvable.'));
   draft.combat.team = unique;
 }
 
 export function startBattle(draft: GameState, kind: PendingBattle['kind'], ref: string, ctx: ActionContext): void {
-  assertGame(!draft.combat.pending, 'pending', 'Un combat est déjà en cours.');
+  assertGame(!draft.combat.pending, 'pending', tr('Un combat est déjà en cours.'));
   const team = draft.combat.team.map((u) => draft.creatures.find((c) => c.uid === u)).filter((c): c is CreatureInstance => !!c);
-  assertGame(team.length >= 1, 'no_team', 'Compose ton équipe de combat (1 à 3 créatures).');
-  for (const c of team) assertGame(!isAway(draft, c.uid), 'away', `${displayName(c)} est en expédition.`);
+  assertGame(team.length >= 1, 'no_team', tr('Compose ton équipe de combat (1 à 3 créatures).'));
+  for (const c of team) assertGame(!isAway(draft, c.uid), 'away', tr('{p0} est en expédition.', { p0: displayName(c) }));
   const enemies = enemiesFor(draft, kind, ref);
   draft.combat.pending = {
     kind, ref, startedAt: ctx.now,
@@ -115,7 +116,7 @@ export function startBattle(draft: GameState, kind: PendingBattle['kind'], ref: 
 }
 
 export function abandonBattle(draft: GameState): void {
-  assertGame(draft.combat.pending, 'no_battle', 'Aucun combat en cours.');
+  assertGame(draft.combat.pending, 'no_battle', tr('Aucun combat en cours.'));
   draft.combat.pending = null;
   draft.stats.battlesLost += 1;
 }
@@ -123,14 +124,14 @@ export function abandonBattle(draft: GameState): void {
 /** Termine le combat : le moteur REJOUE le combat avec les ordres fournis avant toute récompense. */
 export function finishBattle(draft: GameState, inputs: BattleInput[], ctx: ActionContext, events: GameEvent[]): void {
   const p = draft.combat.pending;
-  assertGame(p, 'no_battle', 'Aucun combat en cours.');
+  assertGame(p, 'no_battle', tr('Aucun combat en cours.'));
   let result;
   try {
     result = replay(p.combatants, p.seed, inputs);
   } catch (err) {
-    throw new GameError('invalid_battle', `Combat invalide : ${(err as Error).message}`);
+    throw new GameError('invalid_battle', tr('Combat invalide : {message}', { message: (err as Error).message }));
   }
-  assertGame(result.ended, 'unfinished', 'Le combat n\'est pas terminé.');
+  assertGame(result.ended, 'unfinished', tr('Le combat n\'est pas terminé.'));
   draft.combat.pending = null;
   const won = result.winner === 'A';
   const enemyLevels = p.combatants.filter((c) => c.side === 'B').reduce((s, c) => s + c.level * (c.boss ? 2 : 1), 0);

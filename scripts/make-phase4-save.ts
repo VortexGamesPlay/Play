@@ -19,4 +19,5 @@ ids.forEach((id, i) => {
   s.creatures.push(c); registerInDex(s, c, ctx);
 });
 s.sanctuary.lastHarvestAt = now - 3 * 3600_000;
+s.settings.locale = 'fr'; // les tests de bout en bout lisent l'interface en français
 writeFileSync(process.argv[2]!, serialize(s, now));

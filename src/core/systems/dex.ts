@@ -4,6 +4,7 @@ import { SPECIES_LIST } from '@data/species';
 import type { ActionContext, CreatureInstance, GameState, MutationId } from '../types';
 import { getSpecies } from './creatures';
 import { grant } from './economy';
+import { tr } from '../../i18n';
 
 export interface DexRegistration {
   newSpecies: boolean;
@@ -38,7 +39,7 @@ export function registerInDex(draft: GameState, c: CreatureInstance, ctx: Action
   if (draft.discoveries.length > BALANCE.discoveryLogSize) {
     draft.discoveries.splice(0, draft.discoveries.length - BALANCE.discoveryLogSize);
   }
-  if (crystals > 0) grant(draft, 'crystals', crystals, newSpecies ? `Découverte : ${sp.name}` : `Variante : ${sp.name}`, ctx.now);
+  if (crystals > 0) grant(draft, 'crystals', crystals, newSpecies ? tr('Découverte : {name}', { name: sp.name }) : tr('Variante : {name}', { name: sp.name }), ctx.now);
   return { newSpecies, newVariants, crystalsAwarded: crystals };
 }
 

@@ -7,6 +7,7 @@
 import type { PurchaseRecord } from '@core/types';
 import { PRODUCT_BY_ID, CURRENCY } from '@data/products';
 import { getLocale } from '../../i18n';
+import { tr } from '../../i18n';
 
 type Receipt = Omit<PurchaseRecord, 'at'>;
 
@@ -27,7 +28,7 @@ export const paymentsAvailable = () => paymentsConfig.paypal || paymentsConfig.t
 // ───────────── Mode test ─────────────
 export async function purchaseInTestMode(productId: string): Promise<Receipt> {
   const p = PRODUCT_BY_ID[productId];
-  if (!p) throw new Error('Produit inconnu.');
+  if (!p) throw new Error(tr('Produit inconnu.'));
   await new Promise((r) => setTimeout(r, 400));
   return { orderId: `TEST-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`, productId, provider: 'test', amountCents: p.priceCents, currency: CURRENCY };
 }
@@ -43,7 +44,7 @@ async function supabase() {
     const { data } = await client.auth.getSession();
     if (!data.session) {
       const { error } = await client.auth.signInAnonymously();
-      if (error) throw new Error('Connexion au serveur impossible.');
+      if (error) throw new Error(tr('Connexion au serveur impossible.'));
     }
     return client;
   })();
@@ -74,7 +75,7 @@ async function paypalClientId(): Promise<string> {
     body: '{}',
   }).catch(() => null);
   const data = res ? await res.json().catch(() => ({})) : {};
-  if (!res?.ok || !data.clientId) throw new Error(data.error ?? 'Paiement indisponible pour le moment.');
+  if (!res?.ok || !data.clientId) throw new Error(data.error ?? tr('Paiement indisponible pour le moment.'));
   return data.clientId as string;
 }
 
@@ -84,8 +85,8 @@ function loadPayPalSdk(): Promise<PayPalNamespace> {
     const s = document.createElement('script');
     const locale = getLocale() === 'fr' ? 'fr_FR' : 'en_US';
     s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(clientId)}&currency=${CURRENCY}&intent=capture&components=buttons&locale=${locale}`;
-    s.onload = () => (window.paypal ? resolve(window.paypal) : reject(new Error('PayPal indisponible.')));
-    s.onerror = () => { sdkPromise = null; reject(new Error('Impossible de charger PayPal. Vérifie ta connexion.')); };
+    s.onload = () => (window.paypal ? resolve(window.paypal) : reject(new Error(tr('PayPal indisponible.'))));
+    s.onerror = () => { sdkPromise = null; reject(new Error(tr('Impossible de charger PayPal. Vérifie ta connexion.'))); };
     document.head.appendChild(s);
   })).catch((e) => { sdkPromise = null; throw e; });
   return sdkPromise;
@@ -114,6 +115,6 @@ export async function fetchServerPurchases(): Promise<Receipt[]> {
   if (!paymentsConfig.paypal) return [];
   const client = await supabase();
   const { data, error } = await client.from('purchases').select('order_id, product_id, amount_cents, currency').eq('status', 'captured');
-  if (error) throw new Error('Impossible de récupérer tes achats.');
+  if (error) throw new Error(tr('Impossible de récupérer tes achats.'));
   return (data ?? []).map((r) => ({ orderId: r.order_id, productId: r.product_id, amountCents: r.amount_cents, currency: r.currency, provider: 'paypal' as const }));
 }

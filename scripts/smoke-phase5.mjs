@@ -22,7 +22,7 @@ async function waitResult(p) {
 }
 try {
   for (const [name, vp] of [['desktop', { width: 1366, height: 860 }], ['mobile', { width: 390, height: 844 }]]) {
-    const p = await b.newPage({ viewport: vp });
+    const p = await b.newPage({ locale: 'fr-FR', viewport: vp });
     p.on('pageerror', (e) => errs.push(`[${name}] ${e.message}`)); p.on('console', (m) => m.type() === 'error' && errs.push(`[${name}] ${m.text()}`));
     await p.clock.install({ time: new Date('2026-11-19T15:00:00') });
     await p.goto(URL);

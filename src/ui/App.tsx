@@ -17,6 +17,7 @@ import { ExplorationScreen } from './screens/ExplorationScreen';
 import { ArenaScreen } from './screens/ArenaScreen';
 import { SeasonScreen } from './premium/SeasonScreen';
 import { useEggReadyChime, useMusic } from './hooks/useMusic';
+import { tr } from '../i18n';
 
 function Music() {
   useMusic();
@@ -44,17 +45,18 @@ function Screen() {
 
 export function App() {
   const ready = useGame((s) => s.ready);
+  const locale = useGame((s) => s.state.settings.locale);
   const init = useGame((s) => s.init);
   useEffect(() => {
     void init().then(() => import('./premium/restore').then((m) => m.restorePurchases()).catch(() => { /* hors ligne : réessayé plus tard */ }));
   }, [init]);
   if (!ready) {
-    return <div className="boot"><div className="boot-egg" /><p>Chargement du sanctuaire…</p></div>;
+    return <div className="boot"><div className="boot-egg" /><p>{tr('Chargement du sanctuaire…')}</p></div>;
   }
   return (
     <>
       <Music />
-      <AppShell><Screen /></AppShell>
+      <AppShell key={locale}><Screen /></AppShell>
       <ModalHost />
       <Toasts />
     </>

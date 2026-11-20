@@ -12,6 +12,7 @@ import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
 import { getSpecies } from '@core/systems/creatures';
 import { fmtDateTime } from '../format';
+import { tr } from '../../i18n';
 
 type Cat = 'all' | 'known' | 'unknown' | 'variants' | 'legend' | 'secret' | 'history';
 const LEGEND_TIERS = 4;
@@ -29,13 +30,13 @@ export function DexScreen() {
   const totalVariants = SPECIES_LIST.length * Object.keys(MUTATIONS).length;
 
   const cats: [Cat, string, number][] = [
-    ['all', 'Toutes', SPECIES_LIST.length],
-    ['known', 'Découvertes', known],
-    ['unknown', 'Inconnues', SPECIES_LIST.length - known],
-    ['variants', 'Variantes', variantCount(state)],
-    ['legend', 'Légendaires', SPECIES_LIST.filter((s) => RARITIES[s.rarity].tier >= LEGEND_TIERS && s.rarity !== 'secret').length],
-    ['secret', 'Secrètes', SPECIES_LIST.filter((s) => s.rarity === 'secret').length],
-    ['history', 'Historique', state.discoveries.length],
+    ['all', tr('Toutes'), SPECIES_LIST.length],
+    ['known', tr('Découvertes'), known],
+    ['unknown', tr('Inconnues'), SPECIES_LIST.length - known],
+    ['variants', tr('Variantes'), variantCount(state)],
+    ['legend', tr('Légendaires'), SPECIES_LIST.filter((s) => RARITIES[s.rarity].tier >= LEGEND_TIERS && s.rarity !== 'secret').length],
+    ['secret', tr('Secrètes'), SPECIES_LIST.filter((s) => s.rarity === 'secret').length],
+    ['history', tr('Historique'), state.discoveries.length],
   ];
 
   const list = useMemo(() => SPECIES_LIST.filter((s) => {
@@ -58,14 +59,14 @@ export function DexScreen() {
   return (
     <div className="stack" style={{ gap: 16 }}>
       <div className="card dex-hero">
-        <div className="dex-ring" style={{ ['--p' as string]: pct } as CSSProperties}><b className="num">{pct}%</b><span>complété</span></div>
+        <div className="dex-ring" style={{ ['--p' as string]: pct } as CSSProperties}><b className="num">{pct}%</b><span>{tr('complété')}</span></div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <h2>Bestiaire</h2>
-          <p className="soft" style={{ fontSize: 14 }}>L'encyclopédie des créatures oubliées. Chaque éclosion lève un peu plus le voile.</p>
+          <h2>{tr('Bestiaire')}</h2>
+          <p className="soft" style={{ fontSize: 14 }}>{tr('L\'encyclopédie des créatures oubliées. Chaque éclosion lève un peu plus le voile.')}</p>
           <div className="dex-stats">
-            <div><b className="num">{known}/{SPECIES_LIST.length}</b><span>espèces</span></div>
+            <div><b className="num">{known}/{SPECIES_LIST.length}</b><span>{tr('espèces')}</span></div>
             <div><b className="num">{variantCount(state)}/{totalVariants}</b><span>variantes</span></div>
-            <div><b className="num">{state.stats.eggsHatched}</b><span>éclosions</span></div>
+            <div><b className="num">{state.stats.eggsHatched}</b><span>{tr('éclosions')}</span></div>
           </div>
         </div>
       </div>
@@ -75,12 +76,12 @@ export function DexScreen() {
       </div>
 
       {cat === 'history' ? (
-        state.discoveries.length === 0 ? <EmptyState icon="book" title="Aucune découverte">Tes découvertes seront consignées ici, avec leur date.</EmptyState> : (
+        state.discoveries.length === 0 ? <EmptyState icon="book" title={tr('Aucune découverte')}>{tr('Tes découvertes seront consignées ici, avec leur date.')}</EmptyState> : (
           <div className="card history">
             {[...state.discoveries].reverse().map((d, i) => (
               <button key={i} className="disc-item" onClick={() => openModal({ kind: 'dex', speciesId: d.speciesId })}>
                 <CreatureArt speciesId={d.speciesId} mutations={d.mutationId ? [d.mutationId] : []} size={44} anim="none" />
-                <div style={{ flex: 1 }}><b>{getSpecies(d.speciesId).name}</b><div className="muted" style={{ fontSize: 12 }}>{d.kind === 'species' ? 'Nouvelle espèce' : `Variante ${MUTATIONS[d.mutationId!]?.name}`}</div></div>
+                <div style={{ flex: 1 }}><b>{getSpecies(d.speciesId).name}</b><div className="muted" style={{ fontSize: 12 }}>{d.kind === 'species' ? tr('Nouvelle espèce') : tr('Variante {name}', { name: MUTATIONS[d.mutationId!]?.name })}</div></div>
                 <span className="muted" style={{ fontSize: 12, fontWeight: 700 }}>{fmtDateTime(d.at)}</span>
               </button>
             ))}
@@ -89,9 +90,9 @@ export function DexScreen() {
       ) : (
         <>
           <div className="filters">
-            <div className="field" style={{ flex: '1 1 220px' }}><Icon name="search" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nom, famille ou numéro…" aria-label="Rechercher" /></div>
-            <select className="select" value={rar ?? ''} onChange={(e) => setRar((e.target.value || null) as RarityId | null)} aria-label="Rareté">
-              <option value="">Toutes raretés</option>
+            <div className="field" style={{ flex: '1 1 220px' }}><Icon name="search" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={tr('Nom, famille ou numéro…')} aria-label={tr('Rechercher')} /></div>
+            <select className="select" value={rar ?? ''} onChange={(e) => setRar((e.target.value || null) as RarityId | null)} aria-label={tr('Rareté')}>
+              <option value="">{tr('Toutes raretés')}</option>
               {RARITY_ORDER.map((r) => <option key={r} value={r}>{RARITIES[r].name}</option>)}
             </select>
           </div>
@@ -102,7 +103,7 @@ export function DexScreen() {
               </button>
             ))}
           </div>
-          {list.length === 0 ? <EmptyState icon="search" title="Aucune espèce">Aucune entrée ne correspond à ces filtres.</EmptyState> : (
+          {list.length === 0 ? <EmptyState icon="search" title={tr('Aucune espèce')}>{tr('Aucune entrée ne correspond à ces filtres.')}</EmptyState> : (
             <div className="dex-grid">
               {list.map((s) => {
                 const k = isDiscovered(state, s.id);
