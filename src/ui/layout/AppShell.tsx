@@ -147,8 +147,8 @@ function MoreSheet() {
       <div className="sheet" role="dialog" aria-label={tr('Plus de sections')}>
         <div className="sheet-grip" />
         <div className="sheet-grid">
-          {[...NAV_WORLD, ...NAV_OTHER].map((n) => (
-            <button key={n.route} className="sheet-item" onClick={() => { playSfx('tap'); navigate(n.route); }}>
+          {[...NAV_MAIN, ...NAV_WORLD, ...NAV_OTHER].map((n) => (
+            <button key={n.route} className="sheet-item" onClick={() => { playSfx('tap'); navigate(n.route); setMore(false); }}>
               <Icon name={n.icon} />{tr(n.label)}
               {n.phase && <span className="soon">{tr('Phase')} {n.phase}</span>}
             </button>
@@ -161,22 +161,26 @@ function MoreSheet() {
 
 export function AppShell({ children }: { children: ReactNode }) {
   const route = useUi((s) => s.route);
+  const setMore = useUi((s) => s.setMoreOpen);
   const reduced = useGame((s) => s.state.settings.reducedMotion);
   return (
-    <div className={`shell ${reduced ? 'reduced-motion' : ''}`}>
+    <div className={`shell immersive ${reduced ? 'reduced-motion' : ''}`}>
       <div className="app-bg" aria-hidden="true">
         <div className="blob" style={{ width: 380, height: 380, left: '8%', top: '12%', background: '#ffc2e6' }} />
         <div className="blob" style={{ width: 460, height: 460, right: '-6%', top: '40%', background: '#c2e8ff', animationDelay: '-8s' }} />
         <div className="blob" style={{ width: 340, height: 340, left: '40%', bottom: '-10%', background: '#c8ffe0', animationDelay: '-15s' }} />
       </div>
       <Sidebar />
+      <TopBar />
+      <BottomBar />
       <div className="main">
-        <TopBar />
         <main className="content" key={route}>
           <div className="screen-enter">{children}</div>
         </main>
       </div>
-      <BottomBar />
+      <button className="game-menu-trigger" aria-label={tr('Ouvrir le menu')} onClick={() => { playSfx('open'); setMore(true); }}>
+        <Icon name="more" />
+      </button>
       <MoreSheet />
     </div>
   );
