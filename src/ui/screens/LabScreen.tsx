@@ -89,7 +89,7 @@ export function BreedFx({ parents, eggUid }: { parents: [string, string]; eggUid
   const { closeModal, navigate } = useUi.getState();
   const [stage, setStage] = useState(0);
   useEffect(() => {
-    playSfx('whoosh');
+    playSfx('breed');
     const t = [setTimeout(() => setStage(1), 300), setTimeout(() => { setStage(2); playSfx('reveal', 3); }, 2300)];
     return () => t.forEach(clearTimeout);
   }, []);

@@ -176,7 +176,7 @@ function SanctuaryScene({ creatures }: { creatures: CreatureInstance[] }) {
             key={a.uid}
             className={`actor b-${a.behavior}`}
             style={{ left: `${a.x}%`, top: `${a.y}%`, zIndex: Math.round(a.y), transitionDuration: `${a.moveMs}ms, ${a.moveMs}ms` }}
-            onClick={() => { playSfx('tap'); react(a.uid); openModal({ kind: 'creature', uid: c.uid }); }}
+            onClick={() => { playSfx('happy'); react(a.uid); openModal({ kind: 'creature', uid: c.uid }); }}
             aria-label={`${displayName(c)} — ${a.behavior === 'sleep' ? 'dort' : a.behavior === 'eat' ? 'mange' : a.behavior === 'play' ? 'joue' : a.behavior === 'walk' ? 'se promène' : 'se repose'}`}
           >
             <div className="actor-flip" style={{ transform: a.flip ? 'scaleX(-1)' : undefined }}>

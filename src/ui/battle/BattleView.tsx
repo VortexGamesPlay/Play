@@ -116,22 +116,22 @@ export function BattleView() {
           if (e.crit) float(e.target, 'Critique !', 'info');
           if (e.mul > 1) float(e.target, 'Efficace !', 'info');
           if (e.mul < 1) float(e.target, 'Peu efficace', 'info');
-          playSfx('hit');
+          playSfx(e.crit ? 'crit' : 'hit');
           break;
         case 'heal':
           setView((v) => ({ ...v, [e.target]: { ...v[e.target]!, hp: v[e.target]!.hp + e.amount } }));
-          if (e.amount > 0) float(e.target, `+${e.amount}`, 'heal');
+          if (e.amount > 0) { float(e.target, `+${e.amount}`, 'heal'); playSfx('heal'); }
           break;
         case 'status':
           setView((v) => {
             const cur = v[e.target]!.statuses.filter((s) => s !== e.status);
             return { ...v, [e.target]: { ...v[e.target]!, statuses: e.on ? [...cur, e.status] : cur } };
           });
-          if (e.on) float(e.target, STATUSES[e.status].name, 'info');
+          if (e.on) { float(e.target, STATUSES[e.status].name, 'info'); playSfx(STATUSES[e.status].kind === 'bonus' ? 'buff' : 'debuff'); }
           break;
         case 'cleanse': setView((v) => ({ ...v, [e.target]: { ...v[e.target]!, statuses: v[e.target]!.statuses.filter((s) => STATUSES[s].kind !== 'malus') } })); break;
-        case 'stun': setCaption(`${name(e.actor)} est étourdi et passe son tour.`); break;
-        case 'ko': setView((v) => ({ ...v, [e.target]: { ...v[e.target]!, alive: false, statuses: [] } })); setCaption(`${name(e.target)} est hors de combat !`); break;
+        case 'stun': setCaption(`${name(e.actor)} est étourdi et passe son tour.`); playSfx('stun'); break;
+        case 'ko': setView((v) => ({ ...v, [e.target]: { ...v[e.target]!, alive: false, statuses: [] } })); setCaption(`${name(e.target)} est hors de combat !`); playSfx('ko'); break;
         case 'end': setCaption(e.winner === 'A' ? 'Victoire !' : e.winner === 'B' ? 'Défaite…' : 'Égalité : temps écoulé.'); break;
       }
       setQueue((q) => q.slice(1));

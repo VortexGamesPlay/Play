@@ -20,24 +20,27 @@ Lecteur : `src/services/music.ts` (fondus enchaînés entre zones, jingles qui b
 | sting-rare-hatch | Éclosion d'une créature rare ou plus, ou d'une variante | 12 s |
 | sting-evolution | Évolution | 12 s |
 
-## Effets sonores (10)
+## Effets sonores (33)
 
-Fichiers : `public/audio/sfx/*.mp3` (380 Ko au total), joués par `src/services/audio.ts` (préchargés au premier toucher ; son synthétisé en secours si un fichier manque).
+Fichiers : `public/audio/sfx/*.mp3` (1,3 Mo au total), joués par `src/services/audio.ts` (préchargés au premier toucher ; son synthétisé en secours si un fichier manque).
 
 | Son | Utilisation |
 |---|---|
-| tap | Boutons |
-| open | Ouverture de fenêtres |
-| whoosh | Transitions, lancement d'une compétence |
-| coin | Pièces et récompenses |
+| tap / open / whoosh | Boutons, fenêtres, transitions et compétences |
+| notify | Notifications (seulement si aucun autre son ne vient d'être joué) |
+| coin / crystal / claim | Pièces, cristaux, récompenses (missions, quêtes, succès, saison, bonus du jour) |
 | buy | Achat confirmé |
-| crack | Coquille qui craque |
-| reveal | Éclosion |
+| harvest | Récolte du sanctuaire |
+| placeEgg / speedUp / crack / reveal | Œuf posé dans l'incubateur, accélération, coquille qui craque, éclosion |
+| feed / happy / favorite / release | Nourrir (+ cri de joie si c'est son plat préféré), toucher une créature, favori, libérer |
 | levelUp | Niveau supérieur |
+| breed | Fusion au laboratoire |
+| expeditionStart / expeditionReturn / forage / unlock | Départ, retour d'expédition, fouille, zone secrète découverte |
+| upgrade / decorate | Bâtiment amélioré, décoration ou thème |
+| hit / crit / heal / buff / debuff / stun / ko | Combat : coup, coup critique, soin, bonus, malus, étourdi, hors de combat |
 | error | Action impossible |
-| hit | Coup reçu en combat |
 
 Réglages joueur (Profil) : interrupteur Son général, volume Musique, volume Effets. La musique démarre au premier toucher (règle des navigateurs) et se met en pause quand l'application passe en arrière-plan.
 
-Crédits ElevenLabs utilisés : environ 18 500 pour la musique + 36 pour les effets, sur le budget de 30 000 accordé.
+Crédits ElevenLabs utilisés : environ 18 500 pour la musique + environ 125 pour les effets, sur le budget de 30 000 accordé.
 Les sources restent modifiables dans le « flow » ElevenLabs `5TrEUFBnqDZAPT2fGxaw`.

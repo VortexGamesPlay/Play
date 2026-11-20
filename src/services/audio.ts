@@ -2,10 +2,26 @@
  * Effets sonores synthétisés en temps réel (Web Audio) : aucun fichier audio à charger.
  * La musique originale est gérée par services/music.ts.
  */
-type Sfx = 'tap' | 'coin' | 'crack' | 'reveal' | 'levelUp' | 'error' | 'buy' | 'open' | 'whoosh' | 'hit';
+export type Sfx =
+  | 'tap' | 'coin' | 'crack' | 'reveal' | 'levelUp' | 'error' | 'buy' | 'open' | 'whoosh' | 'hit'
+  | 'feed' | 'happy' | 'favorite' | 'placeEgg' | 'speedUp' | 'release' | 'breed' | 'crystal' | 'claim' | 'harvest'
+  | 'expeditionStart' | 'expeditionReturn' | 'forage' | 'upgrade' | 'unlock' | 'decorate' | 'notify'
+  | 'heal' | 'buff' | 'debuff' | 'ko' | 'crit' | 'stun';
 
-/** Les 10 effets sonores originaux (ElevenLabs), dans public/audio/sfx. Le son synthétisé sert de secours. */
-const SAMPLE_NAMES: Sfx[] = ['tap', 'coin', 'crack', 'reveal', 'levelUp', 'error', 'buy', 'open', 'whoosh', 'hit'];
+/** Les effets sonores originaux (ElevenLabs), dans public/audio/sfx. Le son synthétisé sert de secours. */
+const SAMPLE_NAMES: Sfx[] = [
+  'tap', 'coin', 'crack', 'reveal', 'levelUp', 'error', 'buy', 'open', 'whoosh', 'hit',
+  'feed', 'happy', 'favorite', 'placeEgg', 'speedUp', 'release', 'breed', 'crystal', 'claim', 'harvest',
+  'expeditionStart', 'expeditionReturn', 'forage', 'upgrade', 'unlock', 'decorate', 'notify',
+  'heal', 'buff', 'debuff', 'ko', 'crit', 'stun',
+];
+/** Sons de secours (synthétisés) pour les nouveaux effets, si le fichier manque. */
+const FALLBACK: Partial<Record<Sfx, Sfx>> = {
+  feed: 'tap', happy: 'tap', favorite: 'tap', placeEgg: 'whoosh', speedUp: 'whoosh', release: 'whoosh', breed: 'whoosh',
+  crystal: 'coin', claim: 'buy', harvest: 'coin', expeditionStart: 'whoosh', expeditionReturn: 'open', forage: 'coin',
+  upgrade: 'buy', unlock: 'levelUp', decorate: 'tap', notify: 'open', heal: 'levelUp', buff: 'open', debuff: 'error',
+  ko: 'error', crit: 'hit', stun: 'error',
+};
 const samples = new Map<Sfx, AudioBuffer>();
 let samplesRequested = false;
 
@@ -92,15 +108,20 @@ function noise(start: number, dur: number, gain = 0.15, freq = 1800) {
 
 const MAJOR = [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568];
 
+let lastSfxAt = 0;
+
 export function playSfx(name: Sfx, tier = 0) {
+  lastSfxAt = Date.now();
   try {
     if (!ac()) return;
-    const quiet: Partial<Record<Sfx, number>> = { tap: 0.55, open: 0.6, whoosh: 0.7, hit: 0.8 };
+    const quiet: Partial<Record<Sfx, number>> = { tap: 0.55, open: 0.6, whoosh: 0.7, hit: 0.8, notify: 0.6, happy: 0.7, decorate: 0.7, favorite: 0.7 };
     if (playSample(name, quiet[name] ?? 0.9)) {
       // Les éclosions très rares gardent une note grave en plus, pour marquer le moment.
       if (name === 'reveal' && tier >= 5) tone(130.8, 0, 1.4, 'sine', 0.1);
       return;
     }
+    const fb = FALLBACK[name];
+    if (fb) { playSfx(fb, tier); return; }
     switch (name) {
       case 'hit': noise(0, 0.1, 0.2, 600); tone(160, 0, 0.12, 'triangle', 0.08, 80); break;
       case 'tap': tone(660, 0, 0.08, 'triangle', 0.06); break;
@@ -128,4 +149,9 @@ export function playSfx(name: Sfx, tier = 0) {
 if (typeof window !== 'undefined') {
   const prime = () => { window.removeEventListener('pointerdown', prime, true); ac(); };
   window.addEventListener('pointerdown', prime, true);
+}
+
+/** Petit carillon de notification, seulement si aucun autre son ne vient d'être joué (évite les doublons). */
+export function playNotify() {
+  setTimeout(() => { if (Date.now() - lastSfxAt > 300) playSfx('notify'); }, 30);
 }

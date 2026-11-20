@@ -1,3 +1,4 @@
+import { playNotify } from '../services/audio';
 import { create } from 'zustand';
 import type { GameEvent } from '@core/events';
 
@@ -64,6 +65,7 @@ export const useUi = create<UiState>((set, get) => ({
     set({ route, moreOpen: false, modals: [] });
   },
   toast(t) {
+    if (t.kind === 'info' || t.kind === 'success') playNotify();
     const id = ++toastId;
     set({ toasts: [...get().toasts.slice(-3), { ...t, id }] });
     setTimeout(() => get().dismissToast(id), t.kind === 'error' ? 4200 : 3200);
