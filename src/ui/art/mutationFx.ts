@@ -67,7 +67,8 @@ export const MUTATION_FX: Record<string, MutationFx> = {
   mutante: { layers: [{ color: '#9be05a', blend: 'color', opacity: 0.25 }], particles: 'motes', glow: '#9be05a', cls: 'fx-glitch' },
 };
 
-export function resolveFx(mutations: string[], hue: number) {
+/** `painted` : mutation déjà peinte dans l'illustration (on garde seulement halo et particules). */
+export function resolveFx(mutations: string[], hue: number, painted?: string) {
   const filters: string[] = [];
   if (hue) filters.push(`hue-rotate(${hue}deg)`);
   const layers: FxLayer[] = [];
@@ -79,12 +80,13 @@ export function resolveFx(mutations: string[], hue: number) {
   for (const m of mutations) {
     const fx = MUTATION_FX[m];
     if (!fx) continue;
+    if (fx.particles) particles.add(fx.particles);
+    if (fx.glow) glow = fx.glow;
+    if (m === painted) continue;
     if (fx.filter) filters.push(fx.filter);
     if (fx.layers) layers.push(...fx.layers);
-    if (fx.particles) particles.add(fx.particles);
     if (fx.cls) classes.push(fx.cls);
     if (fx.sheen) sheen = fx.sheen;
-    if (fx.glow) glow = fx.glow;
     if (fx.opacity) opacity = Math.min(opacity, fx.opacity);
   }
   return { filter: filters.join(' ') || undefined, layers, particles: [...particles], classes, sheen, glow, opacity };

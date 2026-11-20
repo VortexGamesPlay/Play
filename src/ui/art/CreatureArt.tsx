@@ -402,8 +402,12 @@ function Particles({ kind }: { kind: Particle }) {
 
 function CreaturePainted({ speciesId, mutations = [], hue = 0, size = 160, anim = 'idle', silhouette = false, seed, className, style, title, onFail }: CreatureArtProps & { onFail: () => void }) {
   const sp = SPECIES[speciesId]!;
-  const src = creatureSrc(speciesId);
-  const fx = resolveFx(silhouette ? [] : mutations, silhouette ? 0 : hue);
+  // Illustration propre à la variante (première mutation), sinon l'illustration de base + effets.
+  const [noVariant, setNoVariant] = useState(false);
+  const painted = !noVariant && !silhouette ? mutations[0] : undefined;
+  const src = creatureSrc(speciesId, painted);
+  const fx = resolveFx(silhouette ? [] : mutations, silhouette || painted ? 0 : hue, painted);
+  const fail = () => (painted ? setNoVariant(true) : onFail());
   const delay = seed ? -((hashString(seed) % 4000) / 1000) : 0;
   const aura = !silhouette && (fx.glow || sp.art.aura);
   const scale = STAGE_SCALE[sp.stage] ?? 1;
@@ -422,7 +426,7 @@ function CreaturePainted({ speciesId, mutations = [], hue = 0, size = 160, anim 
             <div className="ci-sil" style={{ ...mask, background: SIL }} />
           ) : (
             <>
-              <img src={src} alt="" draggable={false} decoding="async" loading="lazy" onError={onFail} style={{ filter: fx.filter }} />
+              <img src={src} alt="" draggable={false} decoding="async" loading="lazy" onError={fail} style={{ filter: fx.filter }} />
               {fx.layers.map((l, i) => (
                 <div
                   key={i}
@@ -445,7 +449,7 @@ function CreatureArtImpl(props: CreatureArtProps) {
   const [failed, setFailed] = useState(false);
   if (!SPECIES[props.speciesId]) return null;
   if (failed) return <CreatureVector {...props} />;
-  return <CreaturePainted {...props} onFail={() => setFailed(true)} />;
+  return <CreaturePainted key={`${props.speciesId}:${(props.mutations ?? []).join(',')}`} {...props} onFail={() => setFailed(true)} />;
 }
 
 export const CreatureArt = memo(CreatureArtImpl);
