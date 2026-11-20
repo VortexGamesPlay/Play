@@ -439,3 +439,29 @@
   .homeworld-pad button { width: 38px; height: 38px; border: 1px solid rgba(255,255,255,.7); border-radius: 12px; background: rgba(255,255,255,.82); color: #425a49; font-weight: 900; touch-action: none; box-shadow: 0 2px 8px rgba(30,60,40,.15); }
   .homeworld-footer { font-size: 10px; }
 }
+
+
+/* Chez nous — véritable scène WebGL 3D */
+.homeworld-immersive { width:100%; max-width:none; height:100%; min-height:calc(100dvh - 20px); margin:0; gap:0; }
+.homeworld-stage-3d { position:relative; flex:1; width:100%; height:calc(100dvh - 20px); min-height:520px; overflow:hidden; border:0; border-radius:0; background:#b9d8df; box-shadow:none; }
+.homeworld-canvas { display:block; width:100%; height:100%; touch-action:none; cursor:grab; outline:none; }
+.homeworld-canvas:active { cursor:grabbing; }
+.homeworld-topline { position:absolute; z-index:3; top:18px; left:20px; right:20px; display:flex; align-items:flex-start; justify-content:space-between; pointer-events:none; }
+.homeworld-title { display:flex; flex-direction:column; gap:2px; color:#fff; text-shadow:0 2px 12px rgba(24,39,42,.65); }
+.homeworld-title span { font-size:10px; font-weight:900; letter-spacing:2px; }
+.homeworld-title strong { font-family:var(--font-title); font-size:28px; line-height:1.1; }
+.homeworld-recenter { pointer-events:auto; width:42px; height:42px; border:1px solid rgba(255,255,255,.55); border-radius:50%; background:rgba(255,255,255,.84); color:#40564a; font-size:25px; cursor:pointer; box-shadow:0 4px 18px rgba(28,49,42,.2); }
+.homeworld-controls-hint { position:absolute; z-index:3; bottom:16px; left:50%; transform:translateX(-50%); max-width:calc(100% - 28px); padding:9px 15px; border:1px solid rgba(255,255,255,.45); border-radius:99px; background:rgba(255,255,255,.84); color:#3f5547; font-size:11px; font-weight:800; white-space:nowrap; pointer-events:none; box-shadow:0 4px 16px rgba(28,49,42,.13); }
+.homeworld-loading { position:absolute; inset:0; z-index:4; display:grid; place-items:center; color:#fff; font-weight:900; text-shadow:0 2px 12px #314d49; pointer-events:none; }
+.homeworld-webgl-warning { display:none; position:absolute; inset:0; z-index:5; place-items:center; padding:24px; text-align:center; color:#fff; background:linear-gradient(135deg,#344e4b,#657e65); font-weight:900; }
+.homeworld-no-webgl .homeworld-webgl-warning { display:grid; }
+.homeworld-touchpad { position:absolute; z-index:4; left:16px; bottom:56px; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.homeworld-touchpad > div { display:flex; gap:4px; }
+.homeworld-touchpad button { width:43px; height:43px; border:1px solid rgba(255,255,255,.75); border-radius:13px; background:rgba(255,255,255,.82); color:#40564a; font-size:18px; font-weight:900; touch-action:none; box-shadow:0 3px 12px rgba(30,60,40,.2); }
+@media (max-width:760px) {
+  .homeworld-stage-3d { height:calc(100dvh - 12px); min-height:460px; }
+  .homeworld-title strong { font-size:24px; }
+  .homeworld-controls-hint { left:auto; right:12px; bottom:16px; transform:none; white-space:normal; max-width:calc(100% - 100px); font-size:9px; text-align:center; }
+  .homeworld-touchpad { left:10px; bottom:14px; }
+  .homeworld-touchpad button { width:38px; height:38px; }
+}
