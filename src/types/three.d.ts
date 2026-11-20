@@ -6,10 +6,13 @@ declare module 'three' {
     add(value: Vector3): this;
     multiplyScalar(value: number): this;
     normalize(): this;
+    setScalar(value: number): this;
+    lerp(value: Vector3, alpha: number): this;
   }
   export class Euler { x: number; y: number; z: number; }
   export class Object3D {
     name: string;
+    matrix: unknown;
     position: Vector3;
     rotation: Euler;
     scale: Vector3;
@@ -34,6 +37,7 @@ declare module 'three' {
     setMatrixAt(index: number, matrix: unknown): void;
   }
   export class Scene extends Group { background: unknown; fog: Fog | null; traverse(callback: (object: Object3D) => void): void; }
+  export class Color { constructor(value?: string | number); }
   export class Fog { constructor(color: string, near: number, far: number); }
   export class PerspectiveCamera extends Object3D {
     aspect: number;
