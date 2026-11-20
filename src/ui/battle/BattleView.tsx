@@ -9,6 +9,7 @@ import type { GameEvent } from '@core/events';
 import { CreatureArt } from '../art/CreatureArt';
 import { ElementIcon, Icon } from '../art/Icons';
 import { BiomeScenery } from '../art/Scenery';
+import { bgSrc } from '../art/sprites';
 import { RewardList } from '../screens/ExplorationScreen';
 import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
@@ -33,16 +34,12 @@ function BattleBackdrop({ kind, refId }: { kind: string; refId: string }) {
   }
   const color = kind === 'league' ? LEAGUES.find((l) => l.fights.some((f) => f.id === refId))?.color ?? '#7b5cff' : '#5a4aa8';
   return (
-    <div className="battle-bg" style={{ ['--lc' as string]: color } as CSSProperties}>
+    <div className={`battle-bg arena-${kind}`} style={{ ['--lc' as string]: color } as CSSProperties}>
       <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <defs>
-          <linearGradient id="arena-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={kind === 'tower' ? '#1d1650' : '#bfe0ff'} /><stop offset="1" stopColor={kind === 'tower' ? '#5a4aa8' : '#fff0f6'} /></linearGradient>
-        </defs>
-        <rect width="800" height="400" fill="url(#arena-sky)" />
-        {kind === 'tower' && Array.from({ length: 40 }, (_, i) => <circle key={i} cx={(i * 197) % 800} cy={(i * 71) % 200} r={i % 4 ? 1 : 2} fill="white" className="star-twinkle" />)}
-        <ellipse cx="400" cy="330" rx="420" ry="120" fill={kind === 'tower' ? '#3a2f6e' : '#cfe8b8'} />
-        <ellipse cx="400" cy="330" rx="300" ry="78" fill="none" stroke={color} strokeWidth="6" opacity=".6" />
-        {[-260, -130, 130, 260].map((dx, i) => <g key={i} transform={`translate(${400 + dx} ${215 + Math.abs(dx) / 8})`}><rect x="-14" y="-60" width="28" height="64" rx="6" fill={kind === 'tower' ? '#2a2050' : '#d8d0c0'} /><path d="M-14-60h28l-14-14Z" fill={color} /></g>)}
+        <image href={bgSrc('arene')} x="-20" y="-12" width="840" height="424" preserveAspectRatio="xMidYMid slice" className="bg-pan" />
+        {kind === 'tower' && <rect width="800" height="400" fill="#140c40" opacity=".55" />}
+        {kind === 'tower' && Array.from({ length: 40 }, (_, i) => <circle key={i} cx={(i * 197) % 800} cy={(i * 71) % 160} r={i % 4 ? 1 : 2} fill="white" className="star-twinkle" />)}
+        <ellipse cx="400" cy="300" rx="250" ry="64" fill="none" stroke={color} strokeWidth="5" opacity=".55" className="arena-ring" />
       </svg>
     </div>
   );
@@ -85,6 +82,7 @@ export function BattleView() {
   const [view, setView] = useState<Record<string, UnitView>>(initial ? initialView(initial) : {});
   const [actor, setActor] = useState<string | null>(null);
   const [hitKey, setHitKey] = useState<string | null>(null);
+  const [shake, setShake] = useState(0);
   const [floaters, setFloaters] = useState<Floater[]>([]);
   const [caption, setCaption] = useState('Le combat commence !');
   const [selected, setSelected] = useState<string | null>(null);
@@ -122,7 +120,7 @@ export function BattleView() {
           setView((v) => ({ ...v, [e.target]: { ...v[e.target]!, hp: Math.max(0, v[e.target]!.hp - e.amount) } }));
           setHitKey(e.target); setTimeout(() => setHitKey(null), 300);
           float(e.target, `-${e.amount}`, e.crit ? 'crit' : 'dmg');
-          if (e.crit) float(e.target, 'Critique !', 'info');
+          if (e.crit) { float(e.target, 'Critique !', 'info'); setShake((n) => n + 1); }
           if (e.mul > 1) float(e.target, 'Efficace !', 'info');
           if (e.mul < 1) float(e.target, 'Peu efficace', 'info');
           playSfx(e.crit ? 'crit' : 'hit');
@@ -210,7 +208,7 @@ export function BattleView() {
           <button className={`chip ${auto ? 'active' : ''}`} onClick={() => setAuto(!auto)}><Icon name="motion" />{tr('Auto')}</button>
         </div>
       </div>
-      <div className="battle-field">
+      <div className={`battle-field ${shake % 2 ? 'shake-a' : shake ? 'shake-b' : ''}`}>
         <div className="bside B">{side('B').map((u) => <BattleUnitCard key={u.key} u={u} view={view[u.key]!} acting={actor === u.key && !idle} hit={hitKey === u.key} targetable={targets.includes(u.key)} onTarget={() => send({ skill: selected!, target: u.key })} floaters={floaters.filter((f) => f.key === u.key)} />)}</div>
         <div className="battle-caption">{caption}</div>
         <div className="bside A">{side('A').map((u) => <BattleUnitCard key={u.key} u={u} view={view[u.key]!} acting={actor === u.key} hit={hitKey === u.key} targetable={targets.includes(u.key)} onTarget={() => send({ skill: selected!, target: u.key })} floaters={floaters.filter((f) => f.key === u.key)} />)}</div>

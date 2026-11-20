@@ -1,10 +1,12 @@
-import { memo, useId, type CSSProperties, type ReactNode } from 'react';
+import { memo, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import type { ArtSpec, BodyShape, EggDef, Palette, ShellStyle, SpeciesDef } from '@core/content';
 import { SPECIES, SPECIES_LIST } from '@data/species';
 import { EGGS } from '@data/eggs';
 import { ELEMENTS } from '@data/elements';
 import { darken, hashString, lighten } from './color';
 import { resolveLook, type Overlay } from './mutationLook';
+import { resolveFx, type Particle } from './mutationFx';
+import { creatureSrc, maskStyle, texSrc } from './sprites';
 
 /**
  * Rendu procédural des créatures : chaque espèce est décrite par un ArtSpec (forme, oreilles, queue, ailes, palette…),
@@ -298,14 +300,14 @@ export interface CreatureArtProps {
   title?: string;
 }
 
-function CreatureArtImpl({ speciesId, mutations = [], hue = 0, size = 160, anim = 'idle', silhouette = false, seed, className, style, title }: CreatureArtProps) {
+/** Ancien rendu vectoriel, gardé en secours si une illustration ne charge pas. */
+function CreatureVector({ speciesId, mutations = [], hue = 0, size = 160, anim = 'idle', silhouette = false, seed, className, style, title }: CreatureArtProps) {
   const rid = useId().replace(/:/g, '');
   const sp = SPECIES[speciesId];
   if (!sp) return null;
   const a = sp.art;
   const g = GEO[a.body];
   const look = resolveLook(a.palette, silhouette ? [] : mutations, silhouette ? 0 : hue);
-  const SIL = '#2b2350';
   const p: Palette = silhouette ? { primary: SIL, secondary: SIL, accent: SIL, belly: SIL, eye: SIL } : look.palette;
   const o = silhouette ? SIL : darken(p.primary, 30);
   const shellStyle: ShellStyle = a.shell ?? (sp.stage === 'bebe' ? 'base' : sp.stage === 'juvenile' ? 'cap' : 'shard');
@@ -381,6 +383,69 @@ function CreatureArtImpl({ speciesId, mutations = [], hue = 0, size = 160, anim 
       {anim === 'sleep' && !silhouette && <g className="cr-zzz" fill="#7b5cff" fontFamily="Fredoka, sans-serif" fontWeight="700"><text x="150" y={g.top + 6} fontSize="18">z</text><text x="162" y={g.top - 10} fontSize="13">z</text></g>}
     </svg>
   );
+}
+
+const SIL = '#2b2350';
+const STAGE_SCALE: Record<string, number> = { bebe: 0.8, juvenile: 0.9, adulte: 1 };
+
+/** Positions fixes des particules (en % de la boîte), pour un rendu stable. */
+const SPOTS = [[18, 30], [82, 24], [12, 66], [88, 60], [50, 10], [30, 84], [70, 80], [60, 40]];
+
+function Particles({ kind }: { kind: Particle }) {
+  const n = kind === 'sparkles' ? 6 : kind === 'wisps' ? 3 : 7;
+  return (
+    <div className={`ci-pt ci-pt-${kind}`} aria-hidden="true">
+      {SPOTS.slice(0, n).map(([x, y], i) => <i key={i} style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${(i * 0.37) % 2.4}s` }} />)}
+    </div>
+  );
+}
+
+function CreaturePainted({ speciesId, mutations = [], hue = 0, size = 160, anim = 'idle', silhouette = false, seed, className, style, title, onFail }: CreatureArtProps & { onFail: () => void }) {
+  const sp = SPECIES[speciesId]!;
+  const src = creatureSrc(speciesId);
+  const fx = resolveFx(silhouette ? [] : mutations, silhouette ? 0 : hue);
+  const delay = seed ? -((hashString(seed) % 4000) / 1000) : 0;
+  const aura = !silhouette && (fx.glow || sp.art.aura);
+  const scale = STAGE_SCALE[sp.stage] ?? 1;
+  const mask = maskStyle(src);
+  return (
+    <div
+      role="img" aria-label={title ?? sp.name}
+      className={`creature ci anim-${anim} ${silhouette ? 'is-silhouette' : ''} ${fx.classes.join(' ')} ${className ?? ''}`}
+      style={{ width: size, height: size, ...style, ['--cr-delay' as string]: `${delay}s`, ['--ci-scale' as string]: scale, ['--glow' as string]: aura || 'transparent' }}
+    >
+      {aura && <div className="ci-aura" />}
+      <div className="ci-shadow" />
+      <div className="ci-root">
+        <div className="ci-body" style={{ opacity: fx.opacity }}>
+          {silhouette ? (
+            <div className="ci-sil" style={{ ...mask, background: SIL }} />
+          ) : (
+            <>
+              <img src={src} alt="" draggable={false} decoding="async" loading="lazy" onError={onFail} style={{ filter: fx.filter }} />
+              {fx.layers.map((l, i) => (
+                <div
+                  key={i}
+                  className={`ci-layer ${l.drift ? 'ci-drift' : ''} ${l.pulse ? 'ci-pulse' : ''}`}
+                  style={{ ...mask, mixBlendMode: l.blend, opacity: l.opacity, background: l.tex ? `url("${texSrc(l.tex)}") center / 70% repeat` : l.color }}
+                />
+              ))}
+              {fx.sheen && <div className={`ci-sheen ci-sheen-${fx.sheen}`} style={mask} />}
+            </>
+          )}
+        </div>
+      </div>
+      {!silhouette && fx.particles.map((k) => <Particles key={k} kind={k} />)}
+      {anim === 'sleep' && !silhouette && <div className="ci-zzz" aria-hidden="true"><span>z</span><span>z</span></div>}
+    </div>
+  );
+}
+
+function CreatureArtImpl(props: CreatureArtProps) {
+  const [failed, setFailed] = useState(false);
+  if (!SPECIES[props.speciesId]) return null;
+  if (failed) return <CreatureVector {...props} />;
+  return <CreaturePainted {...props} onFail={() => setFailed(true)} />;
 }
 
 export const CreatureArt = memo(CreatureArtImpl);

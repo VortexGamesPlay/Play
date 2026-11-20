@@ -1,6 +1,9 @@
 import { memo, useMemo, type CSSProperties } from 'react';
 import type { BiomeDef, WeatherDef } from '@core/content';
 import type { IconName } from './Icons';
+import { bgSrc } from './sprites';
+
+const PAINTED_BIOMES = new Set(['foret', 'abysses', 'montagnes', 'volcan', 'marais', 'desert', 'ombres', 'cosmos']);
 
 /** Icône associée à chaque type d'effet météo. */
 export const WEATHER_ICON: Record<WeatherDef['fx'], IconName> = {
@@ -112,6 +115,14 @@ function Shapes({ b }: { b: BiomeDef }) {
 /** Illustration d'un biome (fond + relief + animation d'ambiance). */
 export const BiomeScenery = memo(function BiomeScenery({ biome, className }: { biome: BiomeDef; className?: string }) {
   const id = `sky-${biome.id}`;
+  if (PAINTED_BIOMES.has(biome.id)) {
+    return (
+      <svg className={`biome-svg biome-painted ${className ?? ''}`} viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="800" height="400" fill={biome.palette.sky2} />
+        <image href={bgSrc(biome.id)} x="-20" y="-12" width="840" height="424" preserveAspectRatio="xMidYMid slice" className="bg-pan" />
+      </svg>
+    );
+  }
   return (
     <svg className={`biome-svg ${className ?? ''}`} viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <defs><linearGradient id={id} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={biome.palette.sky1} /><stop offset="1" stopColor={biome.palette.sky2} /></linearGradient></defs>

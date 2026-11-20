@@ -4,6 +4,7 @@ import { isAway } from '@core/systems/exploration';
 import { pendingProduce } from '@core/systems/sanctuary';
 import { sanctuaryWeather } from '@core/systems/weather';
 import { WEATHER_ICON, WeatherFx } from '../art/Scenery';
+import { bgSrc } from '../art/sprites';
 import { darken } from '../art/color';
 import { BuildPanel, MissionsCard } from './SanctuaryPanels';
 import { BALANCE } from '@data/balance';
@@ -106,69 +107,24 @@ function SceneBackdrop({ night, sanctuary }: { night: boolean; sanctuary?: Parti
     <svg className="scene-bg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <defs>
         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={sky[0]} /><stop offset="1" stopColor={sky[1]} /></linearGradient>
-        <linearGradient id="hillA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={shade(t.hill[0])} /><stop offset="1" stopColor={shade(t.hill[1])} /></linearGradient>
-        <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={shade(t.ground[0])} /><stop offset="1" stopColor={shade(t.ground[1])} /></linearGradient>
-        <linearGradient id="sanctuaryPlateau" x1="0" y1="0" x2="0.15" y2="1"><stop offset="0" stopColor={shade(t.ground[0])} /><stop offset="1" stopColor={shade(t.ground[1])} /></linearGradient>
-        <linearGradient id="sanctuaryEdge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={shade(darken(t.hill[1], 20))} /><stop offset="1" stopColor={shade(darken(t.hill[1], 34))} /></linearGradient>
-        <linearGradient id="sanctuaryPath" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ead9b2" /><stop offset="1" stopColor="#c9aa7b" /></linearGradient>
-        <linearGradient id="sanctuaryWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#b6efff" /><stop offset="1" stopColor="#4fa9d6" /></linearGradient>
-        <clipPath id="sanctuaryGroundClip"><path d="M28 267L399 176L772 267L400 405Z" /></clipPath>
       </defs>
       <rect width="800" height="400" fill="url(#sky)" />
+      <image href={bgSrc(`sanct-${THEMES[sanct.theme] ? sanct.theme : 'prairie'}`)} x="-16" y="-10" width="832" height="420" preserveAspectRatio="xMidYMid slice" className="bg-pan" />
+      {night && <rect width="800" height="400" fill="#120c46" opacity=".52" style={{ mixBlendMode: 'multiply' }} />}
       {night ? (
         <g>
           {Array.from({ length: 40 }, (_, i) => <circle key={i} cx={(i * 197) % 800} cy={(i * 71) % 170} r={i % 4 === 0 ? 1.8 : 1} fill="white" className="star-twinkle" style={{ animationDelay: `${(i % 7) * 0.4}s` }} />)}
           <path d="M690 40a34 34 0 1 0 22 60 28 28 0 1 1-22-60Z" fill="#fff3c4" />
         </g>
-      ) : (
-        <g>
-          <circle cx="680" cy="70" r="38" fill="#fff3b0" /><circle cx="680" cy="70" r="54" fill="#fff3b0" opacity=".3" />
-          <g fill="white" opacity=".9" className="cloud-drift"><ellipse cx="160" cy="70" rx="50" ry="18" /><ellipse cx="190" cy="58" rx="30" ry="18" /><ellipse cx="460" cy="110" rx="40" ry="14" /><ellipse cx="482" cy="100" rx="24" ry="14" /></g>
-        </g>
-      )}
-      <path d="M0 210C120 150 240 170 340 200C460 236 560 150 800 190V400H0Z" fill="url(#hillA)" />
+      ) : null}
       {level('observatoire') > 0 && (
         <g transform="translate(520 178)"><rect x="-16" y="-10" width="32" height="40" rx="4" fill={shade('#e8e0ff')} /><path d="M-22-10a22 22 0 0 1 44 0Z" fill={shade('#7b5cff')} /><rect x="2" y="-30" width="22" height="7" rx="3" fill={shade('#5a3ee0')} transform="rotate(-30 2 -30)" />{night && <circle cx="0" cy="8" r="5" fill="#ffe680" />}</g>
       )}
-      <path d="M0 250C160 220 300 240 420 236C560 232 680 216 800 236V400H0Z" fill="url(#ground)" />
-      {/* Plateau isométrique : un lieu construit en profondeur, sans modèles 3D. */}
-      <g className="sanctuary-island">
-        <path d="M28 267L399 176L772 267L400 405Z" fill="url(#sanctuaryEdge)" opacity=".95" />
-        <path d="M28 267L399 176L772 267L400 386Z" fill="url(#sanctuaryPlateau)" stroke="#d2efb0" strokeWidth="3" />
-        <g clipPath="url(#sanctuaryGroundClip)">
-          <path d="M-30 286C120 240 210 250 315 278S520 322 830 246" fill="none" stroke="#d9edaa" strokeWidth="2" opacity=".22" />
-          <path d="M60 312L400 226L735 310" fill="none" stroke="#e8f3c6" strokeWidth="1.5" strokeDasharray="5 12" opacity=".2" />
-          <path d="M110 267C190 276 225 316 320 321C415 326 474 271 570 269C632 268 674 284 710 302" fill="none" stroke="#416f57" strokeWidth="43" strokeLinecap="round" opacity=".28" />
-          <path d="M110 260C190 269 225 309 320 314C415 319 474 264 570 262C632 261 674 277 710 295" fill="none" stroke="url(#sanctuaryPath)" strokeWidth="34" strokeLinecap="round" />
-          <path d="M110 255C190 264 225 304 320 309C415 314 474 259 570 257C632 256 674 272 710 290" fill="none" stroke="#f6e8c9" strokeWidth="2" strokeDasharray="3 13" strokeLinecap="round" opacity=".7" />
-          <path d="M80 335L202 305L250 322L127 355Z" fill={shade(t.hill[1])} opacity=".6" />
-          <path d="M500 346L624 310L700 339L576 375Z" fill={shade(t.hill[1])} opacity=".65" />
-          <path d="M295 245L372 226L421 244L344 264Z" fill="#b9e48c" opacity=".55" />
-          <path d="M550 221L623 203L663 218L590 237Z" fill="#b9e48c" opacity=".5" />
-          <path d="M80 280C118 269 145 268 170 274" fill="none" stroke="#d8f1b1" strokeWidth="5" strokeLinecap="round" opacity=".5" />
-          <path d="M635 321C660 311 681 306 706 311" fill="none" stroke="#d8f1b1" strokeWidth="5" strokeLinecap="round" opacity=".5" />
-          {Array.from({ length: 18 }, (_, i) => <ellipse key={`grass-${i}`} cx={75 + (i * 83) % 650} cy={260 + (i * 47) % 100} rx="2.2" ry="5" fill={i % 2 ? shade(t.hill[0]) : shade(t.hill[1])} opacity=".55" transform={`rotate(${i * 23} ${75 + (i * 83) % 650} ${260 + (i * 47) % 100})`} />)}
-        </g>
-        <path d="M28 267L399 386L400 405L28 286Z" fill={shade(darken(t.hill[1], 20))} opacity=".45" />
-        <path d="M400 386L772 267L772 286L400 405Z" fill={shade(darken(t.hill[1], 32))} opacity=".55" />
-        <path d="M38 268L399 181L761 268" fill="none" stroke="#eff8cf" strokeWidth="2" opacity=".5" />
-        <g opacity=".9"><path d="M165 283l18-12 18 7-18 13Z" fill="#d8c8a1" /><path d="M183 291v-8l18-5v8Z" fill="#9b896c" /><path d="M650 283l15-10 17 6-16 11Z" fill="#d8c8a1" /><path d="M666 290v-8l16-3v8Z" fill="#9b896c" /><path d="M335 354l20-12 19 7-20 13Z" fill="#d8c8a1" /><path d="M354 362v-8l20-5v8Z" fill="#9b896c" /></g>
-        <path d="M575 322C600 304 632 306 657 317C677 326 679 341 657 350C631 361 596 355 577 343C564 335 564 328 575 322Z" fill="#367fa7" opacity=".55" />
-        <path d="M572 316C596 300 631 302 655 313C676 323 676 337 654 346C629 356 595 350 575 338C561 330 561 323 572 316Z" fill="url(#sanctuaryWater)" stroke="#d5f7ff" strokeWidth="2" />
-        <path d="M585 320C604 312 626 313 643 320" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" opacity=".55" className="star-twinkle" />
-        <path d="M578 329C596 337 618 340 640 333" fill="none" stroke="#d8fbff" strokeWidth="2" strokeLinecap="round" opacity=".65" />
-      </g>
-      {[[70, 214, 1], [740, 206, 1.2], [600, 218, 0.8]].map(([x, y, k], i) => (
-        <g key={i} transform={`translate(${x} ${y}) scale(${k})`}>
-          <rect x="-5" y="-6" width="10" height="34" rx="4" fill={shade('#a0714a')} />
-          <circle cx="0" cy="-24" r="28" fill={shade(t.hill[1])} /><circle cx="-16" cy="-12" r="18" fill={shade(darken(t.hill[1], 6))} /><circle cx="16" cy="-14" r="20" fill={shade(t.hill[0])} />
-        </g>
-      ))}
       {Array.from({ length: Math.min(5, level('nichoirs')) }, (_, i) => (
         <g key={`n${i}`} transform={`translate(${150 + i * 34} ${244 - (i % 2) * 6}) scale(.8)`}><rect x="-12" y="-14" width="24" height="20" rx="3" fill={shade('#f6e2c0')} /><path d="M-16-12L0-28L16-12Z" fill={shade('#d9505a')} /><circle cx="0" cy="-5" r="4" fill={shade('#5a3a2a')} /></g>
       ))}
-      <ellipse cx="640" cy="340" rx={110 + level('bassin') * 14} ry={30 + level('bassin') * 4} fill={night ? '#3a5aa8' : '#7fd0ff'} opacity=".85" />
-      <ellipse cx="620" cy="334" rx="60" ry="9" fill="white" opacity=".35" />
+      {level('bassin') > 0 && <ellipse cx="640" cy="340" rx={110 + level('bassin') * 14} ry={30 + level('bassin') * 4} fill={night ? '#3a5aa8' : '#7fd0ff'} opacity=".85" />}
+      {level('bassin') > 0 && <ellipse cx="620" cy="334" rx="60" ry="9" fill="white" opacity=".35" />}
       {level('bassin') > 0 && <g fill="#c8f0ff">{[600, 660, 700].map((x, i) => <circle key={i} className="bubble-up" style={{ animationDelay: `${i}s` }} cx={x} cy="340" r="3" />)}</g>}
       {level('fournaise') > 0 && (
         <g transform="translate(95 300)"><path d="M-34 20L-20-16H20L34 20Z" fill={shade('#5a3a3a')} /><ellipse cx="0" cy="-16" rx="20" ry="6" fill="#ff8a3d" className="lava-glow" /><circle cx="0" cy="-34" r={6 + level('fournaise') * 2} fill="#ffb03d" opacity=".5" className="lava-glow" /></g>
@@ -184,9 +140,6 @@ function SceneBackdrop({ night, sanctuary }: { night: boolean; sanctuary?: Parti
       {deco('banc') && <g transform="translate(300 290)"><rect x="-26" y="-6" width="52" height="7" rx="3" fill={shade('#c08a52')} /><rect x="-24" y="-16" width="48" height="6" rx="3" fill={shade('#a8743f')} /><rect x="-22" y="0" width="4" height="10" fill={shade('#8a5a3a')} /><rect x="18" y="0" width="4" height="10" fill={shade('#8a5a3a')} /></g>}
       {deco('fontaine') && <g transform="translate(380 368)"><ellipse rx="30" ry="9" fill={shade('#c8c0e0')} /><ellipse cy="-2" rx="24" ry="6" fill="#7fd0ff" /><rect x="-4" y="-26" width="8" height="24" fill={shade('#d8d0f0')} /><circle cy="-30" r="6" fill="#7fd0ff" className="lava-glow" /></g>}
       {deco('guirlande') && <g><path d="M60 120Q400 190 760 110" stroke={shade('#8a7a6a')} strokeWidth="2" fill="none" />{Array.from({ length: 14 }, (_, i) => <circle key={i} cx={60 + i * 50} cy={120 + Math.sin((i / 13) * Math.PI) * 40 - i * 0.7} r="4" fill="#ffe680" className="star-twinkle" style={{ animationDelay: `${i * 0.2}s` }} />)}</g>}
-      {[[120, 300], [260, 360], [420, 320], [520, 370], [330, 290]].map(([x, y], i) => (
-        <g key={`f${i}`} transform={`translate(${x} ${y})`}>{[0, 72, 144, 216, 288].map((r) => <ellipse key={r} cx="0" cy="-4" rx="3" ry="4" fill={['#ff9fd0', '#ffe066', '#c6a7ff', '#ffffff', '#ff9a6a'][i]} transform={`rotate(${r})`} />)}<circle r="2" fill="#ffc23d" /></g>
-      ))}
     </svg>
   );
 }

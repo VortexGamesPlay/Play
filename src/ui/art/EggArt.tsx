@@ -1,7 +1,8 @@
-import { memo, useId, type ReactNode } from 'react';
+import { memo, useId, useState, type ReactNode } from 'react';
 import type { EggVisual } from '@core/content';
 import { EGGS } from '@data/eggs';
 import { darken, lighten } from './color';
+import { eggSrc } from './sprites';
 
 const EGG_PATH = 'M50 4C77 4 94 48 94 76C94 104 74 120 50 120C26 120 6 104 6 76C6 48 23 4 50 4Z';
 
@@ -50,9 +51,30 @@ export interface EggArtProps {
 
 function EggArtImpl({ type, size = 100, cracks = 0, wobble = false, className }: EggArtProps) {
   const rid = useId().replace(/:/g, '');
+  const [failed, setFailed] = useState(false);
   const egg = EGGS[type];
   if (!egg) return null;
   const v = egg.visual;
+  if (!failed) {
+    return (
+      <svg viewBox="0 0 100 130" width={size} height={size * 1.3} className={`egg egg-painted ${wobble ? 'egg-wobble' : ''} ${className ?? ''}`} role="img" aria-label={egg.name}>
+        <defs>
+          <filter id={`${rid}-glow`} x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.8" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+          <radialGradient id={`${rid}-halo`}><stop offset="0" stopColor={v.glow} stopOpacity=".45" /><stop offset="1" stopColor={v.glow} stopOpacity="0" /></radialGradient>
+        </defs>
+        <ellipse cx="50" cy="70" rx="56" ry="62" fill={`url(#${rid}-halo)`} className="egg-halo" />
+        <ellipse cx="50" cy="125" rx="30" ry="4.5" fill="#2b1e5a" opacity=".18" />
+        <g className="egg-body">
+          <image href={eggSrc(type)} x="0" y="0" width="100" height="130" preserveAspectRatio="xMidYMax meet" onError={() => setFailed(true)} />
+          {cracks > 0 && (
+            <g fill="none" stroke={v.glow} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" filter={`url(#${rid}-glow)`}>
+              {CRACKS.slice(0, cracks).map((d, i) => <path key={i} d={d} className="egg-crack" />)}
+            </g>
+          )}
+        </g>
+      </svg>
+    );
+  }
   const dark = v.pattern === 'galaxy' || v.pattern === 'veins' || v.pattern === 'lava';
   return (
     <svg viewBox="0 0 100 130" width={size} height={size * 1.3} className={`egg ${wobble ? 'egg-wobble' : ''} ${className ?? ''}`} role="img" aria-label={egg.name}>
