@@ -8,8 +8,10 @@ import { mkdirSync } from 'node:fs';
 const { chromium } = createRequire(import.meta.url)('playwright');
 const SP = process.argv[2] ?? 'smoke-shots';
 mkdirSync(SP, { recursive: true });
-execSync('node_modules/.bin/vite build --outDir dist-test', { env: { ...process.env, VITE_PAYMENTS_TEST: '1' }, stdio: 'ignore' });
-execSync('node_modules/.bin/vite build', { stdio: 'ignore' });
+// Les deux builds simulent un jeu SANS serveur de paiement (on vide l'adresse Supabase du .env.production).
+const NO_SERVER = { VITE_SUPABASE_URL: '', VITE_SUPABASE_ANON_KEY: '' };
+execSync('node_modules/.bin/vite build --outDir dist-test', { env: { ...process.env, ...NO_SERVER, VITE_PAYMENTS_TEST: '1' }, stdio: 'ignore' });
+execSync('node_modules/.bin/vite build --outDir dist-noserver', { env: { ...process.env, ...NO_SERVER }, stdio: 'ignore' });
 const errs = [];
 async function serve(dir, port) {
   const server = spawn('node_modules/.bin/vite', ['preview', '--outDir', dir, '--port', String(port), '--strictPort'], { stdio: 'pipe' });
@@ -52,7 +54,7 @@ try {
     console.log(name, '| cristaux', before, '→', after, '| passe actif OK');
     await p.close();
   }
-  s2 = await serve('dist', 4325);
+  s2 = await serve('dist-noserver', 4325);
   const p = await b.newPage({ viewport: { width: 1366, height: 860 } });
   await p.goto('http://localhost:4325/#boutique'); await p.waitForSelector('.tabs');
   await p.locator('.tabs button:has-text("Cristaux")').click();

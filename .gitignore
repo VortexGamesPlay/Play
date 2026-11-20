@@ -9,3 +9,4 @@ smoke-shots
 !.env.example
 dist-test
 !.env.production
+dist-noserver

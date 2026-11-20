@@ -12,7 +12,7 @@ import { BiomeScenery } from '../art/Scenery';
 import { RewardList } from '../screens/ExplorationScreen';
 import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
-import { playSfx } from '../../services/audio';
+import { COMBAT_SFX, playSfx, preloadSfx, SKILL_ELEMENTS, type Sfx } from '../../services/audio';
 
 interface UnitView { hp: number; alive: boolean; statuses: StatusId[] }
 interface Floater { id: number; key: string; text: string; kind: 'dmg' | 'crit' | 'heal' | 'info' }
@@ -99,6 +99,9 @@ export function BattleView() {
     setTimeout(() => setFloaters((f) => f.filter((x) => x.id !== id)), 1200);
   };
 
+  // Gong d'ouverture du combat
+  useEffect(() => { preloadSfx(COMBAT_SFX); playSfx('battleStart'); }, []);
+
   // Animation : une entrée du journal à la fois
   useEffect(() => {
     if (queue.length === 0) return;
@@ -106,9 +109,14 @@ export function BattleView() {
     const delay = (e.t === 'skill' || e.t === 'dmg' ? STEP_MS : e.t === 'round' ? 350 : 160) / (fast ? 2.2 : 1);
     const t = setTimeout(() => {
       switch (e.t) {
-        case 'round': setCaption(`Manche ${e.round}`); break;
+        case 'round': setCaption(`Manche ${e.round}`); if (e.round > 1) playSfx('round'); break;
         case 'turn': setActor(e.actor); break;
-        case 'skill': setActor(e.actor); setCaption(`${name(e.actor)} utilise ${SKILLS[e.skill]?.name} !`); playSfx('whoosh'); break;
+        case 'skill': {
+          setActor(e.actor); setCaption(`${name(e.actor)} utilise ${SKILLS[e.skill]?.name} !`);
+          const el = SKILLS[e.skill]?.element;
+          playSfx(el && (SKILL_ELEMENTS as readonly string[]).includes(el) ? (`skill-${el}` as Sfx) : 'whoosh');
+          break;
+        }
         case 'dmg':
           setView((v) => ({ ...v, [e.target]: { ...v[e.target]!, hp: Math.max(0, v[e.target]!.hp - e.amount) } }));
           setHitKey(e.target); setTimeout(() => setHitKey(null), 300);

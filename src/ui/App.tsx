@@ -16,10 +16,11 @@ import { LabScreen } from './screens/LabScreen';
 import { ExplorationScreen } from './screens/ExplorationScreen';
 import { ArenaScreen } from './screens/ArenaScreen';
 import { SeasonScreen } from './premium/SeasonScreen';
-import { useMusic } from './hooks/useMusic';
+import { useEggReadyChime, useMusic } from './hooks/useMusic';
 
 function Music() {
   useMusic();
+  useEggReadyChime();
   return null;
 }
 

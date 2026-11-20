@@ -1,4 +1,4 @@
-import { playNotify } from '../services/audio';
+import { playNotify, playSoft } from '../services/audio';
 import { create } from 'zustand';
 import type { GameEvent } from '@core/events';
 
@@ -77,6 +77,7 @@ export const useUi = create<UiState>((set, get) => ({
     set({ modals: [...get().modals, m] });
   },
   closeModal() {
+    if (get().modals.length) playSoft('close');
     set({ modals: get().modals.slice(0, -1) });
   },
   setMoreOpen(v) {

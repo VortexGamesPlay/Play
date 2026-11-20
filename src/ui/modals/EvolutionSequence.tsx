@@ -7,7 +7,7 @@ import { CrystalIcon, Icon } from '../art/Icons';
 import { ElementBadge, RarityBadge } from '../components/Badges';
 import { useGame } from '../../store/gameStore';
 import { useUi } from '../../store/uiStore';
-import { playSfx } from '../../services/audio';
+import { playSfx, preloadSfx } from '../../services/audio';
 
 type Evolved = Extract<GameEvent, { type: 'evolved' }>;
 
@@ -23,6 +23,8 @@ export function EvolutionSequence({ event }: { event: Evolved }) {
   const r = RARITIES[to.rarity];
   const [stage, setStage] = useState(0); // 0 lueur · 1 alternance · 2 éclair · 3 révélation
   const [showNew, setShowNew] = useState(false);
+
+  useEffect(() => { preloadSfx(['revealEpic']); }, []);
 
   useEffect(() => {
     const t = [setTimeout(() => setStage(1), 1100), setTimeout(() => setStage(2), 4200), setTimeout(() => setStage(3), 4700)];

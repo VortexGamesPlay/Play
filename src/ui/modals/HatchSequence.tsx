@@ -8,7 +8,7 @@ import { EggArt } from '../art/EggArt';
 import { CrystalIcon, Icon } from '../art/Icons';
 import { ElementBadge, MutationBadge, RarityBadge } from '../components/Badges';
 import { useUi } from '../../store/uiStore';
-import { playSfx } from '../../services/audio';
+import { playSfx, preloadSfx } from '../../services/audio';
 
 type Hatched = Extract<GameEvent, { type: 'hatched' }>;
 
@@ -32,11 +32,16 @@ export function HatchSequence({ event }: { event: Hatched }) {
     return () => timers.forEach(clearTimeout);
   }, [timeline]);
 
+  useEffect(() => { preloadSfx(['revealEpic', 'mutation']); }, []);
+
   useEffect(() => {
     if (stage >= 1 && stage <= 3) playSfx('crack');
     if (stage === 4) playSfx('whoosh');
-    if (stage === 5) playSfx('reveal', tier);
-  }, [stage, tier]);
+    if (stage === 5) {
+      playSfx('reveal', tier);
+      if (c.mutations.length > 0) setTimeout(() => playSfx('mutation'), 900);
+    }
+  }, [stage, tier, c.mutations.length]);
 
   const particles = useMemo(() => Array.from({ length: 14 + tier * 6 }, (_, i) => {
     const a = (i / (14 + tier * 6)) * Math.PI * 2 + Math.random() * 0.4;

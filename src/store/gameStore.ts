@@ -15,6 +15,7 @@ import { createSaveStorage, LocalSaveRepository } from '../services/localSaveRep
 import type { SaveRepository } from '../services/saveRepository';
 import { playSfx, setSfxVolume, setSoundEnabled } from '../services/audio';
 import { playStinger, setMusicEnabled, setMusicVolume, setStingerVolume } from '../services/music';
+import { setAmbienceEnabled, setAmbienceVolume } from '../services/ambience';
 import { RARITIES } from '@data/rarities';
 import { useUi } from './uiStore';
 
@@ -52,7 +53,8 @@ function rewardText(r: Extract<GameEvent, { type: 'reward' }>['reward']): string
 /** Sons des actions qui ne produisent pas d'événement dédié. */
 const ACTION_SFX: Partial<Record<GameAction['type'], Parameters<typeof playSfx>[0]>> = {
   placeEgg: 'placeEgg', speedUp: 'speedUp', toggleFavorite: 'favorite', startExpedition: 'expeditionStart',
-  upgradeBuilding: 'upgrade', toggleDecoration: 'decorate', setTheme: 'decorate', setAmbiance: 'open',
+  upgradeBuilding: 'upgrade', toggleDecoration: 'decorate', setTheme: 'decorate', setAmbiance: 'ambiance',
+  rename: 'rename', setPlayerName: 'rename',
 };
 
 /** Applique les réglages audio (son général, volumes musique / effets). */
@@ -62,6 +64,8 @@ function applyAudioSettings(st: GameState['settings']) {
   setStingerVolume(st.sfxVolume);
   setMusicVolume(st.musicVolume);
   setMusicEnabled(st.sound);
+  setAmbienceVolume(st.sfxVolume);
+  setAmbienceEnabled(st.sound);
 }
 
 function presentEvents(events: GameEvent[], state: GameState) {
