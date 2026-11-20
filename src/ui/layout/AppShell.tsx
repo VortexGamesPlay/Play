@@ -170,13 +170,16 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="blob" style={{ width: 460, height: 460, right: '-6%', top: '40%', background: '#c2e8ff', animationDelay: '-8s' }} />
         <div className="blob" style={{ width: 340, height: 340, left: '40%', bottom: '-10%', background: '#c8ffe0', animationDelay: '-15s' }} />
       </div>
+      <Sidebar />
+      <TopBar />
+      <BottomBar />
       <div className="main">
         <main className="content" key={route}>
           <div className="screen-enter">{children}</div>
         </main>
       </div>
       <button className="game-menu-trigger" aria-label={tr('Ouvrir le menu')} onClick={() => { playSfx('open'); setMore(true); }}>
-        <Icon name="menu" />
+        <Icon name="more" />
       </button>
       <MoreSheet />
     </div>
