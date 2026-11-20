@@ -5,6 +5,7 @@ import { AppShell } from './layout/AppShell';
 import { ModalHost } from './ModalHost';
 import { Toasts } from './components/Toasts';
 import { SanctuaryScreen } from './screens/SanctuaryScreen';
+import { ChezNousScreen } from './screens/ChezNousScreen';
 import { IncubatorScreen } from './screens/IncubatorScreen';
 import { CollectionScreen } from './screens/CollectionScreen';
 import { DexScreen } from './screens/DexScreen';
@@ -29,6 +30,7 @@ function Screen() {
   const route = useUi((s) => s.route);
   switch (route) {
     case 'sanctuaire': return <SanctuaryScreen />;
+    case 'chez-nous': return <ChezNousScreen />;
     case 'incubateur': return <IncubatorScreen />;
     case 'collection': return <CollectionScreen />;
     case 'bestiaire': return <DexScreen />;

@@ -11,6 +11,7 @@ export interface NavEntry {
 
 export const NAV_MAIN: NavEntry[] = [
   { route: 'sanctuaire', label: 'Sanctuaire', icon: 'sanctuary' },
+  { route: 'chez-nous', label: 'Chez nous', icon: 'home' },
   { route: 'incubateur', label: 'Incubateur', icon: 'egg' },
   { route: 'collection', label: 'Créatures', icon: 'paw' },
   { route: 'bestiaire', label: 'Bestiaire', icon: 'book' },
